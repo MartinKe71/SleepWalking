@@ -1,0 +1,7 @@
+{
+  "Jerry": {
+    "object name" : "Knife",
+    "object condition": "good",
+    "price" : ["100", "50", "85"]
+  }
+}

@@ -1,16 +1,18 @@
 #include "Mode.hpp"
 
-#include "Connection.hpp"
-#include "ChessBoardData.hpp"
-#include "ColorTextureProgram.hpp"
-#include "ChessBoardTextureProgram.hpp"
+#include "Scene.hpp"
+#include "Sound.hpp"
+#include "FontSource.hpp"
+#include "data_path.hpp"
+#include "FSM.hpp"
+
 #include <glm/glm.hpp>
 
 #include <vector>
 #include <deque>
 
 struct PlayMode : Mode {
-	PlayMode(Client &client);
+	PlayMode();
 	virtual ~PlayMode();
 
 	//functions called by main loop:
@@ -18,7 +20,11 @@ struct PlayMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
-	bool CheckMouseClickValid(const glm::uvec2& window_size);
+	//----- game state -----
+	std::vector<TextBlock> blocks;
+	glm::vec2 mouse_pos;
+	int selected_block_idx = -1;
+	FSM fsm;
 
 	//input tracking:
 	struct Button {
@@ -26,23 +32,5 @@ struct PlayMode : Mode {
 		uint8_t pressed = 0;
 	} left, right, down, up;
 
-
-	//uint8_t game_state = 0;
-	bool should_send = false;
-
-	std::vector<uint8_t> message_buffer;
-	std::pair<int8_t, int8_t> send_pos;
-	std::vector<std::vector<int>> chess_board;
-	glm::vec2 mouse_pos;
-	std::vector<ChessBoardTextureProgram::Circle> chess_pieces;
-	std::vector<glm::u8vec4> chess_piece_colors;
-
-	//last message from server:
-	std::string server_message;
-
-	std::string player_name;
-	std::string status_message = "Waiting for other players to join . . .";
-
-	//connection to server:
-	Client &client;
+	void CheckMouseHover();
 };

@@ -1,0 +1,12 @@
+{
+    "description": {
+      "high": "Wow! This ia Blue-Eyes White Dragon!! \nLegendary monstor in Yu-Gi-Oh!\nIt was once bid to over $12M in an auction event in China.\nNow only price for: ",
+      "medium": "It's Yennefer of Vengerberg from Gwent. \nPowerful witch from famous Witcher series.\nMaybe she is looking for her Geralt.\nNow only price for: ",
+      "low": "Huh.. \nA peach card from Legends of the Three Kingdom. \nIt was trending a decade ago but lost its market for a while now.\nNow only price for: "
+    }, 
+    "detail": {
+        "high" : "The card shines under the light. You can see the rainbow refraction on the glazed the surface. The card is clearly well-preserved.",
+        "medium" : "It is not a shiny card, but certainly not a worn card either. Nothing too much to say about this card.",
+        "low" : "The card looks a bit bent and has clearly undergone some wear and tears. There is a very obvious crease in the middle of the card."
+    }
+}

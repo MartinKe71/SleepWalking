@@ -1,0 +1,20 @@
+{
+    "emotion": {
+        "high" : [
+            "Guilt was written all over his face.",
+            "He avoids eye contact with you.",
+            "He blinks slowly.",
+            "He appear to be more fidgety.",
+            "Vertical wrinkles may appear between his eyebrows",
+            "His mouth is stretched and drawn back, exposing teeth"
+        ],
+        "low" : [
+            "He has kept a firm lid on his emotions.",
+            "He kept a natrual expression on his face.",
+            "He blinks normally.",
+            "He looks straight to your eyes.",
+            "Sincere expression shows on his face",
+            "He looks open and forthright."
+        ]
+    }
+}
