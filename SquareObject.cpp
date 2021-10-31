@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 03:31:23
+ * @ Modified time: 2021-10-31 03:42:40
  * @ Description: implementation of square object
  */
 
@@ -99,7 +99,7 @@ void SquareObject::draw(glm::uvec2 const &drawable_size){
     GLCall(glBindVertexArray(VAO));
     //    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     // draw the points using triangles, indexed with the EBO
-    GLCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+    GLCall(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0));
 
     // Unbind the VAO and shader program
     GLCall(glBindVertexArray(0));
