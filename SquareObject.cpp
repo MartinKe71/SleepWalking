@@ -2,14 +2,14 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 03:42:40
+ * @ Modified time: 2021-10-31 03:48:16
  * @ Description: implementation of square object
  */
 
 #include "load_save_png.hpp"
 #include "data_path.hpp"
 #include "SquareObject.hpp"
-
+#include <signal.h>
 #include "gl_compile_program.hpp"
 #include "gl_errors.hpp"
 
