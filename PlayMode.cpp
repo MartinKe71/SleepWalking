@@ -12,182 +12,69 @@
 #include <random>
 
 PlayMode::PlayMode() {
-	// Set up textblock vector
-	{
-		// Start Button
-		blocks.emplace_back(TextBlock("Pacifico.ttf",
-							true, true,
-							80,
-							{ -0.2f, 0.4f },
-							{ 0.4f, 0.2f },
-							{ 0.03f, 0.03f },
-							{ 0x00, 0x00, 0x00, 0xff },
-							{ 0xff, 0xff, 0xff, 0x00 },
-							"Start"
-		));
-
-		// Customer Description
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, false,
-			24,
-			{ -0.77f, -0.36f },
-			{ 1.54f, 0.5f },
-			{ 0.06f, 0.05f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"This is just a sample of what a customer description is going to be like for real blah\nnothing special"
-		));
-
-		// Customer Name tag
-		blocks.emplace_back(TextBlock("Pacifico.ttf",
-			true, false,
-			28,
-			{ -0.75f, -0.2f },
-			{ 0.13f, 0.09f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"Jerry"
-		));
-
-		// Total Profit
-		blocks.emplace_back(TextBlock("Pacifico.ttf",
-			true, false,
-			18,
-			{ -0.95f, 0.93f },
-			{ 0.4f, 0.08f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"Current Profit : $200 / $1000"
-		));
-
-		// Choice Option 0
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, true,
-			28,
-			{ 0.5f, 0.7f },
-			{ 0.3f, 0.1f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"$150"
-		));
-
-		// Choice Option 1
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, true,
-			28,
-			{ 0.5f, 0.5f },
-			{ 0.3f, 0.1f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"$150"
-		));
-
-		// Choice Option 2
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, true,
-			28,
-			{ 0.5f, 0.3f },
-			{ 0.3f, 0.1f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"$150"
-		));
-
-		// Choice Option 3
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, true,
-			28,
-			{ 0.5f, 0.1f },
-			{ 0.3f, 0.1f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"$150"
-		));
-
-		// Choice Option 4
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, true,
-			28,
-			{ 0.5f, -0.1f },
-			{ 0.3f, 0.1f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"$150"
-		));
-
-		// Num Customer Left
-		blocks.emplace_back(TextBlock("Dimbo.ttf",
-			true, false,
-			18,
-			{ 0.75f, 0.93f },
-			{ 0.2f, 0.08f },
-			{ 0.02f, 0.02f },
-			{ 0x00, 0x00, 0x00, 0xff },
-			{ 0xe0, 0xe0, 0xe0, 0xff },
-			"Customer Left: 3"
-		));	
-	}
-
-	// Only show start button at launch
-	{
-		for (size_t i = 1; i < blocks.size(); i++) {
-			blocks[i].visible = false;
-		}
-	}
-
-	fsm = FSM();
-	fsm.init(blocks);
+	moveableObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.5f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 0.05f, "resource/mos.png"));
+	moveableObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.5f, 0.5f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 0.05f, "resource/mos.png"));
+	moveableObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(-0.5f, 0.5f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 0.05f, "resource/mos.png"));
 }
 
 PlayMode::~PlayMode() {
+	for (auto& obj : moveableObjs){
+        delete obj;
+    }
 }
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
-	if (evt.type == SDL_MOUSEMOTION) {
+	if (evt.type == SDL_KEYDOWN) {
+		if (evt.key.keysym.sym == SDLK_ESCAPE) {
+			SDL_SetRelativeMouseMode(SDL_FALSE);
+			return true;
+		} else if (evt.key.keysym.sym == SDLK_w) {
+			up.downs += 1;
+			up.pressed = true;
+			return true;
+		} else if (evt.key.keysym.sym == SDLK_s) {
+			down.downs += 1;
+			down.pressed = true;
+			return true;
+		}
+	} else if (evt.type == SDL_KEYUP) {
+		if (evt.key.keysym.sym == SDLK_w) {
+			up.pressed = false;
+			return true;
+		} else if (evt.key.keysym.sym == SDLK_s) {
+			down.pressed = false;
+			return true;
+		}
+	} else if (evt.type == SDL_MOUSEMOTION) {
 		mouse_pos = glm::vec2(
 			evt.motion.x / float(window_size.x) * 2 - 1.0f,
 			-evt.motion.y / float(window_size.y) * 2 + 1.0f
 		);
-
-		//std::cout << "Mouse motion: x: " << mouse_pos.x << ", y: " << mouse_pos.y << "\n";
-		CheckMouseHover();
 		return true;
-	}
-	else if (evt.type == SDL_MOUSEBUTTONUP) {
-		if (evt.button.button == SDL_BUTTON_LEFT && selected_block_idx > -1) {
-			int action = selected_block_idx > 0 ? selected_block_idx - 3 : selected_block_idx;
-			fsm.transferState(action);
-			fsm.executeState(blocks);
-		}
 	}
 
 	return false;
 }
 
-void PlayMode::CheckMouseHover() {
-	for (auto& block : blocks) {
-		if (!block.visible || !block.interactable)
-			continue;
+void PlayMode::update(float elapsed) {
 
-		if (mouse_pos.x > block.anchor.x && mouse_pos.x < block.anchor.x + block.dims.x
-			&& mouse_pos.y < block.anchor.y && mouse_pos.y > block.anchor.y - block.dims.y) {
-			selected_block_idx = static_cast<int>(&block - &blocks[0]);
-			return;
-		}
+	{
+		if (down.pressed && !up.pressed) gravity = glm::vec3 (0, -9.8f, 0);
+		if (!down.pressed && up.pressed) gravity  = glm::vec3 (0, 9.8f, 0);
 	}
 
-	selected_block_idx = -1;
-}
-
-void PlayMode::update(float elapsed) {
-	
+	{
+		for (auto& obj : moveableObjs){
+			obj->zeroForce();
+			glm::vec3 force = gravity * obj->getMass();
+			obj->applyForce(force);
+			
+			obj->update(elapsed);
+		}
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
@@ -195,20 +82,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	for (auto& block : blocks) {
-		if (block.visible) {
-			if (selected_block_idx > -1 && &block - &blocks[0] == selected_block_idx) {
-				//shape_texture_program->DrawBox(block.box);
-				shape_texture_program->SetBoxHighlight(block.box, block.box_size);
-				block.source->DrawText(drawable_size, block.text, block.anchor, block.dims, { 0xff, 0xff, 0xff, 0xff });
-			}
-			else {
-				//shape_texture_program->DrawBox(block.box);
-				shape_texture_program->ResetBoxHighlight(block.box, block.box_size);
-				block.source->DrawText(drawable_size, block.text, block.anchor, block.dims, block.font_color);
-			}			
-		}
+	for (auto& obj : moveableObjs){
+		obj->draw(drawable_size);
 	}
 	GL_ERRORS();
 }

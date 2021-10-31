@@ -5,6 +5,7 @@
 #include "FontSource.hpp"
 #include "data_path.hpp"
 #include "FSM.hpp"
+#include "SquareObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -21,10 +22,11 @@ struct PlayMode : Mode {
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
 	//----- game state -----
-	std::vector<TextBlock> blocks;
 	glm::vec2 mouse_pos;
-	int selected_block_idx = -1;
-	FSM fsm;
+	glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
+
+	//----- game object -----
+	vector<GameObject*> moveableObjs;
 
 	//input tracking:
 	struct Button {
