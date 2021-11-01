@@ -143,7 +143,9 @@ GAME_NAMES =
 	PlayMode
 	main
 	LitColorTextureProgram
-	#ColorTextureProgram #not used right now, but you might want it
+	ColorTextureProgram #not used right now, but you might want it
+	GameObject
+	SquareObject
 	Sound
 	load_wav
 	load_opus

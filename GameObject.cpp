@@ -1,0 +1,42 @@
+/**
+ * @ Author: Wenlin Mao
+ * @ Create Time: 2021-10-30 17:59:16
+ * @ Modified by: Wenlin Mao
+ * @ Modified time: 2021-10-31 03:26:06
+ * @ Description: Base class for game object
+ */
+
+#include "GameObject.hpp"
+
+GameObject::GameObject() : mass (0), position(glm::vec3(0.0f)), 
+    velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), isFixed(false){
+    lifeSpan = 100.0f;
+}
+
+GameObject::GameObject(float mass, const glm::vec3& pos, 
+    const glm::vec3& vel, bool isFixed, float l) : mass (mass), position(pos), 
+    velocity(vel), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), 
+    isFixed(isFixed), lifeSpan(l){
+ 
+}
+
+GameObject::~GameObject(){}
+
+void GameObject::update(float deltaTime){
+    // compute acceleration
+    if (!isFixed && lifeSpan > 0.0f){
+        glm::vec3 accel = force / mass;
+        velocity += accel * deltaTime;
+        position += velocity * deltaTime;
+    }
+    
+}
+
+void GameObject::reset(){
+    position = glm::vec3(0.0f);
+    velocity = glm::vec3(0.0f);
+    zeroForce();
+    zeroNormal();
+    isFixed = false;
+    lifeSpan = 0.0f;
+}
