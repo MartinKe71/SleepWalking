@@ -9,6 +9,9 @@
 #include <vector>
 #include <unordered_map>
 
+#define GAME_MAP_SIZE glm::vec2(1920.f, 1080.f)
+#define COLLISION_OPT_LEVEL 4
+
 #define P1_LEFT SDLK_a
 #define P1_RIGHT SDLK_d
 #define P1_UP SDLK_SPACE

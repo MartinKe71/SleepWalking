@@ -32,7 +32,7 @@ struct PlayMode : Mode {
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	};
+	} left, right, down, up;
 
 	struct Player1 {
 		glm::vec3 pos;
