@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 03:48:16
+ * @ Modified time: 2021-10-31 22:17:53
  * @ Description: implementation of square object
  */
 
@@ -59,7 +59,6 @@ SquareObject::SquareObject(float mass, const glm::vec3& pos,
     // Generate a vertex array (VAO) and two vertex buffer objects (VBO).
     GLCall(glGenVertexArrays(1, &VAO));
     GLCall(glGenBuffers(1, &VBO_positions));
-    GLCall(glGenBuffers(1, &VBO_normals));
     GLCall(glGenBuffers(1, &VBO_texcoords));
     GLCall(glGenBuffers(1, &EBO));
 
@@ -69,7 +68,6 @@ SquareObject::SquareObject(float mass, const glm::vec3& pos,
 SquareObject::~SquareObject(){
     // Delete the VBOs and the VAO.
    glDeleteBuffers(1, &VBO_positions);
-   glDeleteBuffers(1, &VBO_normals);
    glDeleteBuffers(1, &EBO);
    glDeleteVertexArrays(1, &VAO);
 }
@@ -118,12 +116,6 @@ void SquareObject::prepareDraw(){
     GLCall(glEnableVertexAttribArray(shader->Position_vec4));
     GLCall(glVertexAttribPointer(shader->Position_vec4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
 
-    // Bind to the second VBO - We will use it to store the vertex_normals
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_normals));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * vertex_normals.size(), vertex_normals.data(), GL_STATIC_DRAW));
-    GLCall(glEnableVertexAttribArray(shader->Normal_vec4));
-    GLCall(glVertexAttribPointer(shader->Normal_vec4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
-
     // Bind to the second VBO - We will use it to store the vertex_texcoords
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_texcoords));
     GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vertex_texcoords.size(), vertex_texcoords.data(), GL_STATIC_DRAW));
@@ -152,13 +144,6 @@ void SquareObject::createVerts(){
         glm::vec4(-width,  width, 0.0f, 1.0f)  // top left 
     });
 
-    vertex_normals = vector<glm::vec4>({
-        glm::normalize(glm::vec4(width,  width, 0.0f, 0.0f)),  // top right
-        glm::normalize(glm::vec4(width, -width, 0.0f, 0.0f)),  // bottom right
-        glm::normalize(glm::vec4(-width, -width, 0.0f, 0.0f)),  // bottom left
-        glm::normalize(glm::vec4(-width,  width, 0.0f, 0.0f))  // top left 
-    });
-
     vertex_texcoords = vector<glm::vec2>({
         glm::vec2(0.f,1.f),
         glm::vec2(1.f,1.f),
@@ -171,14 +156,12 @@ void SquareObject::reset(){
     GameObject::reset();
     
     vertex_positions.clear();
-    vertex_normals.clear();
 }
 
 void SquareObject::setWidth(float r){
     width = r;
     
     vertex_positions.clear();
-    vertex_normals.clear();
     
     createVerts();
     prepareDraw();
