@@ -24,3 +24,11 @@ private:
 	glm::vec4 size {0};
 	bool is_trigger = false;
 };
+
+class PlayerCollisionBox : CollisionBox {
+public:	
+	void OnCollisionEnter() override;
+
+private:
+	bool has_collided = false;
+};
