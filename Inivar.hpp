@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 #define GAME_MAP_SIZE glm::vec2(1920.f, 1080.f)
 #define COLLISION_OPT_LEVEL 4
