@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:53
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 03:31:53
+ * @ Modified time: 2021-10-31 22:17:05
  * @ Description: Interface of square object
  */
 
@@ -41,7 +41,7 @@ private:
     float width;
     
     GLuint VAO;
-    GLuint VBO_positions, VBO_normals, VBO_texcoords, EBO;
+    GLuint VBO_positions, VBO_texcoords, EBO;
     
     glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
     vector<glm::vec4> vertex_positions;

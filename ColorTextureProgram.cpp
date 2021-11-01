@@ -14,12 +14,10 @@ ColorTextureProgram::ColorTextureProgram() {
 		"uniform mat4 Model;\n"
 		"uniform vec4 Color;\n"
 		"in vec4 Position;\n"
-		"in vec4 Normal;\n"
 		"in vec2 TexCoord;\n"
 		"out vec4 color;\n"
 		"out vec2 texCoord;\n"
 		"void main() {\n"
-		"	vec4 normal = Normal;\n"
 		"	gl_Position = OBJECT_TO_CLIP * Model * Position;\n"
 		"	color = Color;\n"
 		"	texCoord = TexCoord;\n"
@@ -40,7 +38,6 @@ ColorTextureProgram::ColorTextureProgram() {
 
 	//look up the locations of vertex attributes:
 	Position_vec4 = glGetAttribLocation(program, "Position");
-	Normal_vec4 = glGetAttribLocation(program, "Normal");
 	TexCoord_vec2 = glGetAttribLocation(program, "TexCoord");
 
 	//look up the locations of uniforms:
