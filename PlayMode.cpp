@@ -5,9 +5,8 @@
 #include "DrawLines.hpp"
 #include "Mesh.hpp"
 #include "Load.hpp"
-#include "gl_errors.hpp"
+#include "Inivar.hpp"
 
-#include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include <random>
 
@@ -48,6 +47,9 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			down.pressed = false;
 			return true;
 		}
+	} else if (evt.key.keysym.sym == P1_LEFT) {
+			player1.left.pressed = true;
+			return true;
 	} else if (evt.type == SDL_MOUSEMOTION) {
 		mouse_pos = glm::vec2(
 			evt.motion.x / float(window_size.x) * 2 - 1.0f,
@@ -60,7 +62,6 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
-
 	{
 		if (down.pressed && !up.pressed) gravity = glm::vec3 (0, -9.8f, 0);
 		if (!down.pressed && up.pressed) gravity  = glm::vec3 (0, 9.8f, 0);
@@ -85,5 +86,6 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	for (auto& obj : moveableObjs){
 		obj->draw(drawable_size);
 	}
+
 	GL_ERRORS();
 }
