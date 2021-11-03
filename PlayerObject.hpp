@@ -13,7 +13,7 @@ public :
         const std::string& filename = "", float l = 100.f);
     ~PlayerObject();
 
-    CollisionBox* box;
+    std::shared_ptr<PlayerCollisionBox> box;
 
     //input tracking:
     struct Button {

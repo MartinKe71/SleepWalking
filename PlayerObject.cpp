@@ -7,34 +7,6 @@
 
 #define SPEED 0.1f
 
-//#ifdef _MSC_VER
-//#define DEBUG_BREAK __debugbreak()
-//#elif __APPLE__
-//#define DEBUG_BREAK __builtin_trap()
-//#else
-//#define DEBUG_BREAK raise(SIGTRAP)
-//#endif
-//
-//#define ASSERT(x) if (!(x)) DEBUG_BREAK;
-//#define GLCall(x) GLClearError();\
-//	x;\
-//	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-//
-//static void GLClearError()
-//{
-//	while (glGetError() != GL_NO_ERROR);
-//}
-//
-//static bool GLLogCall(const char* function, const char* file, int line)
-//{
-//	while (GLenum error = glGetError())
-//	{
-//		std::cout << "[OpenGL Error] ( " << error << " ) : " << function << " " << file << ": " << line << std::endl;
-//		return false;
-//	}
-//	return true;
-//}
-
 PlayerObject::PlayerObject() {
 }
 
@@ -59,6 +31,9 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, glm::uvec2 sz,
     GLCall(glGenBuffers(1, &EBO));
 
     prepareDraw();
+
+    box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, size, false));
+    CollisionSystem::Instance().player1_collision = box;
 }
 
 PlayerObject::~PlayerObject() {

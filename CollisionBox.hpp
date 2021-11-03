@@ -33,8 +33,9 @@ class BlockCollisionBox : public CollisionBox {
 	using CollisionBox::CollisionBox;
 };
 
-class PlayerCollisionBox : CollisionBox {
+class PlayerCollisionBox : public CollisionBox {
 public:	
+	using CollisionBox::CollisionBox;
 
 private:
 	// A player pointer to do game logic.
