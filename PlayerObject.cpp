@@ -5,7 +5,7 @@
 #include "gl_compile_program.hpp"
 #include "gl_errors.hpp"
 
-#define SPEED 0.1f
+#define SPEED 10.f
 
 PlayerObject::PlayerObject() {
 }
@@ -99,24 +99,25 @@ void PlayerObject::update(float elapsed) {
     std::cout << "update player\n";
     if (left.pressed && !right.pressed) {
         // move left
-        glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x += SPEED * elapsed;
+        glm::vec2 new_pos = glm::vec2{ transform->position.x, transform->position.y };
+        new_pos.x -= SPEED * elapsed;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{size.x, size.y})) {
-            position.x = new_pos.x;
-            position.y = new_pos.y;
+            transform->position.x = new_pos.x;
+            transform->position.y = new_pos.y;
+
         }
     }
     else if (!left.pressed && right.pressed) {
         // move right
-        glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x -= SPEED * elapsed;
+        glm::vec2 new_pos = glm::vec2{ transform->position.x, transform->position.y };
+        new_pos.x += SPEED * elapsed;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{size.x, size.y})) {
-            position.x = new_pos.x;
-            position.y = new_pos.y;
+            transform->position.x = new_pos.x;
+            transform->position.y = new_pos.y;
         }
     }
 
-    std::cout << "player position: x: " << position.x << "; y: " << position.y << "\n";
+    std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }
 
 void PlayerObject::draw(glm::uvec2 const& drawable_size) {

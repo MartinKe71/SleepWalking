@@ -45,6 +45,17 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		
 	// }
 
+	player1 = new PlayerObject(10.f, glm::vec3(5.0f, 2.f, 0.f),
+		glm::uvec2(3.f, 5.f), glm::vec3(0.f, 0.f, 0.f),
+		true, "resource/blood32.png");	
+
+	for (auto& transform : scene.transforms) {
+		if (transform.name == "Player1") player1->transform = &transform;
+		if (transform.name.find("Plane") != string::npos) {
+			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(6.0f));
+		}
+	}
+
 	//get pointer to camera for convenience:
 	if (scene.cameras.size() != 1) 
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
@@ -56,12 +67,8 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		glm::vec3(10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
 		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
-	
-	player1 = new PlayerObject(10.f, glm::vec3(5.0f, 2.f, 0.f),
-		glm::uvec2(3.f, 5.f), glm::vec3(0.f, 0.f, 0.f),
-		true, "resource/blood32.png");
-	
 	moveableObjs.push_back(player1);
+	
 }
 
 PlayMode::~PlayMode() {
@@ -159,25 +166,25 @@ void PlayMode::update(float elapsed) {
 	}
 
 	// camera movement test
-	{
-		constexpr float CameraSpeed = 10.0f;
-		glm::mat4x3 frame = camera->transform->make_local_to_parent();
-		glm::vec3 right = frame[0];
-		glm::vec3 up = frame[1];
-		// glm::vec3 forward = -frame[2];
+	//{
+	//	constexpr float CameraSpeed = 10.0f;
+	//	glm::mat4x3 frame = camera->transform->make_local_to_parent();
+	//	glm::vec3 right = frame[0];
+	//	glm::vec3 up = frame[1];
+	//	// glm::vec3 forward = -frame[2];
 
-		if (mouse_pos.x > 0.9)
-			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
-		
-		if (mouse_pos.x < -0.9)
-			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
+	//	if (mouse_pos.x > 0.9)
+	//		camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
+	//	
+	//	if (mouse_pos.x < -0.9)
+	//		camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
 
-		if (mouse_pos.y > 0.9)
-			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
+	//	if (mouse_pos.y > 0.9)
+	//		camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
 
-		if (mouse_pos.y < -0.9)
-			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
-	}
+	//	if (mouse_pos.y < -0.9)
+	//		camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
+	//}
 
 	// force apply test
 	{

@@ -1,5 +1,6 @@
 #include "GameObject.hpp"
 #include "CollisionSystem.hpp"
+#include "Scene.hpp"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ public :
     ~PlayerObject();
 
     std::shared_ptr<PlayerCollisionBox> box;
+    Scene::Transform* transform = nullptr;
 
     //input tracking:
     struct Button {

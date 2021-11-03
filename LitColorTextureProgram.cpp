@@ -46,6 +46,26 @@ Load< LitColorTextureProgram > lit_color_texture_program(LoadTagEarly, []() -> L
 	lit_color_texture_program_pipeline.textures[0].texture = tex;
 	lit_color_texture_program_pipeline.textures[0].target = GL_TEXTURE_2D;
 
+	GLuint tex1;
+	glGenTextures(1, &tex1);
+
+	glBindTexture(GL_TEXTURE_2D, tex1);
+
+	std::vector< glm::u8vec4 > tex_data1(1, glm::u8vec4(0xff));
+	glm::uvec2 sz1;
+	load_png(data_path("resource/mos.png"), &(sz1), &(tex_data1), OriginLocation::LowerLeftOrigin);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz1.x, sz1.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data1.data());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	lit_color_texture_program_pipeline.textures[1].texture = tex1;
+	lit_color_texture_program_pipeline.textures[1].target = GL_TEXTURE_2D;
+
 	return ret;
 });
 
