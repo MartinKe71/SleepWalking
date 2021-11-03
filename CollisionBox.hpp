@@ -4,7 +4,7 @@
 
 class CollisionBox {
 public: 
-	CollisionBox();
+	CollisionBox() {}
 	CollisionBox(const glm::vec2& p, const glm::vec2& s, const bool i)
 		: pos(p), size(s), is_trigger(i) {
 		UpdateBoxCoord();
@@ -30,6 +30,7 @@ private:
 };
 
 class BlockCollisionBox : public CollisionBox {
+public:
 	using CollisionBox::CollisionBox;
 	~BlockCollisionBox() {}
 };

@@ -1,9 +1,5 @@
 #include "CollisionBox.hpp"
 
-CollisionBox::CollisionBox() {}
-
-//CollisionBox::~CollisionBox() {}
-
 void CollisionBox::UpdateBoxCoord()
 {
 	box_coord[0] = pos.x - size.x * 0.5f;
