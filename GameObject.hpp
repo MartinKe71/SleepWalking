@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 03:22:51
+ * @ Modified time: 2021-11-02 23:54:49
  * @ Description: Header file for GameObject class
  */
 
@@ -20,6 +20,8 @@
 #include <unordered_map>
 
 #include "ColorTextureProgram.hpp"
+#include "Scene.hpp"
+#include "glm/gtx/euler_angles.hpp"
 
 class GameObject {
 public:
@@ -71,9 +73,13 @@ public:
     void normalizeNormal(){
         normal = glm::normalize(normal);
     }
+
+    void applyLocalRotation(const glm::vec3& euler){
+        model = model * glm::eulerAngleYXZ(euler.y, euler.x, euler.z);
+    }
     
     virtual void update (float deltaTime);
-    virtual void draw (glm::uvec2 const &drawable_size){}
+    virtual void draw (Scene::Camera const &camera){}
     virtual void reset();
     
 protected:
@@ -84,10 +90,12 @@ protected:
     glm::vec3 normal;
     bool isFixed;
     float lifeSpan;
-    std::vector< glm::u8vec4 > pic;
+
+    glm::mat4 model;
     
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+    // shader info
     Load< ColorTextureProgram > shader = color_texture_program;
 };
 

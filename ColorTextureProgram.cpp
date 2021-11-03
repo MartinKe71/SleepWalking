@@ -10,7 +10,7 @@ ColorTextureProgram::ColorTextureProgram() {
 	program = gl_compile_program(
 		//vertex shader:
 		"#version 330\n"
-		"uniform mat4 OBJECT_TO_CLIP;\n"
+		"uniform mat4 WORLD_TO_CLIP;\n"
 		"uniform mat4 Model;\n"
 		"uniform vec4 Color;\n"
 		"in vec4 Position;\n"
@@ -18,7 +18,7 @@ ColorTextureProgram::ColorTextureProgram() {
 		"out vec4 color;\n"
 		"out vec2 texCoord;\n"
 		"void main() {\n"
-		"	gl_Position = OBJECT_TO_CLIP * Model * Position;\n"
+		"	gl_Position = WORLD_TO_CLIP * Model * Position;\n"
 		"	color = Color;\n"
 		"	texCoord = TexCoord;\n"
 		"}\n"
@@ -41,7 +41,7 @@ ColorTextureProgram::ColorTextureProgram() {
 	TexCoord_vec2 = glGetAttribLocation(program, "TexCoord");
 
 	//look up the locations of uniforms:
-	OBJECT_TO_CLIP_mat4 = glGetUniformLocation(program, "OBJECT_TO_CLIP");
+	OBJECT_TO_CLIP_mat4 = glGetUniformLocation(program, "WORLD_TO_CLIP");
 	Model_mat4 = glGetUniformLocation(program, "Model");
 	Color_vec4 = glGetUniformLocation(program, "Color");
 	GLuint TEX_sampler2D = glGetUniformLocation(program, "TEX");
