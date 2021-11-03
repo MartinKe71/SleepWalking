@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 00:06:35
+ * @ Modified time: 2021-11-03 00:50:47
  * @ Description: implementation of square object
  */
 
@@ -50,8 +50,8 @@ SquareObject::~SquareObject(){
 void SquareObject::draw(Scene::Camera const &camera){
     glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
 
-    // actiavte the shader program
-    glm::mat4 curModel = glm::translate(model, position);
+    // apply local rotation
+    glm::mat4 curModel = glm::translate(glm::mat4(1.f), position) * model;
     //cout << glm::to_string(position) << endl;
     
     // actiavte the shader program

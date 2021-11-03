@@ -112,7 +112,7 @@ void PlayMode::update(float elapsed) {
 	// gravity test
 	{
 		// camera rotation speed
-		constexpr float CameraRotSpeed = 5.0f;
+		constexpr float CameraRotSpeed = 2.0f;
 		if (isGravitySpellLocked) {
 			gravitySpellRot -= CameraRotSpeed;
 			
@@ -132,9 +132,11 @@ void PlayMode::update(float elapsed) {
 				* glm::angleAxis(glm::radians(CameraRotSpeed + remain), glm::vec3(0.0f, 0.0f, 1.0f))
 			);
 			
-			// for (auto& obj : moveableObjs){
-			// 	obj->applyLocalRotation(glm::vec3(0.f, 0.f, CameraRotSpeed + remain));
-			// }
+			for (auto& obj : moveableObjs){
+				obj->applyRotation(
+					glm::vec3(0.f, 0.f, glm::radians(CameraRotSpeed + remain)), 
+					camera->transform->position);
+			}
 		}
 		if (gravitySpell.pressed && !isGravitySpellLocked) {
 			gravity = -gravity;
