@@ -1,5 +1,17 @@
 #include "CollisionSystem.hpp"
 
+CollisionSystem::CollisionSystem()
+{
+	for (uint8_t i = 0; i < COLLISION_OPT_LEVEL * COLLISION_OPT_LEVEL; i++)
+	{
+		std::vector<std::shared_ptr<BlockCollisionBox>> v;
+		scene_blocks[i] = v;
+		std::vector<std::shared_ptr<CollisionBox>> v_1;
+		scene_triggers[i] = v_1;
+	}
+}
+
+
 bool CollisionSystem::IsCollided(const glm::vec4& box1, const glm::vec4& box2) const 
 {
 	glm::vec2 boxes1[4] = { glm::vec2(box1[0], box1[1]),
@@ -48,7 +60,7 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 
 	for (const uint8_t i : sections)
 	{
-		const std::vector<std::shared_ptr<CollisionBox>> & boxes = scene_blocks[i];
+		const std::vector<std::shared_ptr<BlockCollisionBox>> & boxes = scene_blocks[i];
 		for (size_t i = 0; i < boxes.size(); i++)
 		{
 			bool res = IsCollided(player_box, boxes[i]->GetBoxCoord());
@@ -57,4 +69,30 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 	}
 
 	return false; 
+}
+
+void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size)
+{
+	size_t unit_width = static_cast<size_t>(GAME_MAP_SIZE.x / COLLISION_OPT_LEVEL);
+	size_t unit_height = static_cast<size_t>(GAME_MAP_SIZE.y / COLLISION_OPT_LEVEL);
+
+	glm::vec2 block_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
+									glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
+									glm::vec2(pos.x + size.x * 0.5f, pos.y - size.y * 0.5f),
+									glm::vec2(pos.x + size.x * 0.5f, pos.y + size.y * 0.5f) };
+
+	std::set<uint8_t> sections;
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		sections.insert(static_cast<uint8_t>((block_points[i].x - GAME_MAP_ORIGIN.x) / unit_width) +
+			static_cast<uint8_t>((block_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL);
+	}
+
+	std::shared_ptr<BlockCollisionBox> box(new BlockCollisionBox(pos, size, false));
+	
+	for (const uint8_t i : sections)
+	{
+		scene_blocks[i].push_back(box);
+	}
 }

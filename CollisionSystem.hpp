@@ -14,15 +14,18 @@ public:
 		return collision_system;
 	}
 
-	std::shared_ptr<PlayerCollisionBox> player_collision;
+	std::shared_ptr<PlayerCollisionBox> player1_collision;
+	std::shared_ptr<PlayerCollisionBox> player2_collision;
 
-	std::unordered_map<uint8_t, std::vector<std::shared_ptr<CollisionBox>>> scene_blocks;
+	std::unordered_map<uint8_t, std::vector<std::shared_ptr<BlockCollisionBox>>> scene_blocks;
 
 	std::unordered_map<uint8_t, std::vector<std::shared_ptr<CollisionBox>>> scene_triggers;
 
 	bool PlayerCheckCollision(const glm::vec2& pos, const glm::vec2& size);
 
+	void AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size);
+
 private:
-	CollisionSystem() {}
+	CollisionSystem();
 	bool IsCollided(const glm::vec4& box1, const glm::vec4& box2) const;
 };

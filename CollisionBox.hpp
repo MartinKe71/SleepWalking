@@ -29,6 +29,10 @@ private:
 	void UpdateBoxCoord();
 };
 
+class BlockCollisionBox : public CollisionBox {
+	using CollisionBox::CollisionBox;
+};
+
 class PlayerCollisionBox : CollisionBox {
 public:	
 
