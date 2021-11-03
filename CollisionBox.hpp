@@ -9,7 +9,7 @@ public:
 		: pos(p), size(s), is_trigger(i) {
 		UpdateBoxCoord();
 	}
-	~CollisionBox();
+	virtual ~CollisionBox() {}
 
 	inline void SetPos(const glm::vec2& p) { pos = p; UpdateBoxCoord(); }
 	inline void SetSize(const glm::vec2& s) { size = s; UpdateBoxCoord(); }
@@ -31,11 +31,13 @@ private:
 
 class BlockCollisionBox : public CollisionBox {
 	using CollisionBox::CollisionBox;
+	~BlockCollisionBox() {}
 };
 
 class PlayerCollisionBox : public CollisionBox {
 public:	
 	using CollisionBox::CollisionBox;
+	~PlayerCollisionBox() {}
 
 private:
 	// A player pointer to do game logic.

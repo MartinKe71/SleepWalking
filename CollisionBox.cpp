@@ -2,7 +2,7 @@
 
 CollisionBox::CollisionBox() {}
 
-CollisionBox::~CollisionBox() {}
+//CollisionBox::~CollisionBox() {}
 
 void CollisionBox::UpdateBoxCoord()
 {
