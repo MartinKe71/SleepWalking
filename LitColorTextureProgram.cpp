@@ -1,4 +1,6 @@
 #include "LitColorTextureProgram.hpp"
+#include "load_save_png.hpp"
+#include "data_path.hpp"
 
 #include "gl_compile_program.hpp"
 #include "gl_errors.hpp"
@@ -28,8 +30,12 @@ Load< LitColorTextureProgram > lit_color_texture_program(LoadTagEarly, []() -> L
 	glGenTextures(1, &tex);
 
 	glBindTexture(GL_TEXTURE_2D, tex);
+
 	std::vector< glm::u8vec4 > tex_data(1, glm::u8vec4(0xff));
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data.data());
+	glm::uvec2 sz;
+	load_png(data_path("resource/map-1.png"), &(sz), &(tex_data), OriginLocation::LowerLeftOrigin);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz.x, sz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data.data());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

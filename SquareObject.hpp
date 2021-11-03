@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:53
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 22:17:05
+ * @ Modified time: 2021-11-02 21:59:51
  * @ Description: Interface of square object
  */
 
@@ -28,7 +28,7 @@ public:
     
     void setWidth(float r);
     
-    void draw(glm::uvec2 const &drawable_size);
+    void draw(Scene::Camera const &camera);
     void reset();
     
     void prepareDraw();
@@ -42,11 +42,16 @@ private:
     
     GLuint VAO;
     GLuint VBO_positions, VBO_texcoords, EBO;
+    GLuint tex;
     
-    glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     vector<glm::vec4> vertex_positions;
     vector<glm::vec4> vertex_normals;
     vector<glm::vec2> vertex_texcoords;
     vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+
+    // texture info
+    glm::uvec2 sz;
+    std::vector< glm::u8vec4 > pic;
 };
 #endif /* SquareObject_h */
