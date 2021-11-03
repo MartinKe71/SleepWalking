@@ -148,6 +148,7 @@ GAME_NAMES =
 	ColorTextureProgram #not used right now, but you might want it
 	GameObject
 	SquareObject
+	PlayerObject
 	Sound
 	load_wav
 	load_opus

@@ -4,6 +4,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include "data_path.hpp"
+
 #include <algorithm>
 #include <string>
 #include <vector>
