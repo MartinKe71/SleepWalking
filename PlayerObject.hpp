@@ -6,7 +6,7 @@ class PlayerObject : public GameObject {
 public :
 	PlayerObject();
     PlayerObject(float mass, const glm::vec3& pos = glm::vec3(0.f),
-        glm::uvec2& size = glm::uvec2(80, 100),
+        glm::uvec2 size = glm::uvec2(80, 100),
         const glm::vec3& vel = glm::vec3(0.f),
         bool isFixed = false,
         const std::string& filename = "", float l = 100.f);

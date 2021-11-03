@@ -38,7 +38,7 @@ static bool GLLogCall(const char* function, const char* file, int line)
 PlayerObject::PlayerObject() {
 }
 
-PlayerObject::PlayerObject(float mass, const glm::vec3& pos, glm::uvec2& size,
+PlayerObject::PlayerObject(float mass, const glm::vec3& pos, glm::uvec2 size,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, l) {
 

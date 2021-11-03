@@ -54,23 +54,6 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			default:
 				break;
 		}
-	} else if (evt.type == SDL_KEYUP) {
-		if (evt.key.keysym.sym == SDLK_w) {
-			up.pressed = false;
-			return true;
-		} else if (evt.key.keysym.sym == SDLK_s) {
-			down.pressed = false;
-			return true;
-		}
-	} else if (evt.key.keysym.sym == P1_LEFT) {
-			player1.left.pressed = true;
-			return true;
-	} else if (evt.type == SDL_MOUSEMOTION) {
-		mouse_pos = glm::vec2(
-			evt.motion.x / float(window_size.x) * 2 - 1.0f,
-			-evt.motion.y / float(window_size.y) * 2 + 1.0f
-		);
-		return true;
 	}
 
 	return false;
