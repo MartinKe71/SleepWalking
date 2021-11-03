@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-02 23:54:49
+ * @ Modified time: 2021-11-03 00:41:55
  * @ Description: Header file for GameObject class
  */
 
@@ -74,8 +74,10 @@ public:
         normal = glm::normalize(normal);
     }
 
-    void applyLocalRotation(const glm::vec3& euler){
+    void applyLocalRotation(const glm::vec3& euler, const glm::vec3& camPos){
+        // model = glm::translate(model, camPos);
         model = model * glm::eulerAngleYXZ(euler.y, euler.x, euler.z);
+        // model = glm::translate(model, position);
     }
     
     virtual void update (float deltaTime);
