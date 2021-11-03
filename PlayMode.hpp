@@ -21,6 +21,12 @@ struct PlayMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
+
+	//local copy of the game scene (so code can change it during gameplay):
+	Scene scene;
+	//camera:
+	Scene::Camera *camera = nullptr;
+
 	//----- game state -----
 	glm::vec2 mouse_pos;
 	glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);

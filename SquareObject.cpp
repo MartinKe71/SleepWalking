@@ -2,13 +2,14 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-10-31 22:17:53
+ * @ Modified time: 2021-11-02 22:06:41
  * @ Description: implementation of square object
  */
 
 #include "load_save_png.hpp"
 #include "data_path.hpp"
 #include "SquareObject.hpp"
+
 #include <signal.h>
 #include "gl_compile_program.hpp"
 #include "gl_errors.hpp"
@@ -49,7 +50,6 @@ SquareObject::SquareObject(float mass, const glm::vec3& pos,
     const std::string& filename, float l): 
     GameObject(mass, pos, vel, isFixed, l), width(r){
     
-    glm::uvec2 sz (r, r);
     if (!filename.empty())
         load_png(data_path(filename), 
             &(sz), &(pic), OriginLocation::LowerLeftOrigin);
@@ -67,19 +67,14 @@ SquareObject::SquareObject(float mass, const glm::vec3& pos,
 
 SquareObject::~SquareObject(){
     // Delete the VBOs and the VAO.
-   glDeleteBuffers(1, &VBO_positions);
-   glDeleteBuffers(1, &EBO);
-   glDeleteVertexArrays(1, &VAO);
+//    glDeleteBuffers(1, &VBO_positions);
+//    glDeleteBuffers(1, &EBO);
+//    glDeleteVertexArrays(1, &VAO);
 }
 
-void SquareObject::draw(glm::uvec2 const &drawable_size){
-    float aspect = float(drawable_size.x) / float(drawable_size.y);
-    glm::mat4 world_to_clip = glm::mat4(
-        1.0f / aspect, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    );
+void SquareObject::draw(Scene::Camera const &camera){
+    glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
+    
     // actiavte the shader program
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
@@ -96,6 +91,10 @@ void SquareObject::draw(glm::uvec2 const &drawable_size){
     // Bind the VAO
     GLCall(glBindVertexArray(VAO));
     //    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
+    glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
     // draw the points using triangles, indexed with the EBO
     GLCall(glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0));
 
@@ -130,6 +129,19 @@ void SquareObject::prepareDraw(){
     // Unbind the VBOs.
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GLCall(glBindVertexArray(0));
+    
+	GLCall(glGenTextures(1, &tex));
+	GLCall(glBindTexture(GL_TEXTURE_2D, tex));
+
+    // for (glm::u8vec4& v : pic)
+    //     std::cout << (int)v.x << ", " << (int)v.y << ", " << (int) v.z << ", " << (int)v.w << std::endl;
+
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz.x, sz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, pic.data()));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 	
 	GL_ERRORS(); //PARANOIA: make sure nothing strange happened during setup
 }
@@ -145,10 +157,10 @@ void SquareObject::createVerts(){
     });
 
     vertex_texcoords = vector<glm::vec2>({
-        glm::vec2(0.f,1.f),
         glm::vec2(1.f,1.f),
+        glm::vec2(1.f,0.f),
         glm::vec2(0.f,0.f),
-        glm::vec2(1.f,0.f)
+        glm::vec2(0.f,1.f)
     });
 }
 
