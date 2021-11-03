@@ -5,6 +5,8 @@
 #include "FontSource.hpp"
 #include "data_path.hpp"
 #include "FSM.hpp"
+#include "SquareObject.hpp"
+#include "PlayerObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -29,16 +31,8 @@ struct PlayMode : Mode {
 	//input tracking:
 	struct Button {
 		uint8_t downs = 0;
-		uint8_t pressed = 0;
-	};
+		bool pressed = 0;
+	} left, right, down, up;
 
-	struct Player1 {
-		glm::vec3 pos;
-		Button left, right, up;
-	} player1;
-
-	struct Player2 {
-		glm::vec3 pos;
-		Button left, right, up, down;
-	} player2;
+	PlayerObject* player1;
 };
