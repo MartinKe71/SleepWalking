@@ -19,8 +19,8 @@ public :
     } left, right, space;
 
     virtual void update(float elapsed) override;
-    void draw(glm::uvec2 const& drawable_size);
-    void reset();
+    void draw(glm::uvec2 const& drawable_size) override;
+    void reset() override;
 
     void prepareDraw();
     void createVerts();
