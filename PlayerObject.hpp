@@ -1,4 +1,5 @@
 #include "GameObject.hpp"
+#include "CollisionSystem.hpp"
 
 using namespace std;
 
@@ -12,6 +13,8 @@ public :
         const std::string& filename = "", float l = 100.f);
     ~PlayerObject();
 
+    CollisionBox* box;
+
     //input tracking:
     struct Button {
         uint8_t downs = 0;
@@ -19,14 +22,14 @@ public :
     } left, right, space;
 
     virtual void update(float elapsed) override;
-    void draw(glm::uvec2 const& drawable_size) override;
+    void draw(glm::uvec2 const& drawable_size);
     void reset() override;
 
     void prepareDraw();
     void createVerts();
 
 private:
-    float width;
+    glm::uvec2 size;
 
     GLuint VAO;
     GLuint VBO_positions, VBO_texcoords, EBO;
@@ -36,4 +39,8 @@ private:
     vector<glm::vec4> vertex_normals;
     vector<glm::vec2> vertex_texcoords;
     vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+
+    // texture info
+    glm::uvec2 sz;
+    std::vector< glm::u8vec4 > pic;
 };

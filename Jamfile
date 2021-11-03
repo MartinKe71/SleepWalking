@@ -139,7 +139,6 @@ if $(OS) = NT { #Windows
 GAME_NAMES =
 	CollisionSystem
 	CollisionBox
-	FSM
 	FontSource
 	ShapeTextureProgram
 	PlayMode

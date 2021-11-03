@@ -7,44 +7,48 @@
 
 #define SPEED 0.1f
 
-#ifdef _MSC_VER
-#define DEBUG_BREAK __debugbreak()
-#elif __APPLE__
-#define DEBUG_BREAK __builtin_trap()
-#else
-#define DEBUG_BREAK raise(SIGTRAP)
-#endif
-
-#define ASSERT(x) if (!(x)) DEBUG_BREAK;
-#define GLCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-static void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[OpenGL Error] ( " << error << " ) : " << function << " " << file << ": " << line << std::endl;
-		return false;
-	}
-	return true;
-}
+//#ifdef _MSC_VER
+//#define DEBUG_BREAK __debugbreak()
+//#elif __APPLE__
+//#define DEBUG_BREAK __builtin_trap()
+//#else
+//#define DEBUG_BREAK raise(SIGTRAP)
+//#endif
+//
+//#define ASSERT(x) if (!(x)) DEBUG_BREAK;
+//#define GLCall(x) GLClearError();\
+//	x;\
+//	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+//
+//static void GLClearError()
+//{
+//	while (glGetError() != GL_NO_ERROR);
+//}
+//
+//static bool GLLogCall(const char* function, const char* file, int line)
+//{
+//	while (GLenum error = glGetError())
+//	{
+//		std::cout << "[OpenGL Error] ( " << error << " ) : " << function << " " << file << ": " << line << std::endl;
+//		return false;
+//	}
+//	return true;
+//}
 
 PlayerObject::PlayerObject() {
 }
 
-PlayerObject::PlayerObject(float mass, const glm::vec3& pos, glm::uvec2 size,
+PlayerObject::PlayerObject(float mass, const glm::vec3& pos, glm::uvec2 sz,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
-    GameObject(mass, pos, vel, isFixed, l) {
+    GameObject(mass, pos, vel, isFixed, l), size(sz) {
 
     if (!filename.empty())
         load_png(data_path(filename),
-            &(size), &(pic), OriginLocation::LowerLeftOrigin);
+            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
+    else {
+        pic = vector<glm::u8vec4>(1, glm::u8vec4(0xff));
+        sz = glm::uvec2(1, 1);
+    }
 
     createVerts();
 
@@ -96,10 +100,10 @@ void PlayerObject::prepareDraw() {
 void PlayerObject::createVerts() {
 
     vertex_positions = vector<glm::vec4>({
-        glm::vec4(width,  width, 0.0f, 1.0f),  // top right
-        glm::vec4(width, -width, 0.0f, 1.0f),  // bottom right
-        glm::vec4(-width, -width, 0.0f, 1.0f),  // bottom left
-        glm::vec4(-width,  width, 0.0f, 1.0f)  // top left 
+        glm::vec4(size.x,  size.y, 0.0f, 1.0f),  // top right
+        glm::vec4(size.x, -size.y, 0.0f, 1.0f),  // bottom right
+        glm::vec4(-size.x, -size.y, 0.0f, 1.0f),  // bottom left
+        glm::vec4(-size.x,  size.y, 0.0f, 1.0f)  // top left 
         });
 
     vertex_texcoords = vector<glm::vec2>({
@@ -122,19 +126,19 @@ void PlayerObject::update(float elapsed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos.x += SPEED * elapsed;
-        //if (!CheckCollision(new_pos)) {
+        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{size.x, size.y})) {
             position.x = new_pos.x;
             position.y = new_pos.y;
-        //}
+        }
     }
     else if (!left.pressed && right.pressed) {
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos.x -= SPEED * elapsed;
-        //if (!CheckCollision(new_pos)) {
+        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{size.x, size.y})) {
             position.x = new_pos.x;
             position.y = new_pos.y;
-        //}
+        }
     }
 
     std::cout << "player position: x: " << position.x << "; y: " << position.y << "\n";

@@ -57,9 +57,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	moveableObjs.push_back(new SquareObject(10.f, 
 		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 	
-	player1 = new PlayerObject(10.f, glm::vec3(5.0f, 2f, 0.f),
+	player1 = new PlayerObject(10.f, glm::vec3(5.0f, 2.f, 0.f),
 		glm::uvec2(3.f, 5.f), glm::vec3(0.f, 0.f, 0.f),
-		true, "resource/mos.png");
+		true, "resource/blood32.png");
 	
 	moveableObjs.push_back(player1);
 }
