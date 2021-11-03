@@ -133,7 +133,7 @@ void PlayMode::update(float elapsed) {
 			);
 			
 			for (auto& obj : moveableObjs){
-				obj->applyLocalRotation(
+				obj->applyRotation(
 					glm::vec3(0.f, 0.f, glm::radians(CameraRotSpeed + remain)), 
 					camera->transform->position);
 			}
