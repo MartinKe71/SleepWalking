@@ -96,7 +96,7 @@ void PlayerObject::reset() {
 }
 
 void PlayerObject::update(float elapsed) {
-    std::cout << "update player\n";
+    // std::cout << "update player\n";
     if (left.pressed && !right.pressed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ transform->position.x, transform->position.y };
@@ -117,7 +117,19 @@ void PlayerObject::update(float elapsed) {
         }
     }
 
-    std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
+    if (!isFixed) {
+        glm::vec3 accel = force / mass;
+        velocity += accel * elapsed;
+        glm::vec3 new_pos = transform->position + velocity * elapsed;
+        if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, glm::vec2{ size.x, size.y })) {
+            transform->position.x = new_pos.x;
+            transform->position.y = new_pos.y;
+        }
+    }
+
+    CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ transform->position.x, transform->position.y }, glm::vec2{ size.x, size.y });
+
+    // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }
 
 void PlayerObject::draw(glm::uvec2 const& drawable_size) {

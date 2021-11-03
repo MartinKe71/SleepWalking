@@ -47,12 +47,15 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 	player1 = new PlayerObject(10.f, glm::vec3(5.0f, 2.f, 0.f),
 		glm::uvec2(3.f, 5.f), glm::vec3(0.f, 0.f, 0.f),
-		true, "resource/blood32.png");	
+		false, "resource/blood32.png");	
 
 	for (auto& transform : scene.transforms) {
 		if (transform.name == "Player1") player1->transform = &transform;
-		if (transform.name.find("Plane") != string::npos) {
-			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(6.0f));
+		else if (transform.name.find("Plane") != string::npos) {
+			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y*2));
+		}
+		else if (transform.name.find("Trigger") != string::npos) {
+			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y * 2));
 		}
 	}
 
