@@ -4,7 +4,6 @@
 #include "Sound.hpp"
 #include "FontSource.hpp"
 #include "data_path.hpp"
-#include "FSM.hpp"
 #include "SquareObject.hpp"
 
 #include <glm/glm.hpp>
@@ -26,19 +25,23 @@ struct PlayMode : Mode {
 	Scene scene;
 	//camera:
 	Scene::Camera *camera = nullptr;
-
-	//----- game state -----
 	glm::vec2 mouse_pos;
+
+	//----- game physics -----
 	glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
 
 	//----- game object -----
 	vector<GameObject*> moveableObjs;
 
+	//----- game state -----
+	float gravitySpellRot = 180.f;
+	bool isGravitySpellLocked = false;
+
 	//input tracking:
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	} left, right, down, up;
+	} left, right, down, up, gravitySpell;
 
 	struct Player1 {
 		glm::vec3 pos;

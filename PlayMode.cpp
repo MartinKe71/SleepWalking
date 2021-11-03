@@ -10,38 +10,6 @@
 #include <fstream>
 #include <random>
 
-#include <signal.h>
-#include "gl_compile_program.hpp"
-#include "gl_errors.hpp"
-
-#ifdef _MSC_VER
-#define DEBUG_BREAK __debugbreak()
-#elif __APPLE__
-#define DEBUG_BREAK __builtin_trap()
-#else
-#define DEBUG_BREAK raise(SIGTRAP)
-#endif
-
-#define ASSERT(x) if (!(x)) DEBUG_BREAK;
-#define GLCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-static void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[OpenGL Error] ( " << error << " ) : " << function << " " << file << ": " << line << std::endl;
-		return false;
-	}
-	return true;
-}
-
 GLuint sleepWalking_meshes_for_lit_color_texture_program = 0;
 Load< MeshBuffer > sleepWalking_meshes(LoadTagDefault, []() -> MeshBuffer const * {
 	MeshBuffer const *ret = new MeshBuffer(data_path("SleepWalking.pnct"));
@@ -83,11 +51,11 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	camera = &scene.cameras.front();
 	
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(-10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 1.f, "resource/mos.png"));
+		glm::vec3(-10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/mos.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 1.f, "resource/mos.png"));
+		glm::vec3(10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 1.f, "resource/mos.png"));
+		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/blood32.png"));
 }
 
 PlayMode::~PlayMode() {
@@ -109,6 +77,10 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			down.downs += 1;
 			down.pressed = true;
 			return true;
+		} else if (evt.key.keysym.sym == SDLK_r) {
+			gravitySpell.downs += 1;
+			gravitySpell.pressed = true;
+			return true;
 		}
 	} else if (evt.type == SDL_KEYUP) {
 		if (evt.key.keysym.sym == SDLK_w) {
@@ -116,6 +88,9 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			return true;
 		} else if (evt.key.keysym.sym == SDLK_s) {
 			down.pressed = false;
+			return true;
+		} else if (evt.key.keysym.sym == SDLK_r) {
+			gravitySpell.pressed = false;
 			return true;
 		}
 	} else if (evt.key.keysym.sym == P1_LEFT) {
@@ -126,6 +101,7 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			evt.motion.x / float(window_size.x) * 2 - 1.0f,
 			-evt.motion.y / float(window_size.y) * 2 + 1.0f
 		);
+
 		return true;
 	}
 
@@ -133,11 +109,61 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
+	// gravity test
 	{
-		if (down.pressed && !up.pressed) gravity = glm::vec3 (0, -9.8f, 0);
-		if (!down.pressed && up.pressed) gravity  = glm::vec3 (0, 9.8f, 0);
+		// camera rotation speed
+		constexpr float CameraRotSpeed = 5.0f;
+		if (isGravitySpellLocked) {
+			gravitySpellRot -= CameraRotSpeed;
+			
+			float remain = 0.f;
+			if (gravitySpellRot < 0.f) {
+				// record the remain angle so that 
+				// we will not over rotated
+				remain = gravitySpellRot;
+				gravitySpellRot = 180.f;
+				isGravitySpellLocked = false;
+			}
+
+			// substract from the rotation angle if over roate,
+			// otherwise rotate on z axis
+			camera->transform->rotation = glm::normalize(
+				camera->transform->rotation
+				* glm::angleAxis(glm::radians(CameraRotSpeed + remain), glm::vec3(0.0f, 0.0f, 1.0f))
+			);
+			
+			// for (auto& obj : moveableObjs){
+			// 	obj->applyRotation(glm::vec3(0.f, 0.f, CameraRotSpeed + remain));
+			// }
+		}
+		if (gravitySpell.pressed && !isGravitySpellLocked) {
+			gravity = -gravity;
+			isGravitySpellLocked = true;
+		}
 	}
 
+	// camera movement test
+	{
+		constexpr float CameraSpeed = 10.0f;
+		glm::mat4x3 frame = camera->transform->make_local_to_parent();
+		glm::vec3 right = frame[0];
+		glm::vec3 up = frame[1];
+		// glm::vec3 forward = -frame[2];
+
+		if (mouse_pos.x > 0.9)
+			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
+		
+		if (mouse_pos.x < -0.9)
+			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
+
+		if (mouse_pos.y > 0.9)
+			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
+
+		if (mouse_pos.y < -0.9)
+			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
+	}
+
+	// force apply test
 	{
 		for (auto& obj : moveableObjs){
 			obj->zeroForce();
