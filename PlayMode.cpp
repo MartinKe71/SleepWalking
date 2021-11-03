@@ -51,11 +51,11 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	camera = &scene.cameras.front();
 	
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(-10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/mos.png"));
+		glm::vec3(-10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
 		glm::vec3(10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/blood32.png"));
+		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 }
 
 PlayMode::~PlayMode() {
@@ -133,7 +133,7 @@ void PlayMode::update(float elapsed) {
 			);
 			
 			// for (auto& obj : moveableObjs){
-			// 	obj->applyRotation(glm::vec3(0.f, 0.f, CameraRotSpeed + remain));
+			// 	obj->applyLocalRotation(glm::vec3(0.f, 0.f, CameraRotSpeed + remain));
 			// }
 		}
 		if (gravitySpell.pressed && !isGravitySpellLocked) {
