@@ -45,10 +45,11 @@ private:
 	// std::shared_ptr<Player>
 };
 
-class ThornCollisionBox : CollisionBox {
+class ThornCollisionBox : public CollisionBox {
 public:
+	using CollisionBox::CollisionBox;
 	void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) override;
-
+	~ThornCollisionBox() {}
 private:
 	
 };
