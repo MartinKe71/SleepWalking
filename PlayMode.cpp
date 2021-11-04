@@ -6,6 +6,9 @@
 #include "Mesh.hpp"
 #include "Load.hpp"
 #include "Inivar.hpp"
+#include "GLCall.hpp"
+#include "PlayerStats.hpp"
+
 
 #include <fstream>
 #include <random>
@@ -36,26 +39,38 @@ Load< Scene > sleepWalking_scene(LoadTagDefault, []() -> Scene const * {
 
 PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
-	// for (auto &transform : scene.transforms) {
-	// 	if (transform.name.rfind("eggPlate", 0) == 0) {
-	// 		std::size_t found = transform.name.find_first_of(".");
-	// 		int idx = std::stoi(transform.name.substr(found + 1));
-	// 		eggPlates[idx - 1] = &transform;
-	// 	} else if (transform.name == "Marker") marker = &transform;
-		
-	// }
+	for (auto& transform : scene.transforms) {
+		if (transform.name == "Player") {
+			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				false, "resource/mos.png");
+		}
+		else if (transform.name.find("Block") != string::npos) {
+			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
+				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+				transform.name);
+		}
+		else if (transform.name.find("Trigger") != string::npos) {
+			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), 
+				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+				transform.name);
+		}
+	}
 
 	//get pointer to camera for convenience:
 	if (scene.cameras.size() != 1) 
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
-	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(-10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
-	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
-	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
+	// moveableObjs.push_back(new SquareObject(10.f, 
+	// 	glm::vec3(50.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
+	//moveableObjs.push_back(new SquareObject(10.f, 
+	//	glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
+	//moveableObjs.push_back(new SquareObject(10.f, 
+	//	glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
+	
+	moveableObjs.push_back(player1);
+	
 }
 
 PlayMode::~PlayMode() {
@@ -66,53 +81,72 @@ PlayMode::~PlayMode() {
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
 	if (evt.type == SDL_KEYDOWN) {
-		if (evt.key.keysym.sym == SDLK_ESCAPE) {
-			SDL_SetRelativeMouseMode(SDL_FALSE);
-			return true;
-		} else if (evt.key.keysym.sym == SDLK_w) {
-			up.downs += 1;
-			up.pressed = true;
-			return true;
-		} else if (evt.key.keysym.sym == SDLK_s) {
-			down.downs += 1;
-			down.pressed = true;
-			return true;
-		} else if (evt.key.keysym.sym == SDLK_r) {
-			gravitySpell.downs += 1;
-			gravitySpell.pressed = true;
-			return true;
+		switch (evt.key.keysym.sym) {
+			case P1_LEFT:
+				player1->left.pressed = true;
+				return true;
+			case P1_RIGHT:
+				player1->right.pressed = true;
+				return true;
+			case P1_UP:
+				if (!evt.key.repeat) {
+					player1->space.pressed = true;
+					return true;
+				}
+				player1->space.pressed = false;
+				return false;
+			case SDLK_w:
+				up.downs += 1;
+				up.pressed = true;
+				return true;
+			case SDLK_s:
+				up.downs += 1;
+				up.pressed = true;
+				return true;
+			case SDLK_r:
+				gravitySpell.downs += 1;
+				gravitySpell.pressed = true;
+				return true;
+			default:
+				break;
 		}
 	} else if (evt.type == SDL_KEYUP) {
-		if (evt.key.keysym.sym == SDLK_w) {
-			up.pressed = false;
-			return true;
-		} else if (evt.key.keysym.sym == SDLK_s) {
-			down.pressed = false;
-			return true;
-		} else if (evt.key.keysym.sym == SDLK_r) {
-			gravitySpell.pressed = false;
-			return true;
+		switch (evt.key.keysym.sym) {
+			case P1_LEFT:
+				player1->left.pressed = false;
+				return true;
+			case P1_RIGHT:
+				player1->right.pressed = false;
+				return true;
+			case P1_UP:
+				player1->space.pressed = false;
+				return true;
+			case SDLK_w:
+				up.downs = 0;
+				up.pressed = false;
+				return true;
+			case SDLK_s:
+				up.downs = 0;
+				up.pressed = false;
+				return true;
+			case SDLK_r:
+				gravitySpell.downs = 0;
+				gravitySpell.pressed = false;
+				return true;
+			default:
+				break;
 		}
-	} else if (evt.key.keysym.sym == P1_LEFT) {
-			player1.left.pressed = true;
-			return true;
-	} else if (evt.type == SDL_MOUSEMOTION) {
-		mouse_pos = glm::vec2(
-			evt.motion.x / float(window_size.x) * 2 - 1.0f,
-			-evt.motion.y / float(window_size.y) * 2 + 1.0f
-		);
-
-		return true;
 	}
 
 	return false;
 }
 
 void PlayMode::update(float elapsed) {
-	// gravity test
+		
+	// gravity spell
 	{
 		// camera rotation speed
-		constexpr float CameraRotSpeed = 2.0f;
+		float CameraRotSpeed = 180.0f * elapsed;
 		if (isGravitySpellLocked) {
 			gravitySpellRot -= CameraRotSpeed;
 			
@@ -123,6 +157,7 @@ void PlayMode::update(float elapsed) {
 				remain = gravitySpellRot;
 				gravitySpellRot = 180.f;
 				isGravitySpellLocked = false;
+				
 			}
 
 			// substract from the rotation angle if over roate,
@@ -141,28 +176,8 @@ void PlayMode::update(float elapsed) {
 		if (gravitySpell.pressed && !isGravitySpellLocked) {
 			gravity = -gravity;
 			isGravitySpellLocked = true;
+			PlayerStats::Instance().direction *= -1;
 		}
-	}
-
-	// camera movement test
-	{
-		constexpr float CameraSpeed = 10.0f;
-		glm::mat4x3 frame = camera->transform->make_local_to_parent();
-		glm::vec3 right = frame[0];
-		glm::vec3 up = frame[1];
-		// glm::vec3 forward = -frame[2];
-
-		if (mouse_pos.x > 0.9)
-			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
-		
-		if (mouse_pos.x < -0.9)
-			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
-
-		if (mouse_pos.y > 0.9)
-			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
-
-		if (mouse_pos.y < -0.9)
-			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
 	}
 
 	// force apply test
@@ -175,11 +190,59 @@ void PlayMode::update(float elapsed) {
 			obj->update(elapsed);
 		}
 	}
+
+	{
+		// camera->transform->position = glm::vec3(player1->getPos().x, 
+		// 	player1->getPos().y, camera->transform->position.z);
+
+		// // camera movement test
+		float CameraSpeed = player1->getSpeed();
+		
+		glm::vec2 playerPosOnWindow = glm::vec2(
+			player1->getPos().x - camera->transform->position.x, 
+			player1->getPos().y - camera->transform->position.y);
+
+		glm::mat4x3 frame = camera->transform->make_local_to_parent();
+		glm::vec3 right = frame[0];
+		glm::vec3 up = frame[1];	
+		// glm::vec3 forward = -frame[2];
+
+		if (playerPosOnWindow.x > 30.f)
+			camera->transform->position = camera->transform->position 
+				+ PlayerStats::Instance().direction * CameraSpeed * elapsed * right;
+		
+		if (playerPosOnWindow.x < -30.f)
+			camera->transform->position = camera->transform->position 
+				- PlayerStats::Instance().direction * CameraSpeed * elapsed * right;
+
+		if (playerPosOnWindow.y > 20.f)
+			camera->transform->position = camera->transform->position 
+				+ PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
+
+		if (playerPosOnWindow.y < -20.f)
+			camera->transform->position = camera->transform->position 
+				- PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
+		
+	}
+
+	// check reset
+	{
+		if (player1->getPos().x <= 0.f || player1->getPos().y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+			player1->reset();
+			gravity = glm::vec3(0, -98.f, 0);
+
+			camera->transform->position.x = player1->getPos().x;
+			camera->transform->position.y = player1->getPos().y;
+
+			camera->transform->rotation = glm::quat{ 1.f, 0.f, 0.f, 0.f };
+		}
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	//update camera aspect ratio for drawable:
 	camera->aspect = float(drawable_size.x) / float(drawable_size.y);
+	camera->drawable_size = drawable_size;
 
 	//set up light type and position for lit_color_texture_program:
 	GLCall(glUseProgram(lit_color_texture_program->program));
@@ -194,7 +257,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
 	// glEnable(GL_DEPTH_TEST);
 	// glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
-
+	scene.draw(*camera);
 	GLCall(glDisable(GL_DEPTH_TEST));
 
 	GLCall(glDepthMask(GL_FALSE));
@@ -202,7 +265,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	GLCall(glEnable(GL_BLEND));
 	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-	scene.draw(*camera);
+	
 
 	for (auto& obj : moveableObjs){
 		obj->draw(*camera);

@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 00:50:39
+ * @ Modified time: 2021-11-03 23:39:44
  * @ Description: Header file for GameObject class
  */
 
@@ -28,7 +28,7 @@ public:
     GameObject();
     GameObject(float mass, const glm::vec3& pos = glm::vec3(0.f), 
         const glm::vec3& vel = glm::vec3(0.f), 
-        bool isFixed = false, float l = 100.f);
+        bool isFixed = false, const std::string& filename = "", float l = 100.f);
     
     virtual ~GameObject();
 
@@ -78,8 +78,10 @@ public:
         model = model * glm::eulerAngleYXZ(euler.y, euler.x, euler.z);
     }
     
+    void prepareDraw();
+    virtual void createVerts() = 0;
     virtual void update (float deltaTime);
-    virtual void draw (Scene::Camera const &camera){}
+    virtual void draw (Scene::Camera const &camera);
     virtual void reset();
     
 protected:
@@ -97,6 +99,18 @@ protected:
 
     // shader info
     Load< ColorTextureProgram > shader = color_texture_program;
+
+    GLuint VAO;
+    GLuint VBO_positions, VBO_texcoords, EBO;
+    GLuint tex;
+
+    std::vector<glm::vec4> vertex_positions;
+    std::vector<glm::vec2> vertex_texcoords;
+    std::vector<unsigned int> indices;
+
+    // texture info
+    glm::uvec2 sz;
+    std::vector< glm::u8vec4 > pic;
 };
 
 #endif /* GameObject_h */

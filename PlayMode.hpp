@@ -5,6 +5,7 @@
 #include "FontSource.hpp"
 #include "data_path.hpp"
 #include "SquareObject.hpp"
+#include "PlayerObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -28,7 +29,7 @@ struct PlayMode : Mode {
 	glm::vec2 mouse_pos;
 
 	//----- game physics -----
-	glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
+	glm::vec3 gravity = glm::vec3 (0, -98.f, 0);
 
 	//----- game object -----
 	vector<GameObject*> moveableObjs;
@@ -43,13 +44,5 @@ struct PlayMode : Mode {
 		uint8_t pressed = 0;
 	} left, right, down, up, gravitySpell;
 
-	struct Player1 {
-		glm::vec3 pos;
-		Button left, right, up;
-	} player1;
-
-	struct Player2 {
-		glm::vec3 pos;
-		Button left, right, up, down;
-	} player2;
+	PlayerObject* player1;
 };
