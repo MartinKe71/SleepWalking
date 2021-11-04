@@ -140,7 +140,8 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
-	// gravity test
+		
+	// gravity spell
 	{
 		// camera rotation speed
 		float CameraRotSpeed = 180.0f * elapsed;
@@ -177,27 +178,6 @@ void PlayMode::update(float elapsed) {
 		}
 	}
 
-	// camera movement test
-	//{
-	//	constexpr float CameraSpeed = 10.0f;
-	//	glm::mat4x3 frame = camera->transform->make_local_to_parent();
-	//	glm::vec3 right = frame[0];
-	//	glm::vec3 up = frame[1];
-	//	// glm::vec3 forward = -frame[2];
-
-	//	if (mouse_pos.x > 0.9)
-	//		camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
-	//	
-	//	if (mouse_pos.x < -0.9)
-	//		camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
-
-	//	if (mouse_pos.y > 0.9)
-	//		camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
-
-	//	if (mouse_pos.y < -0.9)
-	//		camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
-	//}
-
 	// force apply test
 	{
 		for (auto& obj : moveableObjs){
@@ -208,11 +188,48 @@ void PlayMode::update(float elapsed) {
 			obj->update(elapsed);
 		}
 	}
+
+	{
+		// camera->transform->position = glm::vec3(player1->getPos().x, 
+		// 	player1->getPos().y, camera->transform->position.z);
+
+		// // camera movement test
+		float CameraSpeed = player1->getSpeed();
+		// glm::vec2 playerPosOnWindow = glm::vec2(
+		// 	player1->getPos().x / float(camera->drawable_size.x) * 2 - 1.0f,
+		// 	player1->getPos().y / float(camera->drawable_size.y) * 2 - 1.0f);
+		glm::vec2 playerPosOnWindow = glm::vec2(
+			player1->getPos().x - camera->transform->position.x, 
+			player1->getPos().y - camera->transform->position.y);
+		// playerPosOnWindow = glm::vec2(
+		// 	playerPosOnWindow.x / float(camera->drawable_size.x) * 2 - 1.0f,
+		// 	playerPosOnWindow.y / float(camera->drawable_size.y) * 2 - 1.0f);
+		std::cout << playerPosOnWindow.x << " " << playerPosOnWindow.y << std::endl;
+
+		glm::mat4x3 frame = camera->transform->make_local_to_parent();
+		glm::vec3 right = frame[0];
+		glm::vec3 up = frame[1];
+		// glm::vec3 forward = -frame[2];
+
+		if (playerPosOnWindow.x > 30.f)
+			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
+		
+		if (playerPosOnWindow.x < -30.f)
+			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
+
+		if (playerPosOnWindow.y > 20.f)
+			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
+
+		if (playerPosOnWindow.y < -20.f)
+			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
+	
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	//update camera aspect ratio for drawable:
 	camera->aspect = float(drawable_size.x) / float(drawable_size.y);
+	camera->drawable_size = drawable_size;
 
 	//set up light type and position for lit_color_texture_program:
 	GLCall(glUseProgram(lit_color_texture_program->program));

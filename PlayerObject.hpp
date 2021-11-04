@@ -25,6 +25,9 @@ public :
     int direction = 1;
     bool canJump = true;
 
+    float getSpeed() {return speed;}
+    float getJumpPower() {return jump_power;}
+
     virtual void update(float elapsed) override;
     virtual void reset() override;
     virtual void createVerts() override;
@@ -32,4 +35,7 @@ public :
 private:
     float width, height;
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    float speed = 40.f;
+    float jump_power = 4000.0f;
 };

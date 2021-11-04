@@ -1,9 +1,6 @@
 #include "PlayerObject.hpp"
 
 
-#define SPEED 40.f
-#define JUMP_POW 4000.0f
-
 PlayerObject::PlayerObject() {
 }
 
@@ -53,7 +50,7 @@ void PlayerObject::update(float elapsed) {
     if (left.pressed && !right.pressed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x -= SPEED * elapsed * direction;
+        new_pos.x -= speed * elapsed * direction;
         cout << "checking collision\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{ width * 2, height * 2})) {
             cout << "Not colliding\n";
@@ -64,7 +61,7 @@ void PlayerObject::update(float elapsed) {
     else if (!left.pressed && right.pressed) {
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x += SPEED * elapsed * direction;
+        new_pos.x += speed * elapsed * direction;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{width * 2, height * 2})) {
             position.x = new_pos.x;
             position.y = new_pos.y;
@@ -73,7 +70,7 @@ void PlayerObject::update(float elapsed) {
 
     if (space.pressed && canJump) {
         cout << "jump\n";
-        force.y += JUMP_POW * mass * direction;
+        force.y += jump_power * mass * direction;
         space.pressed = false;
         canJump = false;
     }
