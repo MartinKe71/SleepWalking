@@ -13,6 +13,9 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, l), width(w), height(h) {
 
+    PlayerStats::Instance().startPos = pos;
+    PlayerStats::Instance().startVel = vel;
+
     if (!filename.empty())
         load_png(data_path(filename),
             &(sz), &(pic), OriginLocation::LowerLeftOrigin);
@@ -99,6 +102,11 @@ void PlayerObject::createVerts() {
 void PlayerObject::reset() {
     GameObject::reset();
 
+    PlayerStats::Instance().reset();
+
+    position = PlayerStats::Instance().startPos;
+    velocity = PlayerStats::Instance().startVel;
+
     vertex_positions.clear();
 }
 
@@ -107,7 +115,7 @@ void PlayerObject::update(float elapsed) {
     if (left.pressed && !right.pressed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x -= SPEED * elapsed * direction;
+        new_pos.x -= SPEED * elapsed * PlayerStats::Instance().direction;
         cout << "checking collision\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{ width * 2, height * 2})) {
             cout << "Not colliding\n";
@@ -118,18 +126,18 @@ void PlayerObject::update(float elapsed) {
     else if (!left.pressed && right.pressed) {
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x += SPEED * elapsed * direction;
+        new_pos.x += SPEED * elapsed * PlayerStats::Instance().direction;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{width * 2, height * 2})) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
     }
 
-    if (space.pressed && canJump) {
+    if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
-        force.y += JUMP_POW * mass * direction;
+        force.y += JUMP_POW * mass * PlayerStats::Instance().direction;
         space.pressed = false;
-        canJump = false;
+        PlayerStats::Instance().canJump = false;
     }
 
     if (!isFixed) {
@@ -147,7 +155,7 @@ void PlayerObject::update(float elapsed) {
         }
         else {
             cout << " Gravity collided\n";
-            canJump = true;
+            PlayerStats::Instance().canJump = true;
             velocity = glm::vec3(0.f);
         }
     }
@@ -155,6 +163,10 @@ void PlayerObject::update(float elapsed) {
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
 
     box->SetPos(glm::vec2{ position.x, position.y });
+
+    if (position.x <= 0.f || position.y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+        reset();
+    }
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }

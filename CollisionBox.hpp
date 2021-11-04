@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Inivar.hpp"
+#include "PlayerStats.hpp"
 
 class CollisionBox {
 public: 
@@ -42,9 +43,11 @@ public:
 	using CollisionBox::CollisionBox;
 	~PlayerCollisionBox() {}
 
+	//std::shared_ptr<PlayerObject> ownerPlayer;
+
 private:
 	// A player pointer to do game logic.
-	// std::shared_ptr<Player>
+	
 };
 
 class ThornCollisionBox : public CollisionBox {

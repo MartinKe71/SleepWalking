@@ -10,5 +10,7 @@ void CollisionBox::UpdateBoxCoord()
 
 void ThornCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 {
+	PlayerStats::Instance().health -= 100.f;
+
 	std::cout << "Somebody hits the throne" << std::endl;
 }

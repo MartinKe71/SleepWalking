@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <memory>
 
+
 #define GAME_MAP_SIZE glm::vec2(192.f, 108.f)
 #define GAME_MAP_ORIGIN glm::vec2(0.f, 0.f)
 #define COLLISION_OPT_LEVEL 2

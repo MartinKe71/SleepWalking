@@ -7,6 +7,8 @@
 #include "Load.hpp"
 #include "Inivar.hpp"
 #include "GLCall.hpp"
+#include "PlayerStats.hpp"
+
 
 #include <fstream>
 #include <random>
@@ -174,7 +176,7 @@ void PlayMode::update(float elapsed) {
 		if (gravitySpell.pressed && !isGravitySpellLocked) {
 			gravity = -gravity;
 			isGravitySpellLocked = true;
-			player1->direction *= -1;
+			PlayerStats::Instance().direction *= -1;
 		}
 	}
 
