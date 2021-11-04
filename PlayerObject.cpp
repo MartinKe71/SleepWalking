@@ -53,6 +53,7 @@ void PlayerObject::createVerts() {
 
 void PlayerObject::reset() {
     std::cout << "reset beng" << std::endl;
+    model = glm::mat4(1.0f);
     GameObject::reset();
 
     PlayerStats::Instance().reset();
@@ -123,9 +124,9 @@ void PlayerObject::update(float elapsed) {
 
     box->SetPos(glm::vec2{ position.x, position.y });
 
-    if (position.x <= 0.f || position.y <= 0.f || PlayerStats::Instance().health <= 0.f) {
-        reset();
-    }
+    //if (position.x <= 0.f || position.y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+    //    reset();
+    //}
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }

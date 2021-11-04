@@ -224,6 +224,19 @@ void PlayMode::update(float elapsed) {
 				- PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
 		
 	}
+
+	// check reset
+	{
+		if (player1->getPos().x <= 0.f || player1->getPos().y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+			player1->reset();
+			gravity = glm::vec3(0, -98.f, 0);
+
+			camera->transform->position.x = player1->getPos().x;
+			camera->transform->position.y = player1->getPos().y;
+
+			camera->transform->rotation = glm::quat{ 1.f, 0.f, 0.f, 0.f };
+		}
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
