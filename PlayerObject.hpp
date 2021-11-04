@@ -22,6 +22,8 @@ public :
         bool pressed = 0;
     } left, right, space;
 
+    int direction = 1;
+    bool canJump = true;
 
     virtual void update(float elapsed) override;
     void draw(Scene::Camera const& camera) override;

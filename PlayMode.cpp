@@ -42,7 +42,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/mos.png");
+				false);
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
@@ -155,6 +155,7 @@ void PlayMode::update(float elapsed) {
 				remain = gravitySpellRot;
 				gravitySpellRot = 180.f;
 				isGravitySpellLocked = false;
+				
 			}
 
 			// substract from the rotation angle if over roate,
@@ -164,15 +165,16 @@ void PlayMode::update(float elapsed) {
 				* glm::angleAxis(glm::radians(CameraRotSpeed + remain), glm::vec3(0.0f, 0.0f, 1.0f))
 			);
 			
-			/*for (auto& obj : moveableObjs){
+			for (auto& obj : moveableObjs){
 				obj->applyRotation(
 					glm::vec3(0.f, 0.f, glm::radians(CameraRotSpeed + remain)), 
 					camera->transform->position);
-			}*/
+			}
 		}
 		if (gravitySpell.pressed && !isGravitySpellLocked) {
 			gravity = -gravity;
 			isGravitySpellLocked = true;
+			player1->direction *= -1;
 		}
 	}
 
