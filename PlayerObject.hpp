@@ -24,7 +24,7 @@ public :
 
 
     virtual void update(float elapsed) override;
-    void draw(Scene::Camera const& camera);
+    void draw(Scene::Camera const& camera) override;
     void reset() override;
 
     void prepareDraw();

@@ -1,9 +1,7 @@
 #include "load_save_png.hpp"
 #include "PlayerObject.hpp"
 #include "Inivar.hpp"
-#include <signal.h>
-#include "gl_compile_program.hpp"
-#include "gl_errors.hpp"
+#include "GLCall.hpp"
 
 #define SPEED 10.f
 #define JUMP_POW 2000.0f
@@ -91,10 +89,10 @@ void PlayerObject::createVerts() {
         });
 
     vertex_texcoords = vector<glm::vec2>({
-        glm::vec2(0.f,1.f),
         glm::vec2(1.f,1.f),
+        glm::vec2(1.f,0.f),
         glm::vec2(0.f,0.f),
-        glm::vec2(1.f,0.f)
+        glm::vec2(0.f,1.f)
         });
 }
 

@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 00:50:47
+ * @ Modified time: 2021-11-03 22:09:40
  * @ Description: implementation of square object
  */
 
@@ -10,6 +10,7 @@
 #include "data_path.hpp"
 #include "SquareObject.hpp"
 #include "Inivar.hpp"
+#include "GLCall.hpp"
 
 SquareObject::SquareObject(){
 }

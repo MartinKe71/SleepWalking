@@ -6,6 +6,7 @@
 #include "Mesh.hpp"
 #include "Load.hpp"
 #include "Inivar.hpp"
+#include "GLCall.hpp"
 
 #include <fstream>
 #include <random>
