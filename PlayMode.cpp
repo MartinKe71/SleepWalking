@@ -9,7 +9,7 @@
 #include "GLCall.hpp"
 #include "PlayerStats.hpp"
 
-
+#include <algorithm>
 #include <fstream>
 #include <random>
 
@@ -43,7 +43,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/mos.png");
+				false, "resource/QinYe.png");
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
@@ -96,9 +96,12 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 				player1->space.pressed = false;
 				return false;
 			case SDLK_w:
-				up.downs += 1;
-				up.pressed = true;
-				return true;
+				if (!evt.key.repeat) {
+					player1->space.pressed = true;
+					return true;
+				}
+				player1->space.pressed = false;
+				return false;
 			case SDLK_s:
 				up.downs += 1;
 				up.pressed = true;
@@ -122,8 +125,7 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 				player1->space.pressed = false;
 				return true;
 			case SDLK_w:
-				up.downs = 0;
-				up.pressed = false;
+				player1->space.pressed = false;
 				return true;
 			case SDLK_s:
 				up.downs = 0;
@@ -223,6 +225,8 @@ void PlayMode::update(float elapsed) {
 			camera->transform->position = camera->transform->position 
 				- PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
 		
+		//camera->transform->position.x =std::clamp(camera->transform->position.x, 140.0f, 300.0f);
+		//camera->transform->position.y = std::clamp(camera->transform->position.y, 100.0f, 240.0f);
 	}
 
 	// check reset
@@ -235,6 +239,8 @@ void PlayMode::update(float elapsed) {
 			camera->transform->position.y = player1->getPos().y;
 
 			camera->transform->rotation = glm::quat{ 1.f, 0.f, 0.f, 0.f };
+			gravitySpellRot = 180.f;
+			isGravitySpellLocked = false;
 		}
 	}
 }
