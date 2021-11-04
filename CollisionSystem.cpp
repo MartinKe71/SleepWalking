@@ -63,7 +63,7 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 			bool res = IsCollided(player_box, boxes[j]->GetBoxCoord());
 			if (res) { 
 				auto coord = boxes[j]->GetBoxCoord();
-				std::cout << "Colldied block name: " << boxes[j].name << std::endl;
+				std::cout << "Colldied block name: " << boxes[j]->name << std::endl;
 				std::cout << "Collided block: x: " << coord.x << ";y: " << coord.y << std::endl;
 				return true;
 			}
