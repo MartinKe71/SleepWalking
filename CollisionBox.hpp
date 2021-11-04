@@ -5,8 +5,8 @@
 class CollisionBox {
 public: 
 	CollisionBox() {}
-	CollisionBox(const glm::vec2& p, const glm::vec2& s, const bool i)
-		: pos(p), size(s), is_trigger(i) {
+	CollisionBox(const glm::vec2& p, const glm::vec2& s, const bool i, std::string n = "")
+		: pos(p), size(s), is_trigger(i), name(n) {
 		UpdateBoxCoord();
 	}
 	virtual ~CollisionBox() {}
@@ -19,6 +19,8 @@ public:
 
 	virtual void OnCollisionEnter(std::shared_ptr<CollisionBox> cb) {}
 	virtual void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) {}
+
+	std::string name;
 
 private:
 	glm::vec2 pos {0};

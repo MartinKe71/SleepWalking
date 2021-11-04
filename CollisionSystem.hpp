@@ -28,9 +28,9 @@ public:
 
 	void PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& size);
 
-	void AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size);
+	void AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
-	void AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size);
+	void AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
 private:
 	CollisionSystem();

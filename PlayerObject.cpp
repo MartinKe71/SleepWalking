@@ -103,15 +103,16 @@ void PlayerObject::reset() {
 }
 
 void PlayerObject::update(float elapsed) {
-    // std::cout << "update player\n";
+    std::cout << "update player\n";
     if (left.pressed && !right.pressed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos.x -= SPEED * elapsed;
+        cout << "checking collision\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{sz.x, sz.y})) {
+            cout << "Not colliding\n";
             position.x = new_pos.x;
             position.y = new_pos.y;
-
         }
     }
     else if (!left.pressed && right.pressed) {
@@ -134,20 +135,23 @@ void PlayerObject::update(float elapsed) {
         glm::vec3 accel = force / mass;
         cout << "Force: " << glm::to_string(force) << endl;
         velocity += accel * elapsed;
-        //cout << glm::to_string(velocity) << endl;
         glm::vec3 new_pos = position + velocity * elapsed;
         cout << "new_pos: " << glm::to_string(new_pos) << endl;
         cout << "\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, glm::vec2{ sz.x, sz.y })) {
+            cout << "Graivity Not colliding\n";
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
         else {
+            cout << " Gravity collided\n";
             velocity = glm::vec3(0.f);
         }
     }
 
-    CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ sz.x, sz.y });
+    CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ sz.x * 2, sz.y*2 });
+
+    box->SetPos(glm::vec2{ position.x, position.y });
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }

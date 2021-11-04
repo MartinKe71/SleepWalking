@@ -45,10 +45,14 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 				false, "resource/mos.png");
 		}
 		else if (transform.name.find("Block") != string::npos) {
-			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y));
+			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
+				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+				transform.name);
 		}
 		else if (transform.name.find("Trigger") != string::npos) {
-			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y));
+			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), 
+				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+				transform.name);
 		}
 	}
 

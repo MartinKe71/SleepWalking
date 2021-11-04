@@ -61,7 +61,12 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 		for (size_t j = 0; j < boxes.size(); j++)
 		{
 			bool res = IsCollided(player_box, boxes[j]->GetBoxCoord());
-			if (res) return true;
+			if (res) { 
+				auto coord = boxes[j]->GetBoxCoord();
+				std::cout << "Colldied block name: " << boxes[j].name << std::endl;
+				std::cout << "Collided block: x: " << coord.x << ";y: " << coord.y << std::endl;
+				return true;
+			}
 		}
 	}
 
@@ -102,7 +107,7 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 	}
 }
 
-void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size)
+void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name)
 {
 	glm::vec2 block_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
 									glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
@@ -117,7 +122,7 @@ void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& si
 			static_cast<uint8_t>((block_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL);
 	}
 
-	std::shared_ptr<BlockCollisionBox> box(new BlockCollisionBox(pos, size, false));
+	std::shared_ptr<BlockCollisionBox> box(new BlockCollisionBox(pos, size, false, name));
 	
 	for (const uint8_t i : sections)
 	{
@@ -125,7 +130,7 @@ void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& si
 	}
 }
 
-void CollisionSystem::AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size)
+void CollisionSystem::AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name)
 {
 	glm::vec2 block_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
 								glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
@@ -140,7 +145,7 @@ void CollisionSystem::AddOneThornBlock(const glm::vec2& pos, const glm::vec2& si
 			static_cast<uint8_t>((block_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL);
 	}
 
-	std::shared_ptr<CollisionBox> box(new ThornCollisionBox(pos, size, true));
+	std::shared_ptr<CollisionBox> box(new ThornCollisionBox(pos, size, true, name));
 
 	for (const uint8_t i : sections)
 	{
