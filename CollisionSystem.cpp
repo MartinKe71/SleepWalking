@@ -90,11 +90,6 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 
 	for (size_t i = 0; i < 4; i++)
 	{
-		auto res = static_cast<uint8_t>((player_points[i].x - GAME_MAP_ORIGIN.x) / unit_width) +
-			static_cast<uint8_t>((player_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL;
-		
-		//std::cout << std::to_string((player_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) << std::endl;
-
 		sections.insert(static_cast<uint8_t>((player_points[i].x - GAME_MAP_ORIGIN.x) / unit_width) +
 			static_cast<uint8_t>((player_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL);
 	}

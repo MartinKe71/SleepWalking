@@ -197,34 +197,32 @@ void PlayMode::update(float elapsed) {
 
 		// // camera movement test
 		float CameraSpeed = player1->getSpeed();
-		// glm::vec2 playerPosOnWindow = glm::vec2(
-		// 	player1->getPos().x / float(camera->drawable_size.x) * 2 - 1.0f,
-		// 	player1->getPos().y / float(camera->drawable_size.y) * 2 - 1.0f);
+		
 		glm::vec2 playerPosOnWindow = glm::vec2(
 			player1->getPos().x - camera->transform->position.x, 
 			player1->getPos().y - camera->transform->position.y);
-		// playerPosOnWindow = glm::vec2(
-		// 	playerPosOnWindow.x / float(camera->drawable_size.x) * 2 - 1.0f,
-		// 	playerPosOnWindow.y / float(camera->drawable_size.y) * 2 - 1.0f);
-		std::cout << playerPosOnWindow.x << " " << playerPosOnWindow.y << std::endl;
 
 		glm::mat4x3 frame = camera->transform->make_local_to_parent();
 		glm::vec3 right = frame[0];
-		glm::vec3 up = frame[1];
+		glm::vec3 up = frame[1];	
 		// glm::vec3 forward = -frame[2];
 
 		if (playerPosOnWindow.x > 30.f)
-			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * right;
+			camera->transform->position = camera->transform->position 
+				+ PlayerStats::Instance().direction * CameraSpeed * elapsed * right;
 		
 		if (playerPosOnWindow.x < -30.f)
-			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * right;
+			camera->transform->position = camera->transform->position 
+				- PlayerStats::Instance().direction * CameraSpeed * elapsed * right;
 
 		if (playerPosOnWindow.y > 20.f)
-			camera->transform->position = camera->transform->position + CameraSpeed * elapsed * up;
+			camera->transform->position = camera->transform->position 
+				+ PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
 
 		if (playerPosOnWindow.y < -20.f)
-			camera->transform->position = camera->transform->position - CameraSpeed * elapsed * up;
-	
+			camera->transform->position = camera->transform->position 
+				- PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
+		
 	}
 }
 
