@@ -36,30 +36,34 @@ Load< Scene > sleepWalking_scene(LoadTagDefault, []() -> Scene const * {
 });
 
 PlayMode::PlayMode() : scene(*sleepWalking_scene){
-	player1 = new PlayerObject(10.f, glm::vec3(50.0f, 52.f, 0.f),
-		1.f, 1.f, glm::vec3(0.f, 0.f, 0.f),
-		true, "resource/blood32.png");	
 
-	//for (auto& transform : scene.transforms) {
-	//	else if (transform.name.find("Plane") != string::npos) {
-	//		CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y*2));
-	//	}
-	//	else if (transform.name.find("Trigger") != string::npos) {
-	//		CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y * 2));
-	//	}
-	//}
+
+	for (auto& transform : scene.transforms) {
+		if (transform.name == "Player") {
+			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				false, "resource/mos.png");
+		}
+		else if (transform.name.find("Block") != string::npos) {
+			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y));
+		}
+		else if (transform.name.find("Trigger") != string::npos) {
+			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x, transform.scale.y));
+		}
+	}
 
 	//get pointer to camera for convenience:
 	if (scene.cameras.size() != 1) 
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
-	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(50.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
-	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
-	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
+	//moveableObjs.push_back(new SquareObject(10.f, 
+	//	glm::vec3(50.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
+	//moveableObjs.push_back(new SquareObject(10.f, 
+	//	glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
+	//moveableObjs.push_back(new SquareObject(10.f, 
+	//	glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
+	
 	moveableObjs.push_back(player1);
 	
 }
@@ -218,7 +222,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
 	// glEnable(GL_DEPTH_TEST);
 	// glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
-
+	scene.draw(*camera);
 	GLCall(glDisable(GL_DEPTH_TEST));
 
 	GLCall(glDepthMask(GL_FALSE));
@@ -226,7 +230,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	GLCall(glEnable(GL_BLEND));
 	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-	scene.draw(*camera);
+	
 
 	for (auto& obj : moveableObjs){
 		obj->draw(*camera);

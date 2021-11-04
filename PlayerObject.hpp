@@ -37,7 +37,7 @@ private:
     GLuint VBO_positions, VBO_texcoords, EBO;
     GLuint tex;
 
-    glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     vector<glm::vec4> vertex_positions;
     vector<glm::vec4> vertex_normals;
     vector<glm::vec2> vertex_texcoords;
