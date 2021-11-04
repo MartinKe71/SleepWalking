@@ -86,8 +86,15 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 
 	std::set<uint8_t> sections;
 
+	//std::cout << "unit width : " << unit_width << " unit height : " << unit_height << std::endl;
+
 	for (size_t i = 0; i < 4; i++)
 	{
+		auto res = static_cast<uint8_t>((player_points[i].x - GAME_MAP_ORIGIN.x) / unit_width) +
+			static_cast<uint8_t>((player_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL;
+		
+		//std::cout << std::to_string((player_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) << std::endl;
+
 		sections.insert(static_cast<uint8_t>((player_points[i].x - GAME_MAP_ORIGIN.x) / unit_width) +
 			static_cast<uint8_t>((player_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL);
 	}
@@ -95,11 +102,12 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 	glm::vec4 player_box(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f,
 		pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
 
-	std::cout << "iterating trigger arrays" << std::endl;
+	//std::cout << "iterating trigger arrays " << scene_triggers.size();
 
 	// Triggers
 	for (const uint8_t i : sections)
 	{
+		//std::cout << " at index: " << std::to_string(i) << std::endl;
 		const std::vector<std::shared_ptr<CollisionBox>>& triggers = scene_triggers[i];
 		for (size_t j = 0; j < triggers.size(); j++)
 		{
