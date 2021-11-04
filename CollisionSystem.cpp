@@ -95,6 +95,8 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 	glm::vec4 player_box(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f,
 		pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
 
+	std::cout << "iterating trigger arrays" << std::endl;
+
 	// Triggers
 	for (const uint8_t i : sections)
 	{

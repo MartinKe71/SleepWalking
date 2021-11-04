@@ -18,7 +18,7 @@
 
 #define GAME_MAP_SIZE glm::vec2(192.f, 108.f)
 #define GAME_MAP_ORIGIN glm::vec2(0.f, 0.f)
-#define COLLISION_OPT_LEVEL 2
+#define COLLISION_OPT_LEVEL 1
 
 #define P1_LEFT SDLK_a
 #define P1_RIGHT SDLK_d

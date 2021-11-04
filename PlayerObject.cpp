@@ -55,14 +55,20 @@ void PlayerObject::createVerts() {
 }
 
 void PlayerObject::reset() {
+    std::cout << "reset beng" << std::endl;
     GameObject::reset();
 
     PlayerStats::Instance().reset();
 
     position = PlayerStats::Instance().startPos;
     velocity = PlayerStats::Instance().startVel;
+    box->SetPos(glm::vec2{ position.x, position.y });
+
+    std::cout << "Before beng" << std::endl;
 
     vertex_positions.clear();
+    createVerts();
+    prepareDraw();
 }
 
 void PlayerObject::update(float elapsed) {
@@ -116,6 +122,7 @@ void PlayerObject::update(float elapsed) {
     }
 
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
+    std::cout << "Triggers checked" << std::endl;
 
     box->SetPos(glm::vec2{ position.x, position.y });
 
@@ -125,5 +132,3 @@ void PlayerObject::update(float elapsed) {
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }
-
-
