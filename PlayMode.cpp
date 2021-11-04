@@ -35,29 +35,18 @@ Load< Scene > sleepWalking_scene(LoadTagDefault, []() -> Scene const * {
 });
 
 PlayMode::PlayMode() : scene(*sleepWalking_scene){
+	player1 = new PlayerObject(10.f, glm::vec3(50.0f, 52.f, 0.f),
+		1.f, 1.f, glm::vec3(0.f, 0.f, 0.f),
+		true, "resource/blood32.png");	
 
-	// for (auto &transform : scene.transforms) {
-	// 	if (transform.name.rfind("eggPlate", 0) == 0) {
-	// 		std::size_t found = transform.name.find_first_of(".");
-	// 		int idx = std::stoi(transform.name.substr(found + 1));
-	// 		eggPlates[idx - 1] = &transform;
-	// 	} else if (transform.name == "Marker") marker = &transform;
-		
-	// }
-
-	player1 = new PlayerObject(10.f, glm::vec3(5.0f, 2.f, 0.f),
-		glm::uvec2(3.f, 5.f), glm::vec3(0.f, 0.f, 0.f),
-		false, "resource/blood32.png");	
-
-	for (auto& transform : scene.transforms) {
-		if (transform.name == "Player1") player1->transform = &transform;
-		else if (transform.name.find("Plane") != string::npos) {
-			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y*2));
-		}
-		else if (transform.name.find("Trigger") != string::npos) {
-			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y * 2));
-		}
-	}
+	//for (auto& transform : scene.transforms) {
+	//	else if (transform.name.find("Plane") != string::npos) {
+	//		CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y*2));
+	//	}
+	//	else if (transform.name.find("Trigger") != string::npos) {
+	//		CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), glm::vec2(transform.scale.x * 2, transform.scale.y * 2));
+	//	}
+	//}
 
 	//get pointer to camera for convenience:
 	if (scene.cameras.size() != 1) 
@@ -65,11 +54,11 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	camera = &scene.cameras.front();
 	
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(-10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
+		glm::vec3(50.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(10.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
+		glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
 	moveableObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(20.0f, 1.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
+		glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 	moveableObjs.push_back(player1);
 	
 }
@@ -89,6 +78,13 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			case P1_RIGHT:
 				player1->right.pressed = true;
 				return true;
+			case P1_UP:
+				if (!evt.key.repeat) {
+					player1->space.pressed = true;
+					return true;
+				}
+				player1->space.pressed = false;
+				return false;
 			case SDLK_w:
 				up.downs += 1;
 				up.pressed = true;
@@ -111,6 +107,9 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 				return true;
 			case P1_RIGHT:
 				player1->right.pressed = false;
+				return true;
+			case P1_UP:
+				player1->space.pressed = false;
 				return true;
 			case SDLK_w:
 				up.downs = 0;
@@ -136,7 +135,7 @@ void PlayMode::update(float elapsed) {
 	// gravity test
 	{
 		// camera rotation speed
-		constexpr float CameraRotSpeed = 2.0f;
+		float CameraRotSpeed = 180.0f * elapsed;
 		if (isGravitySpellLocked) {
 			gravitySpellRot -= CameraRotSpeed;
 			
@@ -156,11 +155,11 @@ void PlayMode::update(float elapsed) {
 				* glm::angleAxis(glm::radians(CameraRotSpeed + remain), glm::vec3(0.0f, 0.0f, 1.0f))
 			);
 			
-			for (auto& obj : moveableObjs){
+			/*for (auto& obj : moveableObjs){
 				obj->applyRotation(
 					glm::vec3(0.f, 0.f, glm::radians(CameraRotSpeed + remain)), 
 					camera->transform->position);
-			}
+			}*/
 		}
 		if (gravitySpell.pressed && !isGravitySpellLocked) {
 			gravity = -gravity;

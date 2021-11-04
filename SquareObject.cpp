@@ -26,7 +26,6 @@ SquareObject::SquareObject(float mass, const glm::vec3& pos,
         pic = vector<glm::u8vec4> (1, glm::u8vec4(0xff));
         sz = glm::uvec2(1, 1);
     }
-        
     
     createVerts();
     

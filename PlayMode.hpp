@@ -29,7 +29,7 @@ struct PlayMode : Mode {
 	glm::vec2 mouse_pos;
 
 	//----- game physics -----
-	glm::vec3 gravity = glm::vec3 (0, -9.8f, 0);
+	glm::vec3 gravity = glm::vec3 (0, -98.f, 0);
 
 	//----- game object -----
 	vector<GameObject*> moveableObjs;
