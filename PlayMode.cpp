@@ -43,7 +43,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/blood32.png");
+				false, "resource/mos.png");
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
