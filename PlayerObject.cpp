@@ -1,4 +1,5 @@
 #include "PlayerObject.hpp"
+#include "load_save_png.hpp"
 
 
 PlayerObject::PlayerObject() {
@@ -7,6 +8,17 @@ PlayerObject::PlayerObject() {
 PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, filename, l), width(w), height(h) {
+
+    PlayerStats::Instance().startPos = pos;
+    PlayerStats::Instance().startVel = vel;
+
+    if (!filename.empty())
+        load_png(data_path(filename),
+            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
+    else {
+        pic = vector<glm::u8vec4>(1, glm::u8vec4(0xff));
+        sz = glm::uvec2(1, 1);
+    }
 
     createVerts();
     prepareDraw();
@@ -40,9 +52,20 @@ void PlayerObject::createVerts() {
 }
 
 void PlayerObject::reset() {
+    std::cout << "reset beng" << std::endl;
     GameObject::reset();
 
+    PlayerStats::Instance().reset();
+
+    position = PlayerStats::Instance().startPos;
+    velocity = PlayerStats::Instance().startVel;
+    box->SetPos(glm::vec2{ position.x, position.y });
+
+    std::cout << "Before beng" << std::endl;
+
     vertex_positions.clear();
+    createVerts();
+    prepareDraw();
 }
 
 void PlayerObject::update(float elapsed) {
@@ -50,7 +73,7 @@ void PlayerObject::update(float elapsed) {
     if (left.pressed && !right.pressed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x -= speed * elapsed * direction;
+        new_pos.x -= speed * elapsed * PlayerStats::Instance().direction;
         cout << "checking collision\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{ width * 2, height * 2})) {
             cout << "Not colliding\n";
@@ -61,18 +84,18 @@ void PlayerObject::update(float elapsed) {
     else if (!left.pressed && right.pressed) {
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos.x += speed * elapsed * direction;
+        new_pos.x += speed * elapsed * PlayerStats::Instance().direction;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{width * 2, height * 2})) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
     }
 
-    if (space.pressed && canJump) {
+    if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
-        force.y += jump_power * mass * direction;
+        force.y += jump_power * mass * PlayerStats::Instance().direction;
         space.pressed = false;
-        canJump = false;
+        PlayerStats::Instance().canJump = false;
     }
 
     if (!isFixed) {
@@ -90,16 +113,19 @@ void PlayerObject::update(float elapsed) {
         }
         else {
             cout << " Gravity collided\n";
-            canJump = true;
+            PlayerStats::Instance().canJump = true;
             velocity = glm::vec3(0.f);
         }
     }
 
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
+    std::cout << "Triggers checked" << std::endl;
 
     box->SetPos(glm::vec2{ position.x, position.y });
 
+    if (position.x <= 0.f || position.y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+        reset();
+    }
+
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 }
-
-
