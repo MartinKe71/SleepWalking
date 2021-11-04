@@ -6,7 +6,7 @@ class CollisionBox {
 public: 
 	CollisionBox() {}
 	CollisionBox(const glm::vec2& p, const glm::vec2& s, const bool i, std::string n = "")
-		: pos(p), size(s), is_trigger(i), name(n) {
+		: name(n), pos(p), size(s), is_trigger(i){
 		UpdateBoxCoord();
 	}
 	virtual ~CollisionBox() {}
