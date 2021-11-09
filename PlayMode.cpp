@@ -106,9 +106,13 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 				up.downs += 1;
 				up.pressed = true;
 				return true;
-			case SDLK_r:
-				gravitySpell.downs += 1;
-				gravitySpell.pressed = true;
+			case SDLK_q:
+				counterClockwiseRot.downs += 1;
+				counterClockwiseRot.pressed = true;
+				return true;
+			case SDLK_e:
+				clockwiseRot.downs += 1;
+				clockwiseRot.pressed = true;
 				return true;
 			default:
 				break;
@@ -131,9 +135,13 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 				up.downs = 0;
 				up.pressed = false;
 				return true;
-			case SDLK_r:
-				gravitySpell.downs = 0;
-				gravitySpell.pressed = false;
+			case SDLK_q:
+				counterClockwiseRot.downs = 0;
+				counterClockwiseRot.pressed = false;
+				return true;
+			case SDLK_e:
+				clockwiseRot.downs = 0;
+				clockwiseRot.pressed = false;
 				return true;
 			default:
 				break;
@@ -148,37 +156,55 @@ void PlayMode::update(float elapsed) {
 	// gravity spell
 	{
 		// camera rotation speed
-		float CameraRotSpeed = 180.0f * elapsed;
+		float CameraRotSpeed = WORLD_ROT_ANGLE * elapsed;
 		if (isGravitySpellLocked) {
 			gravitySpellRot -= CameraRotSpeed;
 			
 			float remain = 0.f;
+			float factor = isClockwise ? -1.f : 1.f;
+
 			if (gravitySpellRot < 0.f) {
 				// record the remain angle so that 
 				// we will not over rotated
 				remain = gravitySpellRot;
-				gravitySpellRot = 180.f;
+				gravitySpellRot = WORLD_ROT_ANGLE;
 				isGravitySpellLocked = false;
-				
 			}
 
+			std::cout << gravitySpellRot << std::endl;
+			
 			// substract from the rotation angle if over roate,
 			// otherwise rotate on z axis
 			camera->transform->rotation = glm::normalize(
 				camera->transform->rotation
-				* glm::angleAxis(glm::radians(CameraRotSpeed + remain), glm::vec3(0.0f, 0.0f, 1.0f))
+				* glm::angleAxis(
+					glm::radians(factor * (CameraRotSpeed + remain)), glm::vec3(0.0f, 0.0f, 1.0f))
 			);
 			
 			for (auto& obj : moveableObjs){
 				obj->applyRotation(
-					glm::vec3(0.f, 0.f, glm::radians(CameraRotSpeed + remain)), 
+					glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))), 
 					camera->transform->position);
 			}
 		}
-		if (gravitySpell.pressed && !isGravitySpellLocked) {
-			gravity = -gravity;
+		if (clockwiseRot.pressed && !isGravitySpellLocked) {
+			gravity = glm::vec3(gravity.y, -gravity.x, 0.f);
 			isGravitySpellLocked = true;
-			PlayerStats::Instance().direction *= -1;
+			isClockwise = true;
+			PlayerStats::Instance().rotMat = PlayerStats::Instance().rotMat 
+				* glm::mat3(
+					glm::cos(glm::radians(WORLD_ROT_ANGLE)),  glm::sin(glm::radians(WORLD_ROT_ANGLE)), 0, 
+					-glm::sin(glm::radians(WORLD_ROT_ANGLE)), glm::cos(glm::radians(WORLD_ROT_ANGLE)), 0,
+					0,  																			0, 0);
+		} else if (counterClockwiseRot.pressed && !isGravitySpellLocked) {
+			gravity = glm::vec3(-gravity.y, gravity.x, 0.f);
+			isGravitySpellLocked = true;
+			isClockwise = false;
+			PlayerStats::Instance().rotMat = PlayerStats::Instance().rotMat 
+				* glm::mat3(
+					glm::cos(-glm::radians(WORLD_ROT_ANGLE)),  glm::sin(-glm::radians(WORLD_ROT_ANGLE)), 0, 
+					-glm::sin(-glm::radians(WORLD_ROT_ANGLE)), glm::cos(-glm::radians(WORLD_ROT_ANGLE)), 0,
+					0,  												  							  0, 0);
 		}
 	}
 
@@ -211,19 +237,19 @@ void PlayMode::update(float elapsed) {
 
 		if (playerPosOnWindow.x > 30.f)
 			camera->transform->position = camera->transform->position 
-				+ PlayerStats::Instance().direction * CameraSpeed * elapsed * right;
+				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
 		
 		if (playerPosOnWindow.x < -30.f)
 			camera->transform->position = camera->transform->position 
-				- PlayerStats::Instance().direction * CameraSpeed * elapsed * right;
+				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
 
 		if (playerPosOnWindow.y > 20.f)
 			camera->transform->position = camera->transform->position 
-				+ PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
+				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
 
 		if (playerPosOnWindow.y < -20.f)
 			camera->transform->position = camera->transform->position 
-				- PlayerStats::Instance().direction * CameraSpeed * elapsed * up;
+				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
 		
 		//camera->transform->position.x =std::clamp(camera->transform->position.x, 140.0f, 300.0f);
 		//camera->transform->position.y = std::clamp(camera->transform->position.y, 100.0f, 240.0f);
@@ -239,7 +265,7 @@ void PlayMode::update(float elapsed) {
 			camera->transform->position.y = player1->getPos().y;
 
 			camera->transform->rotation = glm::quat{ 1.f, 0.f, 0.f, 0.f };
-			gravitySpellRot = 180.f;
+			gravitySpellRot = WORLD_ROT_ANGLE;
 			isGravitySpellLocked = false;
 		}
 	}

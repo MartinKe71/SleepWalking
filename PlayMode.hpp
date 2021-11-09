@@ -35,14 +35,15 @@ struct PlayMode : Mode {
 	vector<GameObject*> moveableObjs;
 
 	//----- game state -----
-	float gravitySpellRot = 180.f;
+	float gravitySpellRot = WORLD_ROT_ANGLE;
+	bool isClockwise = false; 
 	bool isGravitySpellLocked = false;
 
 	//input tracking:
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	} left, right, down, up, gravitySpell;
+	} left, right, down, up, clockwiseRot, counterClockwiseRot;
 
 	PlayerObject* player1;
 };
