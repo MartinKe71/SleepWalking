@@ -14,16 +14,17 @@ public:
 		return audio_system;
 	}
 
-	void InitializeSound(const glm::vec3& pos);
 	void UpdateSoundPos(const glm::vec3& pos);
 
-	void PlayJumpSound(const float volume, const glm::vec3& pos) const;
+	void PlayJumpSound( glm::vec3& pos,  float volume = 1.0f) const;
+	void PlayFootStepsSound( glm::vec3& pos,  float volume = 1.0f);
+
+	void ResetPlayerSound();
 
 	~AudioSystem() {}
 	
 private:
-	AudioSystem() {}
-	std::shared_ptr< Sound::PlayingSample > dusty_floor_ps;
-	std::shared_ptr< Sound::PlayingSample > car_honk_ps;
-	std::shared_ptr< Sound::PlayingSample > train_horn_ps;
+	AudioSystem();
+
+	std::shared_ptr< Sound::PlayingSample > foot_steps_ps;
 };

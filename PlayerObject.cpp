@@ -1,5 +1,6 @@
 #include "PlayerObject.hpp"
 #include "load_save_png.hpp"
+#include "AudioSystem.hpp"
 
 
 PlayerObject::PlayerObject() {
@@ -81,6 +82,7 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
+        AudioSystem::Instance().PlayFootStepsSound(position);
     }
     else if (!left.pressed && right.pressed) {
         // move right
@@ -90,11 +92,16 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
+		AudioSystem::Instance().PlayFootStepsSound(position);
+    }
+    else if (!left.pressed && !right.pressed) {
+        AudioSystem::Instance().ResetPlayerSound();
     }
 
     if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
         force.y += jump_power * mass * PlayerStats::Instance().direction;
+        AudioSystem::Instance().PlayJumpSound(position, 1.0f);
         space.pressed = false;
         PlayerStats::Instance().canJump = false;
     }
