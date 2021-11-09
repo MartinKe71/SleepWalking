@@ -17,6 +17,8 @@ public:
 	float health = 100.f;
 	int direction = 1;
 	bool canJump = true;
+	float jumpElapsed = 0.f;
+
 	glm::vec3 startPos = glm::vec3(0.f);
 	glm::vec3 startVel = glm::vec3(0.f);
 

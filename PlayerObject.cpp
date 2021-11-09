@@ -82,7 +82,7 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
-        AudioSystem::Instance().PlayFootStepsSound(position);
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayFootStepsSound(position);
     }
     else if (!left.pressed && right.pressed) {
         // move right
@@ -92,11 +92,13 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
-		AudioSystem::Instance().PlayFootStepsSound(position);
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayFootStepsSound(position);
     }
     else if (!left.pressed && !right.pressed) {
         AudioSystem::Instance().ResetPlayerSound();
     }
+
+    if (!PlayerStats::Instance().canJump) PlayerStats::Instance().jumpElapsed += elapsed;
 
     if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
@@ -121,7 +123,10 @@ void PlayerObject::update(float elapsed) {
         }
         else {
             cout << " Gravity collided\n";
-            PlayerStats::Instance().canJump = true;
+            if (PlayerStats::Instance().jumpElapsed > 0.5f) {
+                PlayerStats::Instance().canJump = true;
+                PlayerStats::Instance().jumpElapsed = 0.f;
+            }
             velocity = glm::vec3(0.f);
         }
     }
