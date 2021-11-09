@@ -15,9 +15,9 @@ Load < Sound::Sample > train_horn_sample(LoadTagDefault, []() -> Sound::Sample c
 	return new Sound::Sample(data_path("train_horn.opus"));
 });
 
-void AudioSystem::InitializeSound()
+void AudioSystem::InitializeSound(const glm::vec3& pos)
 {
-	dusty_floor_ps->set_position();
+	dusty_floor_ps->Sound::loop_3D (*dusty_floor_sample, 1.0f, pos, HALF_VOLUME_RADIUS);
 }
 
 void AudioSystem::UpdateSoundPos(const glm::vec3& pos)
@@ -25,4 +25,9 @@ void AudioSystem::UpdateSoundPos(const glm::vec3& pos)
 	dusty_floor_ps->set_position(pos, 1.0f/60.0f);
 	car_honk_ps->set_position(pos, 1.0f/60.0f);
 	train_horn_ps->set_position(pos, 1.0f/60.0f);
+}
+
+void AudioSystem::PlayJumpSound(const float volume, const glm::vec3& pos) const
+{
+
 }

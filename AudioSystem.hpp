@@ -14,8 +14,10 @@ public:
 		return audio_system;
 	}
 
-	void InitializeSound();
-	void UpdateSoundPos();
+	void InitializeSound(const glm::vec3& pos);
+	void UpdateSoundPos(const glm::vec3& pos);
+
+	void PlayJumpSound(const float volume, const glm::vec3& pos) const;
 
 	~AudioSystem() {}
 	
