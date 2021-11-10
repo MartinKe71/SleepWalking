@@ -14,17 +14,14 @@ public:
 		return audio_system;
 	}
 
-	void UpdateSoundPos(const glm::vec3& pos);
+	void PlayShortAudio(const AudioSourceList sound, const glm::vec3& pos, float volume = 1.0f);
+	void PlayLongAudio(const AudioSourceList sound, const glm::vec3& pos, float volume = 1.0f);
+	void StopLongAudio(const AudioSourceList sound);
+	void StopAllAudio();
 
-	void PlayJumpSound( glm::vec3& pos,  float volume = 1.0f) const;
-	void PlayFootStepsSound( glm::vec3& pos,  float volume = 1.0f);
-
-	void ResetPlayerSound();
-
-	~AudioSystem() {}
+	~AudioSystem();
 	
 private:
 	AudioSystem();
-
 	std::shared_ptr< Sound::PlayingSample > foot_steps_ps;
 };

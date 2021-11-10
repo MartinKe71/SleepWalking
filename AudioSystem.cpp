@@ -24,32 +24,52 @@ AudioSystem::AudioSystem()
 	foot_steps_ps = Sound::loop_3D(*foot_steps_sample, 0.0f, glm::vec3(0), HALF_VOLUME_RADIUS);
 }
 
-//void AudioSystem::InitializeSound(const glm::vec3& pos)
-//{
-//	dusty_floor_ps->Sound::loop_3D (*dusty_floor_sample, 1.0f, pos, HALF_VOLUME_RADIUS);
-//}
-
-void AudioSystem::UpdateSoundPos(const glm::vec3& pos)
+AudioSystem::~AudioSystem()
 {
-	//dusty_floor_ps->set_position(pos, 1.0f/60.0f);
-	//car_honk_ps->set_position(pos, 1.0f/60.0f);
-	//train_horn_ps->set_position(pos, 1.0f/60.0f);
+	Sound::stop_all_samples();
 }
 
-void AudioSystem::PlayJumpSound( glm::vec3& pos, float volume) const
+void AudioSystem::PlayShortAudio(const AudioSourceList sound, const glm::vec3& pos, float volume /* = 1.0f */)
 {
-	Sound::play_3D(*car_honk_sample, volume, pos, HALF_VOLUME_RADIUS);
-	//Sound::play_3D(*foot_steps_sample, volume, pos, HALF_VOLUME_RADIUS);
+	switch (sound)
+	{
+	default:
+		break;
+
+	case AudioSourceList::Jump:
+		Sound::play_3D(*car_honk_sample, volume, pos, HALF_VOLUME_RADIUS);
+		break;
+	}
 }
 
-void AudioSystem::PlayFootStepsSound( glm::vec3& pos, float volume)
+void AudioSystem::PlayLongAudio(const AudioSourceList sound, const glm::vec3& pos, float volume /* = 1.0f */)
 {
-	foot_steps_ps->set_position(pos);
-	foot_steps_ps->set_volume(volume);
-	std::cout << "PLAYED_HERE" << volume << std::endl;
+	switch (sound)
+	{
+	default:
+		break;
+
+	case AudioSourceList::Footsteps:
+		foot_steps_ps->set_position(pos);
+		foot_steps_ps->set_volume(volume);
+		break;
+	}
 }
 
-void AudioSystem::ResetPlayerSound()
+void AudioSystem::StopLongAudio(const AudioSourceList sound)
+{
+	switch (sound)
+	{
+	default:
+		break;
+
+	case AudioSourceList::Footsteps:
+		foot_steps_ps->set_volume(0.0f);
+		break;
+	}
+}
+
+void AudioSystem::StopAllAudio()
 {
 	foot_steps_ps->set_volume(0.0f);
 }

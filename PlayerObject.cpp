@@ -82,7 +82,7 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
-        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayFootStepsSound(position);
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, position, 3.0f);
     }
     else if (!left.pressed && right.pressed) {
         // move right
@@ -92,10 +92,10 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
-        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayFootStepsSound(position);
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, position, 3.0f);
     }
     else if (!left.pressed && !right.pressed) {
-        AudioSystem::Instance().ResetPlayerSound();
+        AudioSystem::Instance().StopLongAudio(AudioSourceList::Footsteps);
     }
 
     if (!PlayerStats::Instance().canJump) PlayerStats::Instance().jumpElapsed += elapsed;
@@ -103,7 +103,7 @@ void PlayerObject::update(float elapsed) {
     if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
         force.y += jump_power * mass * PlayerStats::Instance().direction;
-        AudioSystem::Instance().PlayJumpSound(position, 1.0f);
+        AudioSystem::Instance().PlayShortAudio(AudioSourceList::Jump, position);
         space.pressed = false;
         PlayerStats::Instance().canJump = false;
     }

@@ -243,6 +243,13 @@ void PlayMode::update(float elapsed) {
 			isGravitySpellLocked = false;
 		}
 	}
+
+	{ //update listener to camera position:
+		glm::mat4x3 frame = camera->transform->make_local_to_parent();
+		glm::vec3 right = frame[0];
+		glm::vec3 at = frame[3];
+		Sound::listener.set_position_right(at, right, 1.0f / 60.0f);
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
