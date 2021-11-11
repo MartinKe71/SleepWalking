@@ -20,8 +20,14 @@ public:
 	glm::mat3 rotMat = glm::mat3(1.f);
 
 	bool canJump = true;
-	glm::vec3 startPos = glm::vec3(0.f);
-	glm::vec3 startVel = glm::vec3(0.f);
+
+	glm::vec3 player1Pos = glm::vec3(0.f);
+	glm::vec3 player2Pos = glm::vec3(0.f);
+
+	glm::vec3 player1StartPos = glm::vec3(0.f);
+	glm::vec3 player1StartVel = glm::vec3(0.f);
+	glm::vec3 player2StartPos = glm::vec3(0.f);
+	glm::vec3 player2StartVel = glm::vec3(0.f);
 
 	void reset();
 

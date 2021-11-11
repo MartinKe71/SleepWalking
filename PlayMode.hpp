@@ -6,6 +6,7 @@
 #include "data_path.hpp"
 #include "SquareObject.hpp"
 #include "PlayerObject.hpp"
+#include "SecondPlayerObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -46,4 +47,5 @@ struct PlayMode : Mode {
 	} left, right, down, up, clockwiseRot, counterClockwiseRot;
 
 	PlayerObject* player1;
+	SecondPlayerObject* player2;
 };
