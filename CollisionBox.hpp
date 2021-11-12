@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameObject.hpp"
 #include "Inivar.hpp"
 #include "PlayerStats.hpp"
 
@@ -22,6 +23,8 @@ public:
 	virtual void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) {}
 
 	std::string name;
+
+	GameObject* owner;
 
 private:
 	glm::vec2 pos {0};
@@ -57,4 +60,12 @@ public:
 	~ThornCollisionBox() {}
 private:
 	
+};
+
+class CollectableCollisionBox : public CollisionBox {
+public :
+	using CollisionBox::CollisionBox;
+	void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) override;
+	~CollectableCollisionBox() {}
+private:
 };

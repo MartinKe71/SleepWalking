@@ -9,8 +9,8 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, filename, l), width(w), height(h) {
 
-    PlayerStats::Instance().player1StartPos = pos;
-    PlayerStats::Instance().player1StartVel = vel;
+    PlayerStats::Instance().player1SavedPos = pos;
+    PlayerStats::Instance().player1SavedVel = vel;
 
     if (!filename.empty())
         load_png(data_path(filename),
@@ -58,8 +58,8 @@ void PlayerObject::reset() {
 
     PlayerStats::Instance().reset();
 
-    position = PlayerStats::Instance().player1StartPos;
-    velocity = PlayerStats::Instance().player1StartVel;
+    position = PlayerStats::Instance().player1SavedPos;
+    velocity = PlayerStats::Instance().player1SavedVel;
     box->SetPos(glm::vec2{ position.x, position.y });
 
     std::cout << "Before beng" << std::endl;
@@ -123,6 +123,9 @@ void PlayerObject::update(float elapsed) {
 
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
     std::cout << "Triggers checked" << std::endl;
+
+    CollisionSystem::Instance().PlayerCheckCollectables(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
+
 
     box->SetPos(glm::vec2{ position.x, position.y });
 

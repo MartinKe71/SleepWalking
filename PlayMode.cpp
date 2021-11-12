@@ -33,7 +33,6 @@ Load< Scene > sleepWalking_scene(LoadTagDefault, []() -> Scene const * {
 		drawable.pipeline.type = mesh.type;
 		drawable.pipeline.start = mesh.start;
 		drawable.pipeline.count = mesh.count;
-
 	});
 });
 
@@ -59,6 +58,18 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), 
 				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
 				transform.name);
+		}
+		else if (transform.name.find("Collectable") != string::npos) {
+			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/light.png");
+
+			collectableObjs.push_back(collectable);
+
+			collectable->box = CollisionSystem::Instance().AddOneCollectable(glm::vec2(transform.position.x, transform.position.y),
+				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+				transform.name);
+			collectable->box->owner = collectable;
 		}
 	}
 
@@ -334,6 +345,27 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	for (auto& obj : moveableObjs){
 		obj->draw(*camera);
 	}
+
+	std::cout << "drawing collectables" << std::endl;
+	int n = (int)collectableObjs.size();
+	for (int i = 0; i < n; i++) {
+		std::cout << i << std::endl;
+		auto obj = collectableObjs[i];
+		if (obj->getLife() > 0) {
+			obj->draw(*camera);
+		}
+		else {
+			
+			obj->~CollectableObject();
+			n--;
+
+			std::cout << "erase" << std::endl;
+			collectableObjs.erase(collectableObjs.begin() + i);
+			
+			i--;
+		}
+	}
+	std::cout << "finished drawing collectables" << std::endl;
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glDisable(GL_BLEND));

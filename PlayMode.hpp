@@ -7,6 +7,7 @@
 #include "SquareObject.hpp"
 #include "PlayerObject.hpp"
 #include "SecondPlayerObject.hpp"
+#include "CollectableObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -34,6 +35,7 @@ struct PlayMode : Mode {
 
 	//----- game object -----
 	vector<GameObject*> moveableObjs;
+	vector<CollectableObject*> collectableObjs;
 
 	//----- game state -----
 	float gravitySpellRot = WORLD_ROT_ANGLE;
@@ -48,4 +50,5 @@ struct PlayMode : Mode {
 
 	PlayerObject* player1;
 	SecondPlayerObject* player2;
+	
 };

@@ -21,6 +21,8 @@ public:
 
 	std::unordered_map<uint8_t, std::vector<std::shared_ptr<CollisionBox>>> scene_triggers;
 
+	std::unordered_map<uint8_t, std::vector<std::shared_ptr<CollectableCollisionBox>>> scenes_collectables;
+
 	size_t unit_width = static_cast<size_t>(GAME_MAP_SIZE.x / COLLISION_OPT_LEVEL);
 	size_t unit_height = static_cast<size_t>(GAME_MAP_SIZE.y / COLLISION_OPT_LEVEL);
 
@@ -28,9 +30,13 @@ public:
 
 	void PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& size);
 
+	void PlayerCheckCollectables(const glm::vec2& pos, const glm::vec2& size);
+
 	void AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
 	void AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
+
+	std::shared_ptr<CollectableCollisionBox> AddOneCollectable(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
 private:
 	CollisionSystem();

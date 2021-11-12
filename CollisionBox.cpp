@@ -13,3 +13,13 @@ void ThornCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 	//std::cout << "Somebody hits the thorn" << std::endl;
 	PlayerStats::Instance().health -= 100.f;	
 }
+
+void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
+{
+	std::cout << "Somebody hits the collectable" << std::endl;
+	PlayerStats::Instance().lightNum++;
+
+	if (owner != nullptr) {
+		owner->setLife(-1.f);
+	}
+}

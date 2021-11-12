@@ -150,6 +150,7 @@ GAME_NAMES =
 	SquareObject
 	PlayerObject
 	SecondPlayerObject
+	CollectableObject
 	Sound
 	load_wav
 	load_opus
