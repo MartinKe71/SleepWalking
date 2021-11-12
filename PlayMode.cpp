@@ -43,7 +43,8 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/QinYe.png");
+				false, "resource/templerun/Run.png");
+			// player1->addAnimation(data_path("resource/templerun/Run.txt"));
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
@@ -62,21 +63,25 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
-	// moveableObjs.push_back(new SquareObject(10.f, 
-	// 	glm::vec3(50.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
+	// test = new SquareObject(10.f, 
+	// 	player1->getPos(), glm::vec3(0.f, 0.f, 0.f), true, 20.f, "resource/templerun/Run.png");
+	// test->addAnimation(data_path("resource/templerun/Run.txt"));
+	// test->addAnimation(data_path("resource/spritsheet/Run.txt"));
+	
 	//moveableObjs.push_back(new SquareObject(10.f, 
 	//	glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
 	//moveableObjs.push_back(new SquareObject(10.f, 
 	//	glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 	
 	moveableObjs.push_back(player1);
-	
+	moveableObjs.push_back(test);
 }
 
 PlayMode::~PlayMode() {
 	for (auto& obj : moveableObjs){
         delete obj;
     }
+	// delete test;
 }
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
@@ -298,7 +303,6 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	
-
 	for (auto& obj : moveableObjs){
 		obj->draw(*camera);
 	}

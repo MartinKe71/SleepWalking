@@ -12,13 +12,13 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     PlayerStats::Instance().startPos = pos;
     PlayerStats::Instance().startVel = vel;
 
-    if (!filename.empty())
-        load_png(data_path(filename),
-            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
-    else {
-        pic = vector<glm::u8vec4>(1, glm::u8vec4(0xff));
-        sz = glm::uvec2(1, 1);
-    }
+    // if (!filename.empty())
+    //     load_png(data_path(filename),
+    //         &(sz), &(pic), OriginLocation::LowerLeftOrigin);
+    // else {
+    //     pic = vector<glm::u8vec4>(1, glm::u8vec4(0xff));
+    //     sz = glm::uvec2(1, 1);
+    // }
 
     createVerts();
     prepareDraw();
@@ -70,6 +70,10 @@ void PlayerObject::reset() {
 }
 
 void PlayerObject::update(float elapsed) {
+    // update texcoords every update
+    // if(type < this->anims.size() && anims[type]) 
+    //     anims[type]->play(this->VAO, this->VBO_texcoords, sz, elapsed);
+
     std::cout << "update player\n";
     if (left.pressed && !right.pressed) {
         // move left

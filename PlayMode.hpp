@@ -46,4 +46,6 @@ struct PlayMode : Mode {
 	} left, right, down, up, clockwiseRot, counterClockwiseRot;
 
 	PlayerObject* player1;
+
+	SquareObject* test;
 };

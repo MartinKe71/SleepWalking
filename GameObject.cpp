@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:16
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 23:31:16
+ * @ Modified time: 2021-11-12 13:41:15
  * @ Description: Base class for game object
  */
 
@@ -53,9 +53,15 @@ GameObject::~GameObject(){
     glDeleteBuffers(1, &VBO_positions);
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
+
+    // for(auto& o : anims) delete o;
 }
 
 void GameObject::update(float deltaTime){
+    // update texcoords every update
+    if(type < anims.size() && anims[type]) 
+        anims[type]->play(this->VAO, this->VBO_texcoords, sz, deltaTime);
+    
     // compute acceleration
     if (!isFixed && lifeSpan > 0.0f){
         glm::vec3 accel = force / mass;
@@ -85,7 +91,7 @@ void GameObject::prepareDraw() {
     GLCall(glEnableVertexAttribArray(shader->Position_vec4));
     GLCall(glVertexAttribPointer(shader->Position_vec4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
 
-    // Bind to the second VBO - We will use it to store the vertex_texcoords
+    // load texcoord every draw to create animation
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_texcoords));
     GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vertex_texcoords.size(), vertex_texcoords.data(), GL_STATIC_DRAW));
     GLCall(glEnableVertexAttribArray(shader->TexCoord_vec2));
@@ -98,9 +104,10 @@ void GameObject::prepareDraw() {
     // Unbind the VBOs.
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GLCall(glBindVertexArray(0));
-
+    
     GLCall(glBindTexture(GL_TEXTURE_2D, tex));
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz.x, sz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, pic.data()));
+    GLCall(glGenerateMipmap(GL_TEXTURE_2D));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
@@ -111,6 +118,8 @@ void GameObject::prepareDraw() {
 }
 
 void GameObject::draw(Scene::Camera const& camera) {
+    
+
     glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
 
     // apply local rotation
@@ -140,3 +149,17 @@ void GameObject::draw(Scene::Camera const& camera) {
     GLCall(glUseProgram(0));
 }
 
+void GameObject::addAnimation(const std::string& filename){
+    Animation2D* anim = new Animation2D(filename);
+	anims.push_back(anim);
+}
+
+void GameObject::changeTexture(const std::string& filename){
+    if (!filename.empty())
+        load_png(data_path(filename),
+            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
+    else {
+        pic = std::vector<glm::u8vec4>(1, glm::u8vec4(0xff));
+        sz = glm::uvec2(1, 1);
+    }
+}
