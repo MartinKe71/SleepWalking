@@ -102,13 +102,13 @@
         <key>algorithmSettings</key>
         <struct type="AlgorithmSettings">
             <key>algorithm</key>
-            <enum type="AlgorithmSettings::AlgorithmId">MaxRects</enum>
+            <enum type="AlgorithmSettings::AlgorithmId">Basic</enum>
             <key>freeSizeMode</key>
             <enum type="AlgorithmSettings::AlgorithmFreeSizeMode">Best</enum>
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">AnySize</enum>
             <key>forceSquared</key>
-            <false/>
+            <true/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -132,7 +132,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename></filename>
+                <filename>spritesheet.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -153,7 +153,7 @@
         <key>trimSpriteNames</key>
         <false/>
         <key>prependSmartFolderName</key>
-        <false/>
+        <true/>
         <key>autodetectAnimations</key>
         <true/>
         <key>globalSpriteSettings</key>
@@ -163,11 +163,11 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>1</uint>
+            <uint>0</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
-            <uint>1</uint>
+            <uint>20</uint>
             <key>trimMode</key>
             <enum type="SpriteSettings::TrimMode">Trim</enum>
             <key>tracerTolerance</key>
@@ -177,20 +177,20 @@
             <key>defaultPivotPoint</key>
             <point_f>0.5,0.5</point_f>
             <key>writePivotPoints</key>
-            <true/>
+            <false/>
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">Idle__000.png</key>
-            <key type="filename">Idle__001.png</key>
-            <key type="filename">Idle__002.png</key>
-            <key type="filename">Idle__003.png</key>
-            <key type="filename">Idle__004.png</key>
-            <key type="filename">Idle__005.png</key>
-            <key type="filename">Idle__006.png</key>
-            <key type="filename">Idle__007.png</key>
-            <key type="filename">Idle__008.png</key>
-            <key type="filename">Idle__009.png</key>
+            <key type="filename">Idle/Idle__000.png</key>
+            <key type="filename">Idle/Idle__001.png</key>
+            <key type="filename">Idle/Idle__002.png</key>
+            <key type="filename">Idle/Idle__003.png</key>
+            <key type="filename">Idle/Idle__004.png</key>
+            <key type="filename">Idle/Idle__005.png</key>
+            <key type="filename">Idle/Idle__006.png</key>
+            <key type="filename">Idle/Idle__007.png</key>
+            <key type="filename">Idle/Idle__008.png</key>
+            <key type="filename">Idle/Idle__009.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -205,26 +205,44 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">Run/Run__000.png</key>
+            <key type="filename">Run/Run__001.png</key>
+            <key type="filename">Run/Run__002.png</key>
+            <key type="filename">Run/Run__003.png</key>
+            <key type="filename">Run/Run__004.png</key>
+            <key type="filename">Run/Run__005.png</key>
+            <key type="filename">Run/Run__006.png</key>
+            <key type="filename">Run/Run__007.png</key>
+            <key type="filename">Run/Run__008.png</key>
+            <key type="filename">Run/Run__009.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>104,127,207,253</rect>
+                <key>scale9Paddings</key>
+                <rect>104,127,207,253</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>Idle__000.png</filename>
-            <filename>Idle__001.png</filename>
-            <filename>Idle__002.png</filename>
-            <filename>Idle__003.png</filename>
-            <filename>Idle__004.png</filename>
-            <filename>Idle__005.png</filename>
-            <filename>Idle__006.png</filename>
-            <filename>Idle__007.png</filename>
-            <filename>Idle__008.png</filename>
-            <filename>Idle__009.png</filename>
+            <filename>Idle</filename>
+            <filename>Run</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
         <key>replaceList</key>
         <array/>
         <key>ignoredWarnings</key>
-        <array/>
+        <array>
+            <string>large-max-texture-size</string>
+        </array>
         <key>commonDivisorX</key>
         <uint>1</uint>
         <key>commonDivisorY</key>

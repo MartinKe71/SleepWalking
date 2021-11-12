@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:16
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 13:41:15
+ * @ Modified time: 2021-11-12 17:17:22
  * @ Description: Base class for game object
  */
 
@@ -59,7 +59,7 @@ GameObject::~GameObject(){
 
 void GameObject::update(float deltaTime){
     // update texcoords every update
-    if(type < anims.size() && anims[type]) 
+    if(anims.count(type) && anims[type]) 
         anims[type]->play(this->VAO, this->VBO_texcoords, sz, deltaTime);
     
     // compute acceleration
@@ -149,17 +149,7 @@ void GameObject::draw(Scene::Camera const& camera) {
     GLCall(glUseProgram(0));
 }
 
-void GameObject::addAnimation(const std::string& filename){
-    Animation2D* anim = new Animation2D(filename);
-	anims.push_back(anim);
-}
-
-void GameObject::changeTexture(const std::string& filename){
-    if (!filename.empty())
-        load_png(data_path(filename),
-            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
-    else {
-        pic = std::vector<glm::u8vec4>(1, glm::u8vec4(0xff));
-        sz = glm::uvec2(1, 1);
-    }
+void GameObject::addAnimation(const std::string& type, const std::string& filename){
+    Animation2D* anim = new Animation2D(data_path(filename));
+	anims[type] = anim;
 }

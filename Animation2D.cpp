@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-11-11 21:05:07
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 13:47:47
+ * @ Modified time: 2021-11-12 17:05:50
  * @ Description: Animation System
  */
 
@@ -47,6 +47,9 @@ Animation2D::Animation2D(const std::string& filename)
 
 	frames_count = (int)frames.size();
     
+	// for (glm::vec4& frame : frames)
+	// 	std::cout << frame.x << " " << frame.y << " " << frame.z << " " << frame.w << std::endl;
+	// exit(0);
 	fclose(fp);
 }
 
@@ -65,7 +68,7 @@ void Animation2D::play(GLuint VAO, GLuint VBO_texcoords, const glm::uvec2& textu
 	}
     
 	glm::vec4 frame = frames[current_frame_indx];
-    
+
 	// normalization
 	frame.x /= texture_size.x;
 	frame.y /= texture_size.y;
@@ -75,11 +78,11 @@ void Animation2D::play(GLuint VAO, GLuint VBO_texcoords, const glm::uvec2& textu
 	vector<glm::vec2> uv = {
         glm::vec2(frame.x + frame.z, frame.y + frame.w),
         glm::vec2(frame.x + frame.z, frame.y),
-		glm::vec2(frame.x,frame.y),
+		glm::vec2(frame.x, frame.y),
 		glm::vec2(frame.x, frame.y + frame.w)
 	};
 
-    std::cout << frame.x << " " << frame.y << " " << frame.z << " " << frame.w << std::endl;
+    // std::cout << frame.x << " " << frame.y << " " << frame.z << " " << frame.w << std::endl;
     
 	GLCall(glBindVertexArray(VAO));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_texcoords));

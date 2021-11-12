@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-11-11 21:05:14
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 00:15:58
+ * @ Modified time: 2021-11-12 17:13:06
  * @ Description: Animation Interface
  */
 
@@ -11,13 +11,6 @@
 #include <vector>
 
 using namespace std;
-
-enum AnimationType
-{
-	Idle,
-	Run,
-	Jump
-};
 
 class Animation2D
 {

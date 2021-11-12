@@ -43,8 +43,10 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/templerun/Run.png");
-			// player1->addAnimation(data_path("resource/templerun/Run.txt"));
+				false, "resource/templerun/spritesheet.png");
+			player1->addAnimation("Idle", "resource/templerun/Idle.txt");
+			player1->addAnimation("Run", "resource/templerun/Run.txt");
+			player1->addAnimation("Jump", "resource/templerun/Jump.txt");
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
@@ -64,7 +66,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	camera = &scene.cameras.front();
 	
 	// test = new SquareObject(10.f, 
-	// 	player1->getPos(), glm::vec3(0.f, 0.f, 0.f), true, 20.f, "resource/templerun/Run.png");
+	// 	player1->getPos(), glm::vec3(0.f, 0.f, 0.f), true, 20.f, "resource/templerun/spritesheet.png");
 	// test->addAnimation(data_path("resource/templerun/Run.txt"));
 	// test->addAnimation(data_path("resource/spritsheet/Run.txt"));
 	
@@ -74,7 +76,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	//	glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 	
 	moveableObjs.push_back(player1);
-	moveableObjs.push_back(test);
+	// moveableObjs.push_back(test);
 }
 
 PlayMode::~PlayMode() {

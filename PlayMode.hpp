@@ -47,5 +47,5 @@ struct PlayMode : Mode {
 
 	PlayerObject* player1;
 
-	SquareObject* test;
+	// SquareObject* test;
 };

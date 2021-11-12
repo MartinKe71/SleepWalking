@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 13:40:22
+ * @ Modified time: 2021-11-12 17:14:54
  * @ Description: Header file for GameObject class
  */
 
@@ -80,11 +80,10 @@ public:
     }
     
     void prepareDraw();
-    void addAnimation(const std::string& filename);
+    void addAnimation(const std::string& type, const std::string& filename);
 
     virtual void createVerts() = 0;
 
-    virtual void changeTexture (const string& filename);
     virtual void update (float deltaTime);
     virtual void draw (Scene::Camera const &camera);
     virtual void reset();
@@ -118,8 +117,8 @@ protected:
     std::vector< glm::u8vec4 > pic;
 
     // animation info
-    std::vector<Animation2D*> anims;
-    AnimationType type = AnimationType::Idle;
+    std::unordered_map<std::string, Animation2D*> anims;
+    std::string type = "Idle";
 };
 
 #endif /* GameObject_h */
