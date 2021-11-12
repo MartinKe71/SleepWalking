@@ -32,6 +32,8 @@ public:
 
 	void reset();
 
+	void to_string();
+
 private:
 	PlayerStats();
 };

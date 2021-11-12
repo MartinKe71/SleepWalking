@@ -312,6 +312,8 @@ void PlayMode::update(float elapsed) {
 			isGravitySpellLocked = false;
 		}
 	}
+
+	PlayerStats::Instance().to_string();
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {

@@ -110,6 +110,7 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 			if (res)
 			{
 				triggers[i]->OnTriggerEnter(player1_collision);
+				return;
 			}
 		}
 	}
@@ -137,11 +138,15 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 
 	std::cout << "iterating trigger arrays " << scene_triggers.size();
 
+
+	std::shared_ptr<CollectableCollisionBox> to_delete;
+
 	// Collectables
 	for (const uint8_t i : sections)
 	{
 		std::cout << " at index: " << std::to_string(i) << std::endl;
 		std::vector<std::shared_ptr<CollectableCollisionBox>>& collectables = scenes_collectables[i];
+
 		for (size_t j = 0; j < collectables.size(); j++)
 		{
 			bool res = IsCollided(player_box, collectables[j]->GetBoxCoord());
@@ -154,9 +159,21 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 
 				collectables[j]->OnTriggerEnter(player1_collision);
 
-				collectables.erase(collectables.begin() + j);
-				j--;
+				to_delete = collectables[j];
+
+				//collectables.erase(collectables.begin() + j);
+
+				//j--;
+				break;
 			}
+		}
+	}
+
+	if (to_delete != nullptr) {
+		std::cout << "Erasing collectable collision box" << std::endl;
+		for (uint8_t i : sections) {
+			auto pos = find(scenes_collectables[i].begin(), scenes_collectables[i].end(), to_delete);
+			scenes_collectables[i].erase(pos);
 		}
 	}
 }
