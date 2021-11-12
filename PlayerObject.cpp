@@ -76,7 +76,8 @@ void PlayerObject::update(float elapsed) {
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(-1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
         cout << "checking collision\n";
-        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{ width * 2, height * 2})) {
+        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
+            glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
             cout << "Not colliding\n";
             position.x = new_pos.x;
             position.y = new_pos.y;
@@ -86,7 +87,8 @@ void PlayerObject::update(float elapsed) {
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, glm::vec2{width * 2, height * 2})) {
+        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
+            glm::vec2{width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
@@ -106,7 +108,8 @@ void PlayerObject::update(float elapsed) {
         glm::vec3 new_pos = position + velocity * elapsed;
         cout << "new_pos: " << glm::to_string(new_pos) << endl;
         cout << "\n";
-        if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, glm::vec2{ width * 2, height * 2})) {
+        if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, 
+            glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
             cout << "Graivity Not colliding\n";
             
             position.x = new_pos.x;
