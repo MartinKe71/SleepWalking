@@ -273,7 +273,7 @@ void PlayMode::update(float elapsed) {
 		// 	player1->getPos().y, camera->transform->position.z);
 
 		// // camera movement test
-		float CameraSpeed = player1->getSpeed();
+		float CameraSpeed = glm::length(player1->getVelocity());
 		
 		glm::vec2 playerPosOnWindow = glm::vec2(
 			player1->getPos().x - camera->transform->position.x, 

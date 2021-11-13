@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 17:14:54
+ * @ Modified time: 2021-11-12 23:14:14
  * @ Description: Header file for GameObject class
  */
 
@@ -67,7 +67,7 @@ public:
     void setVelocity(const glm::vec3& v){
         velocity = v;
     }
-    
+
     void applyNormal(glm::vec3& n) {
         normal += n;
     }
