@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-11-11 21:05:07
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 22:00:34
+ * @ Modified time: 2021-11-12 22:02:15
  * @ Description: Animation System
  */
 
@@ -25,7 +25,7 @@ Animation2D::Animation2D(const std::string& filename)
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 	fopen_s(&fp, filename.c_str(), "r");
-#elif __APPLE__
+#elif __APPLE__ || __linux__
 	fp = fopen(filename.c_str(), "r");
 #else
 #   error "Unknown compiler"
