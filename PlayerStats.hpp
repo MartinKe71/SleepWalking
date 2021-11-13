@@ -18,6 +18,7 @@ public:
 	int direction = 1;
 	
 	glm::mat3 rotMat = glm::mat3(1.f);
+	bool isFacingLeft = false;
 
 	bool canJump = true;
 

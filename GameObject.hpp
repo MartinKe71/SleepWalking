@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 23:39:44
+ * @ Modified time: 2021-11-12 17:14:54
  * @ Description: Header file for GameObject class
  */
 
@@ -21,6 +21,7 @@
 
 #include "ColorTextureProgram.hpp"
 #include "Scene.hpp"
+#include "Animation2D.hpp"
 #include "glm/gtx/euler_angles.hpp"
 
 class GameObject {
@@ -79,7 +80,10 @@ public:
     }
     
     void prepareDraw();
+    void addAnimation(const std::string& type, const std::string& filename);
+
     virtual void createVerts() = 0;
+
     virtual void update (float deltaTime);
     virtual void draw (Scene::Camera const &camera);
     virtual void reset();
@@ -111,6 +115,10 @@ protected:
     // texture info
     glm::uvec2 sz;
     std::vector< glm::u8vec4 > pic;
+
+    // animation info
+    std::unordered_map<std::string, Animation2D*> anims;
+    std::string type = "Idle";
 };
 
 #endif /* GameObject_h */

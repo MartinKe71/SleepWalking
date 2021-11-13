@@ -43,7 +43,10 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player1") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/QinYe.png");
+				false, "resource/templerun/spritesheet.png");
+			player1->addAnimation("Idle", "resource/templerun/Idle.txt");
+			player1->addAnimation("Run", "resource/templerun/Run.txt");
+			player1->addAnimation("Jump", "resource/templerun/Jump.txt");
 		}
 		else if (transform.name == "Player2") {
 			player2 = new SecondPlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
@@ -67,8 +70,11 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
-	// moveableObjs.push_back(new SquareObject(10.f, 
-	// 	glm::vec3(50.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/blood32.png"));
+	// test = new SquareObject(10.f, 
+	// 	player1->getPos(), glm::vec3(0.f, 0.f, 0.f), true, 20.f, "resource/templerun/spritesheet.png");
+	// test->addAnimation(data_path("resource/templerun/Run.txt"));
+	// test->addAnimation(data_path("resource/spritsheet/Run.txt"));
+	
 	//moveableObjs.push_back(new SquareObject(10.f, 
 	//	glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
 	//moveableObjs.push_back(new SquareObject(10.f, 
@@ -76,13 +82,14 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	
 	moveableObjs.push_back(player1);
 	moveableObjs.push_back(player2);
-	
+	// moveableObjs.push_back(test);
 }
 
 PlayMode::~PlayMode() {
 	for (auto& obj : moveableObjs){
         delete obj;
     }
+	// delete test;
 }
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
@@ -330,7 +337,6 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	
-
 	for (auto& obj : moveableObjs){
 		obj->draw(*camera);
 	}

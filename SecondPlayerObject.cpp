@@ -135,4 +135,9 @@ void SecondPlayerObject::update(float elapsed) {
     //}
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
+
+    if(anims.count(type) && anims[type]) 
+        anims[type]->play(this->VAO, this->VBO_texcoords, sz, elapsed);
+    
+    type = "Idle";
 }

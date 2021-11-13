@@ -142,6 +142,7 @@ GAME_NAMES =
 	CollisionBox
 	FontSource
 	ShapeTextureProgram
+	Animation2D
 	PlayMode
 	main
 	LitColorTextureProgram

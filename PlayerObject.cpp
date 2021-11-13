@@ -12,14 +12,6 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     PlayerStats::Instance().player1StartPos = pos;
     PlayerStats::Instance().player1StartVel = vel;
 
-    if (!filename.empty())
-        load_png(data_path(filename),
-            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
-    else {
-        pic = vector<glm::u8vec4>(1, glm::u8vec4(0xff));
-        sz = glm::uvec2(1, 1);
-    }
-
     createVerts();
     prepareDraw();
 
@@ -72,9 +64,11 @@ void PlayerObject::reset() {
 void PlayerObject::update(float elapsed) {
     std::cout << "update player\n";
     if (left.pressed && !right.pressed) {
+        type = "Run";
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(-1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
+        PlayerStats::Instance().isFacingLeft = true;
         cout << "checking collision\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
             glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
@@ -84,9 +78,11 @@ void PlayerObject::update(float elapsed) {
         }
     }
     else if (!left.pressed && right.pressed) {
+        type = "Run";
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
+        PlayerStats::Instance().isFacingLeft = false;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
             glm::vec2{width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
             position.x = new_pos.x;
@@ -96,6 +92,7 @@ void PlayerObject::update(float elapsed) {
 
     if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
+        type = "Jump";
         force += mass * jump_power * glm::vec3(0.f, 1.f, 0.f) * PlayerStats::Instance().rotMat;
         space.pressed = false;
         PlayerStats::Instance().canJump = false;
@@ -134,4 +131,10 @@ void PlayerObject::update(float elapsed) {
     //}
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
+
+    // update texcoords every update
+    if(anims.count(type) && anims[type]) 
+        anims[type]->play(this->VAO, this->VBO_texcoords, sz, elapsed);
+    
+    type = "Idle";
 }
