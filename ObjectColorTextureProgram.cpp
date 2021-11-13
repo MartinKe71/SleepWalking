@@ -15,15 +15,15 @@ ObjectColorTextureProgram::ObjectColorTextureProgram() {
 		"uniform mat3 NORMAL_TO_LIGHT;\n"
 		"uniform vec4 Color;\n"
 		"uniform mat4 Model;\n"
-		"in vec4 Position;\n"
-		"in vec3 Normal;\n"		
+		"uniform vec3 Normal;\n"
+		"in vec4 Position;\n"			
 		"in vec2 TexCoord;\n"
 		"out vec3 position;\n"
 		"out vec3 normal;\n"
 		"out vec4 color;\n"
 		"out vec2 texCoord;\n"
 		"void main() {\n"
-		"	gl_Position = OBJECT_TO_CLIP * Position;\n"
+		"	gl_Position = OBJECT_TO_CLIP * Model * Position;\n"
 		"	position = OBJECT_TO_LIGHT * Position;\n"
 		"	normal = NORMAL_TO_LIGHT * Normal;\n"
 		"	color = Color;\n"
@@ -63,6 +63,7 @@ ObjectColorTextureProgram::ObjectColorTextureProgram() {
 		"		nl *= smoothstep(LIGHT_CUTOFF,mix(LIGHT_CUTOFF,1.0,0.1), c);\n"
 		"		e = nl * LIGHT_ENERGY;\n"
 		"	} else { //(LIGHT_TYPE == 3) //directional light \n"
+		//"		e = vec3(1.0f);\n"
 		"		e = max(0.0, dot(n,-LIGHT_DIRECTION)) * LIGHT_ENERGY;\n"
 		"	}\n"
 		"	vec4 albedo = texture(TEX, texCoord) * color;\n"
@@ -74,10 +75,10 @@ ObjectColorTextureProgram::ObjectColorTextureProgram() {
 
 	//look up the locations of vertex attributes:
 	Position_vec4 = glGetAttribLocation(program, "Position");
-	Normal_vec3 = glGetAttribLocation(program, "Normal");
 	TexCoord_vec2 = glGetAttribLocation(program, "TexCoord");
 
 	//look up the locations of uniforms:
+	Normal_vec3 = glGetUniformLocation(program, "Normal");
 	Color_vec4 = glGetUniformLocation(program, "Color");
 	Model_mat4 = glGetUniformLocation(program, "Model");
 	OBJECT_TO_CLIP_mat4 = glGetUniformLocation(program, "OBJECT_TO_CLIP");
