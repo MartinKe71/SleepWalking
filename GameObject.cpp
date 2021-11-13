@@ -121,6 +121,8 @@ void GameObject::draw(Scene::Camera const& camera) {
     
 
     glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
+    //glm::mat4x3 world_to_light = glm::mat4x3(1.0f);
+    //glm::mat3 normal_to_light = glm::inverse(glm::transpose(glm::mat3(world_to_light)));
 
     // apply local rotation
     glm::mat4 curModel = glm::translate(glm::mat4(1.f), position) * model;
@@ -131,6 +133,8 @@ void GameObject::draw(Scene::Camera const& camera) {
 
     // get the locations and send the uniforms to the shader
     GLCall(glUniformMatrix4fv(shader->OBJECT_TO_CLIP_mat4, 1, GL_FALSE, glm::value_ptr(world_to_clip)));
+    //GLCall(glUniformMatrix4x3fv(shader->OBJECT_TO_LIGHT_mat4x3, 1, GL_FALSE, glm::value_ptr(world_to_light)));
+    //GLCall(glUniformMatrix3fv(shader->NORMAL_TO_LIGHT_mat3, 1, GL_FALSE, glm::value_ptr(normal_to_light)));
     GLCall(glUniformMatrix4fv(shader->Model_mat4, 1, GL_FALSE, (float*)&curModel));
     GLCall(glUniform4fv(shader->Color_vec4, 1, &color[0]));
 

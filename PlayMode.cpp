@@ -33,7 +33,6 @@ Load< Scene > sleepWalking_scene(LoadTagDefault, []() -> Scene const * {
 		drawable.pipeline.type = mesh.type;
 		drawable.pipeline.start = mesh.start;
 		drawable.pipeline.count = mesh.count;
-
 	});
 });
 
@@ -62,6 +61,18 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), 
 				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
 				transform.name);
+		}
+		else if (transform.name.find("Collectable") != string::npos) {
+			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/light.png");
+
+			collectableObjs.push_back(collectable);
+
+			collectable->box = CollisionSystem::Instance().AddOneCollectable(glm::vec2(transform.position.x, transform.position.y),
+				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+				transform.name);
+			collectable->box->owner = collectable;
 		}
 	}
 
@@ -308,6 +319,14 @@ void PlayMode::update(float elapsed) {
 			isGravitySpellLocked = false;
 		}
 	}
+
+	PlayerStats::Instance().to_string();
+	{ //update listener to camera position:
+		glm::mat4x3 frame = camera->transform->make_local_to_parent();
+		glm::vec3 right = frame[0];
+		glm::vec3 at = frame[3];
+		Sound::listener.set_position_right(at, right, 1.0f / 60.0f);
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
@@ -317,9 +336,19 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
 	//set up light type and position for lit_color_texture_program:
 	GLCall(glUseProgram(lit_color_texture_program->program));
-	GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 1));
+	GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
+	glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(PlayerStats::Instance().player1Pos + glm::vec3(0.0f, 0.f, 10.0f)));
 	GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f,-1.0f))));
-	GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f))));
+	glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f));
+	GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 200.f)));
+	GLCall(glUseProgram(0));
+
+	GLCall(glUseProgram(object_color_texture_program->program));
+	GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 2));
+	GLCall(glUniform3fv(object_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(PlayerStats::Instance().player1Pos + glm::vec3(0.0f, 0.f, 10.0f))));
+	GLCall(glUniform3fv(object_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
+	GLCall(glUniform1f(object_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
+	GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 200.f)));
 	GLCall(glUseProgram(0));
 
 	GLCall(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
@@ -340,6 +369,27 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	for (auto& obj : moveableObjs){
 		obj->draw(*camera);
 	}
+
+	std::cout << "drawing collectables" << std::endl;
+	int n = (int)collectableObjs.size();
+	for (int i = 0; i < n; i++) {
+		std::cout << i << std::endl;
+		auto obj = collectableObjs[i];
+		if (obj->getLife() > 0) {
+			obj->draw(*camera);
+		}
+		else {
+			
+			obj->~CollectableObject();
+			n--;
+
+			std::cout << "erase" << std::endl;
+			collectableObjs.erase(collectableObjs.begin() + i);
+			
+			i--;
+		}
+	}
+	std::cout << "finished drawing collectables" << std::endl;
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glDisable(GL_BLEND));

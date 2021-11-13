@@ -1,5 +1,6 @@
 #include "PlayerObject.hpp"
 #include "load_save_png.hpp"
+#include "AudioSystem.hpp"
 
 
 PlayerObject::PlayerObject() {
@@ -9,8 +10,8 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, filename, l), width(w), height(h) {
 
-    PlayerStats::Instance().player1StartPos = pos;
-    PlayerStats::Instance().player1StartVel = vel;
+    PlayerStats::Instance().player1SavedPos = pos;
+    PlayerStats::Instance().player1SavedVel = vel;
 
     createVerts();
     prepareDraw();
@@ -50,8 +51,8 @@ void PlayerObject::reset() {
 
     PlayerStats::Instance().reset();
 
-    position = PlayerStats::Instance().player1StartPos;
-    velocity = PlayerStats::Instance().player1StartVel;
+    position = PlayerStats::Instance().player1SavedPos;
+    velocity = PlayerStats::Instance().player1SavedVel;
     box->SetPos(glm::vec2{ position.x, position.y });
 
     std::cout << "Before beng" << std::endl;
@@ -76,6 +77,7 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
     }
     else if (!left.pressed && right.pressed) {
         type = "Run";
@@ -88,12 +90,20 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
     }
+    else if (!left.pressed && !right.pressed) {
+        AudioSystem::Instance().StopLongAudio(AudioSourceList::Footsteps);
+    }
+
+    if (!PlayerStats::Instance().canJump) PlayerStats::Instance().jumpElapsed += elapsed;
 
     if (space.pressed && PlayerStats::Instance().canJump) {
         cout << "jump\n";
         type = "Jump";
         force += mass * jump_power * glm::vec3(0.f, 1.f, 0.f) * PlayerStats::Instance().rotMat;
+        AudioSystem::Instance().PlayShortAudio(AudioSourceList::Jump);
+        AudioSystem::Instance().StopLongAudio(AudioSourceList::Footsteps);
         space.pressed = false;
         PlayerStats::Instance().canJump = false;
     }
@@ -114,7 +124,10 @@ void PlayerObject::update(float elapsed) {
         }
         else {
             cout << " Gravity collided\n";
-            PlayerStats::Instance().canJump = true;
+            if (PlayerStats::Instance().jumpElapsed > 0.5f) {
+                PlayerStats::Instance().canJump = true;
+                PlayerStats::Instance().jumpElapsed = 0.f;
+            }
             velocity = glm::vec3(0.f);
         }
     }
@@ -123,6 +136,9 @@ void PlayerObject::update(float elapsed) {
 
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
     std::cout << "Triggers checked" << std::endl;
+
+    CollisionSystem::Instance().PlayerCheckCollectables(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
+
 
     box->SetPos(glm::vec2{ position.x, position.y });
 

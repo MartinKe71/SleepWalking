@@ -9,8 +9,8 @@ SecondPlayerObject::SecondPlayerObject(float mass, const glm::vec3& pos, float w
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, filename, l), width(w), height(h) {
 
-    PlayerStats::Instance().player2StartPos = pos;
-    PlayerStats::Instance().player2StartVel = vel;
+    PlayerStats::Instance().player2SavedPos = pos;
+    PlayerStats::Instance().player2SavedVel = vel;
 
     if (!filename.empty())
         load_png(data_path(filename),
@@ -58,8 +58,8 @@ void SecondPlayerObject::reset() {
 
     PlayerStats::Instance().reset();
 
-    position = PlayerStats::Instance().player2StartPos;
-    velocity = PlayerStats::Instance().player2StartVel;
+    position = PlayerStats::Instance().player2SavedPos;
+    velocity = PlayerStats::Instance().player2SavedVel;
 
     std::cout << "Before beng" << std::endl;
 

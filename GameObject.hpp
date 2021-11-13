@@ -20,6 +20,7 @@
 #include <unordered_map>
 
 #include "ColorTextureProgram.hpp"
+#include "ObjectColorTextureProgram.hpp"
 #include "Scene.hpp"
 #include "Animation2D.hpp"
 #include "glm/gtx/euler_angles.hpp"
@@ -103,6 +104,7 @@ protected:
 
     // shader info
     Load< ColorTextureProgram > shader = color_texture_program;
+    //Load< ObjectColorTextureProgram > shader = object_color_texture_program;
 
     GLuint VAO;
     GLuint VBO_positions, VBO_texcoords, EBO;

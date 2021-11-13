@@ -1,75 +1,11 @@
-#include "LitColorTextureProgram.hpp"
-#include "load_save_png.hpp"
-#include "data_path.hpp"
+#include "ObjectColorTextureProgram.hpp"
 
 #include "gl_compile_program.hpp"
 #include "gl_errors.hpp"
 
-Scene::Drawable::Pipeline lit_color_texture_program_pipeline;
+Load< ObjectColorTextureProgram > object_color_texture_program(LoadTagEarly);
 
-Load< LitColorTextureProgram > lit_color_texture_program(LoadTagEarly, []() -> LitColorTextureProgram const * {
-	LitColorTextureProgram *ret = new LitColorTextureProgram();
-
-	//----- build the pipeline template -----
-	lit_color_texture_program_pipeline.program = ret->program;
-
-	lit_color_texture_program_pipeline.OBJECT_TO_CLIP_mat4 = ret->OBJECT_TO_CLIP_mat4;
-	lit_color_texture_program_pipeline.OBJECT_TO_LIGHT_mat4x3 = ret->OBJECT_TO_LIGHT_mat4x3;
-	lit_color_texture_program_pipeline.NORMAL_TO_LIGHT_mat3 = ret->NORMAL_TO_LIGHT_mat3;
-
-	/* This will be used later if/when we build a light loop into the Scene:
-	lit_color_texture_program_pipeline.LIGHT_TYPE_int = ret->LIGHT_TYPE_int;
-	lit_color_texture_program_pipeline.LIGHT_LOCATION_vec3 = ret->LIGHT_LOCATION_vec3;
-	lit_color_texture_program_pipeline.LIGHT_DIRECTION_vec3 = ret->LIGHT_DIRECTION_vec3;
-	lit_color_texture_program_pipeline.LIGHT_ENERGY_vec3 = ret->LIGHT_ENERGY_vec3;
-	lit_color_texture_program_pipeline.LIGHT_CUTOFF_float = ret->LIGHT_CUTOFF_float;
-	*/
-
-	//make a 1-pixel white texture to bind by default:
-	GLuint tex;
-	glGenTextures(1, &tex);
-
-	glBindTexture(GL_TEXTURE_2D, tex);
-
-	std::vector< glm::u8vec4 > tex_data(1, glm::u8vec4(0xff));
-	glm::uvec2 sz;
-	load_png(data_path("resource/map-1.png"), &(sz), &(tex_data), OriginLocation::LowerLeftOrigin);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz.x, sz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data.data());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	lit_color_texture_program_pipeline.textures[0].texture = tex;
-	lit_color_texture_program_pipeline.textures[0].target = GL_TEXTURE_2D;
-
-	//GLuint tex1;
-	//glGenTextures(1, &tex1);
-
-	//glBindTexture(GL_TEXTURE_2D, tex1);
-
-	//std::vector< glm::u8vec4 > tex_data1(1, glm::u8vec4(0xff));
-	//glm::uvec2 sz1;
-	//load_png(data_path("resource/mos.png"), &(sz1), &(tex_data1), OriginLocation::LowerLeftOrigin);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz1.x, sz1.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data1.data());
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	//lit_color_texture_program_pipeline.textures[1].texture = tex1;
-	//lit_color_texture_program_pipeline.textures[1].target = GL_TEXTURE_2D;
-
-	return ret;
-});
-
-LitColorTextureProgram::LitColorTextureProgram() {
+ObjectColorTextureProgram::ObjectColorTextureProgram() {
 	//Compile vertex and fragment shaders using the convenient 'gl_compile_program' helper function:
 	program = gl_compile_program(
 		//vertex shader:
@@ -77,9 +13,10 @@ LitColorTextureProgram::LitColorTextureProgram() {
 		"uniform mat4 OBJECT_TO_CLIP;\n"
 		"uniform mat4x3 OBJECT_TO_LIGHT;\n"
 		"uniform mat3 NORMAL_TO_LIGHT;\n"
+		"uniform vec4 Color;\n"
+		"uniform mat4 Model;\n"
 		"in vec4 Position;\n"
-		"in vec3 Normal;\n"
-		"in vec4 Color;\n"
+		"in vec3 Normal;\n"		
 		"in vec2 TexCoord;\n"
 		"out vec3 position;\n"
 		"out vec3 normal;\n"
@@ -92,7 +29,7 @@ LitColorTextureProgram::LitColorTextureProgram() {
 		"	color = Color;\n"
 		"	texCoord = TexCoord;\n"
 		"}\n"
-	,
+		,
 		//fragment shader:
 		"#version 330\n"
 		"uniform sampler2D TEX;\n"
@@ -138,11 +75,11 @@ LitColorTextureProgram::LitColorTextureProgram() {
 	//look up the locations of vertex attributes:
 	Position_vec4 = glGetAttribLocation(program, "Position");
 	Normal_vec3 = glGetAttribLocation(program, "Normal");
-	Color_vec4 = glGetAttribLocation(program, "Color");
-	//Model_mat4 = glGetUniformLocation(program, "Model");
 	TexCoord_vec2 = glGetAttribLocation(program, "TexCoord");
 
 	//look up the locations of uniforms:
+	Color_vec4 = glGetUniformLocation(program, "Color");
+	Model_mat4 = glGetUniformLocation(program, "Model");
 	OBJECT_TO_CLIP_mat4 = glGetUniformLocation(program, "OBJECT_TO_CLIP");
 	OBJECT_TO_LIGHT_mat4x3 = glGetUniformLocation(program, "OBJECT_TO_LIGHT");
 	NORMAL_TO_LIGHT_mat3 = glGetUniformLocation(program, "NORMAL_TO_LIGHT");
@@ -152,7 +89,6 @@ LitColorTextureProgram::LitColorTextureProgram() {
 	LIGHT_DIRECTION_vec3 = glGetUniformLocation(program, "LIGHT_DIRECTION");
 	LIGHT_ENERGY_vec3 = glGetUniformLocation(program, "LIGHT_ENERGY");
 	LIGHT_CUTOFF_float = glGetUniformLocation(program, "LIGHT_CUTOFF");
-
 
 	GLuint TEX_sampler2D = glGetUniformLocation(program, "TEX");
 
@@ -164,8 +100,7 @@ LitColorTextureProgram::LitColorTextureProgram() {
 	glUseProgram(0); //unbind program -- glUniform* calls refer to ??? now
 }
 
-LitColorTextureProgram::~LitColorTextureProgram() {
+ObjectColorTextureProgram::~ObjectColorTextureProgram() {
 	glDeleteProgram(program);
 	program = 0;
 }
-
