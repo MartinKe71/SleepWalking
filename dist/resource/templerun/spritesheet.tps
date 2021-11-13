@@ -84,13 +84,13 @@
         <key>textureFormat</key>
         <enum type="SettingsBase::TextureFormat">png</enum>
         <key>borderPadding</key>
-        <uint>0</uint>
+        <uint>1</uint>
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>2048</int>
+            <int>4096</int>
             <key>height</key>
-            <int>2048</int>
+            <int>4096</int>
         </QSize>
         <key>fixedTextureSize</key>
         <QSize>
@@ -108,7 +108,7 @@
             <key>sizeConstraints</key>
             <enum type="AlgorithmSettings::SizeConstraints">AnySize</enum>
             <key>forceSquared</key>
-            <true/>
+            <false/>
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
@@ -163,7 +163,7 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>0</uint>
+            <uint>1</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
@@ -205,6 +205,30 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">Jump/Jump__000.png</key>
+            <key type="filename">Jump/Jump__001.png</key>
+            <key type="filename">Jump/Jump__002.png</key>
+            <key type="filename">Jump/Jump__003.png</key>
+            <key type="filename">Jump/Jump__004.png</key>
+            <key type="filename">Jump/Jump__005.png</key>
+            <key type="filename">Jump/Jump__006.png</key>
+            <key type="filename">Jump/Jump__007.png</key>
+            <key type="filename">Jump/Jump__008.png</key>
+            <key type="filename">Jump/Jump__009.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>102,134,203,268</rect>
+                <key>scale9Paddings</key>
+                <rect>102,134,203,268</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">Run/Run__000.png</key>
             <key type="filename">Run/Run__001.png</key>
             <key type="filename">Run/Run__002.png</key>
@@ -234,6 +258,7 @@
         <array>
             <filename>Idle</filename>
             <filename>Run</filename>
+            <filename>Jump</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

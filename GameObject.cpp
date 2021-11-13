@@ -76,7 +76,7 @@ void GameObject::reset(){
     velocity = glm::vec3(0.0f);
     zeroForce();
     zeroNormal();
-    isFixed = false;
+    //isFixed = false;
     lifeSpan = 0.0f;
 }
 

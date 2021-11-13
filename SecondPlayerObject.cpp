@@ -1,30 +1,38 @@
-#include "PlayerObject.hpp"
+#include "SecondPlayerObject.hpp"
 #include "load_save_png.hpp"
 
 
-PlayerObject::PlayerObject() {
+SecondPlayerObject::SecondPlayerObject() {
 }
 
-PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
+SecondPlayerObject::SecondPlayerObject(float mass, const glm::vec3& pos, float w, float h,
     const glm::vec3& vel, bool isFixed, const std::string& filename, float l) :
     GameObject(mass, pos, vel, isFixed, filename, l), width(w), height(h) {
 
-    PlayerStats::Instance().player1StartPos = pos;
-    PlayerStats::Instance().player1StartVel = vel;
+    PlayerStats::Instance().player2StartPos = pos;
+    PlayerStats::Instance().player2StartVel = vel;
+
+    if (!filename.empty())
+        load_png(data_path(filename),
+            &(sz), &(pic), OriginLocation::LowerLeftOrigin);
+    else {
+        pic = vector<glm::u8vec4>(1, glm::u8vec4(0xff));
+        sz = glm::uvec2(1, 1);
+    }
 
     createVerts();
     prepareDraw();
 
-    box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false));
-    CollisionSystem::Instance().player1_collision = box;
+    /*box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false));
+    CollisionSystem::Instance().player1_collision = box;*/
 }
 
-PlayerObject::~PlayerObject() {
+SecondPlayerObject::~SecondPlayerObject() {
 
 }
 
 
-void PlayerObject::createVerts() {
+void SecondPlayerObject::createVerts() {
 
     vertex_positions = vector<glm::vec4>({
         glm::vec4(width,  height, 0.0f, 1.0f),  // top right
@@ -38,21 +46,20 @@ void PlayerObject::createVerts() {
         glm::vec2(1.f,0.f),
         glm::vec2(0.f,0.f),
         glm::vec2(0.f,1.f)
-    });
+        });
 
     indices = std::vector<unsigned int>({ 0, 1, 2, 2, 3, 0 });
 }
 
-void PlayerObject::reset() {
+void SecondPlayerObject::reset() {
     std::cout << "reset beng" << std::endl;
     model = glm::mat4(1.0f);
     GameObject::reset();
 
     PlayerStats::Instance().reset();
 
-    position = PlayerStats::Instance().player1StartPos;
-    velocity = PlayerStats::Instance().player1StartVel;
-    box->SetPos(glm::vec2{ position.x, position.y });
+    position = PlayerStats::Instance().player2StartPos;
+    velocity = PlayerStats::Instance().player2StartVel;
 
     std::cout << "Before beng" << std::endl;
 
@@ -61,41 +68,39 @@ void PlayerObject::reset() {
     prepareDraw();
 }
 
-void PlayerObject::update(float elapsed) {
-    std::cout << "update player\n";
+void SecondPlayerObject::update(float elapsed) {
+    std::cout << "update second player\n";
     if (left.pressed && !right.pressed) {
-        type = "Run";
         // move left
+        std::cout << "second player move left\n";
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(-1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        PlayerStats::Instance().isFacingLeft = true;
+        position.x = new_pos.x;
+        position.y = new_pos.y;
         cout << "checking collision\n";
-        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
-            glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
-            cout << "Not colliding\n";
-            position.x = new_pos.x;
-            position.y = new_pos.y;
-        }
     }
     else if (!left.pressed && right.pressed) {
-        type = "Run";
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        PlayerStats::Instance().isFacingLeft = false;
-        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
-            glm::vec2{width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
-            position.x = new_pos.x;
-            position.y = new_pos.y;
-        }
+        position.x = new_pos.x;
+        position.y = new_pos.y;
     }
 
-    if (space.pressed && PlayerStats::Instance().canJump) {
-        cout << "jump\n";
-        type = "Jump";
-        force += mass * jump_power * glm::vec3(0.f, 1.f, 0.f) * PlayerStats::Instance().rotMat;
-        space.pressed = false;
-        PlayerStats::Instance().canJump = false;
+    if (up.pressed && !down.pressed) {
+        // move left
+        glm::vec2 new_pos = glm::vec2{ position.x, position.y };
+        new_pos += elapsed * speed * glm::vec2(0.f, 1.f) * glm::mat2(PlayerStats::Instance().rotMat);
+        cout << "checking collision\n";
+        position.x = new_pos.x;
+        position.y = new_pos.y;
+    }
+    else if (!up.pressed && down.pressed) {
+        // move right
+        glm::vec2 new_pos = glm::vec2{ position.x, position.y };
+        new_pos += elapsed * speed * glm::vec2(0.f, -1.f) * glm::mat2(PlayerStats::Instance().rotMat);
+        position.x = new_pos.x;
+        position.y = new_pos.y;
     }
 
     if (!isFixed) {
@@ -105,10 +110,9 @@ void PlayerObject::update(float elapsed) {
         glm::vec3 new_pos = position + velocity * elapsed;
         cout << "new_pos: " << glm::to_string(new_pos) << endl;
         cout << "\n";
-        if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, 
-            glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat))) {
+        if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, glm::vec2{ width * 2, height * 2 })) {
             cout << "Graivity Not colliding\n";
-            
+
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
@@ -119,12 +123,12 @@ void PlayerObject::update(float elapsed) {
         }
     }
 
-    PlayerStats::Instance().player1Pos = position;
+    PlayerStats::Instance().player2Pos = position;
 
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
     std::cout << "Triggers checked" << std::endl;
 
-    box->SetPos(glm::vec2{ position.x, position.y });
+    //box->SetPos(glm::vec2{ position.x, position.y });
 
     //if (position.x <= 0.f || position.y <= 0.f || PlayerStats::Instance().health <= 0.f) {
     //    reset();
@@ -132,7 +136,6 @@ void PlayerObject::update(float elapsed) {
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 
-    // update texcoords every update
     if(anims.count(type) && anims[type]) 
         anims[type]->play(this->VAO, this->VBO_texcoords, sz, elapsed);
     

@@ -40,13 +40,18 @@ Load< Scene > sleepWalking_scene(LoadTagDefault, []() -> Scene const * {
 PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 	for (auto& transform : scene.transforms) {
-		if (transform.name == "Player") {
+		if (transform.name == "Player1") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
 				false, "resource/templerun/spritesheet.png");
 			player1->addAnimation("Idle", "resource/templerun/Idle.txt");
 			player1->addAnimation("Run", "resource/templerun/Run.txt");
 			player1->addAnimation("Jump", "resource/templerun/Jump.txt");
+		}
+		else if (transform.name == "Player2") {
+			player2 = new SecondPlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/gg.png");
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
@@ -76,6 +81,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	//	glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 	
 	moveableObjs.push_back(player1);
+	moveableObjs.push_back(player2);
 	// moveableObjs.push_back(test);
 }
 
@@ -101,14 +107,26 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 					return true;
 				}
 				player1->space.pressed = false;
-				return false;
+				return true;
 			case SDLK_w:
 				if (!evt.key.repeat) {
 					player1->space.pressed = true;
 					return true;
 				}
 				player1->space.pressed = false;
-				return false;
+				return true;
+			case P2_LEFT:
+				player2->left.pressed = true;
+				return true;
+			case P2_RIGHT:
+				player2->right.pressed = true;
+				return true;
+			case P2_UP:
+				player2->up.pressed = true;
+				return true;
+			case P2_DOWN:
+				player2->down.pressed = true;
+				return true;
 			case SDLK_s:
 				up.downs += 1;
 				up.pressed = true;
@@ -137,6 +155,18 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 				return true;
 			case SDLK_w:
 				player1->space.pressed = false;
+				return true;
+			case P2_LEFT:
+				player2->left.pressed = false;
+				return true;
+			case P2_RIGHT:
+				player2->right.pressed = false;
+				return true;
+			case P2_UP:
+				player2->up.pressed = false;
+				return true;
+			case P2_DOWN:
+				player2->down.pressed = false;
 				return true;
 			case SDLK_s:
 				up.downs = 0;
@@ -168,7 +198,7 @@ void PlayMode::update(float elapsed) {
 			gravitySpellRot -= CameraRotSpeed;
 			
 			float remain = 0.f;
-			float factor = isClockwise ? -1.f : 1.f;
+			float factor = isClockwise ? 1.f : -1.f;
 
 			if (gravitySpellRot < 0.f) {
 				// record the remain angle so that 
@@ -194,24 +224,25 @@ void PlayMode::update(float elapsed) {
 					camera->transform->position);
 			}
 		}
+
 		if (clockwiseRot.pressed && !isGravitySpellLocked) {
-			gravity = glm::vec3(gravity.y, -gravity.x, 0.f);
-			isGravitySpellLocked = true;
-			isClockwise = true;
-			PlayerStats::Instance().rotMat = PlayerStats::Instance().rotMat 
-				* glm::mat3(
-					glm::cos(glm::radians(WORLD_ROT_ANGLE)),  glm::sin(glm::radians(WORLD_ROT_ANGLE)), 0, 
-					-glm::sin(glm::radians(WORLD_ROT_ANGLE)), glm::cos(glm::radians(WORLD_ROT_ANGLE)), 0,
-					0,  																			0, 0);
-		} else if (counterClockwiseRot.pressed && !isGravitySpellLocked) {
 			gravity = glm::vec3(-gravity.y, gravity.x, 0.f);
 			isGravitySpellLocked = true;
-			isClockwise = false;
-			PlayerStats::Instance().rotMat = PlayerStats::Instance().rotMat 
+			isClockwise = true;
+			PlayerStats::Instance().rotMat = PlayerStats::Instance().rotMat
 				* glm::mat3(
-					glm::cos(-glm::radians(WORLD_ROT_ANGLE)),  glm::sin(-glm::radians(WORLD_ROT_ANGLE)), 0, 
+					glm::cos(-glm::radians(WORLD_ROT_ANGLE)), glm::sin(-glm::radians(WORLD_ROT_ANGLE)), 0,
 					-glm::sin(-glm::radians(WORLD_ROT_ANGLE)), glm::cos(-glm::radians(WORLD_ROT_ANGLE)), 0,
-					0,  												  							  0, 0);
+					0, 0, 0);
+		} else if (counterClockwiseRot.pressed && !isGravitySpellLocked) {
+			gravity = glm::vec3(gravity.y, -gravity.x, 0.f);
+			isGravitySpellLocked = true;
+			isClockwise = false;
+			PlayerStats::Instance().rotMat = PlayerStats::Instance().rotMat
+				* glm::mat3(
+					glm::cos(glm::radians(WORLD_ROT_ANGLE)), glm::sin(glm::radians(WORLD_ROT_ANGLE)), 0,
+					-glm::sin(glm::radians(WORLD_ROT_ANGLE)), glm::cos(glm::radians(WORLD_ROT_ANGLE)), 0,
+					0, 0, 0);
 		}
 	}
 
@@ -266,6 +297,7 @@ void PlayMode::update(float elapsed) {
 	{
 		if (player1->getPos().x <= 0.f || player1->getPos().y <= 0.f || PlayerStats::Instance().health <= 0.f) {
 			player1->reset();
+			player2->reset();
 			gravity = glm::vec3(0, -98.f, 0);
 
 			camera->transform->position.x = player1->getPos().x;

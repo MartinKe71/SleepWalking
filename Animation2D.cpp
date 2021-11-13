@@ -2,12 +2,13 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-11-11 21:05:07
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 17:05:50
+ * @ Modified time: 2021-11-12 21:52:19
  * @ Description: Animation System
  */
 
 #include "Animation2D.hpp"
 #include "GLCall.hpp"
+#include "PlayerStats.hpp"
 
 #include <string>
 #include <sstream>
@@ -57,7 +58,8 @@ Animation2D::~Animation2D()
 {
 }
 
-void Animation2D::play(GLuint VAO, GLuint VBO_texcoords, const glm::uvec2& texture_size, double deltatime)
+void Animation2D::play(GLuint VAO, GLuint VBO_texcoords, 
+	const glm::uvec2& texture_size, double deltatime)
 {
 	anim_cursor += deltatime;
 
@@ -76,11 +78,19 @@ void Animation2D::play(GLuint VAO, GLuint VBO_texcoords, const glm::uvec2& textu
 	frame.w /= texture_size.y;
     
 	vector<glm::vec2> uv = {
-        glm::vec2(frame.x + frame.z, frame.y + frame.w),
-        glm::vec2(frame.x + frame.z, frame.y),
-		glm::vec2(frame.x, frame.y),
-		glm::vec2(frame.x, frame.y + frame.w)
+        glm::vec2(frame.x + frame.z, frame.y + frame.w), // lower right
+        glm::vec2(frame.x + frame.z, frame.y), // upper right 
+		glm::vec2(frame.x, frame.y), // upper left
+		glm::vec2(frame.x, frame.y + frame.w) // lower left
 	};
+
+	if (PlayerStats::Instance().isFacingLeft)
+		uv = {
+			glm::vec2(frame.x, frame.y + frame.w), // lower left
+			glm::vec2(frame.x, frame.y), // upper left
+			glm::vec2(frame.x + frame.z, frame.y), // upper right 
+			glm::vec2(frame.x + frame.z, frame.y + frame.w) // lower right
+		};
 
     // std::cout << frame.x << " " << frame.y << " " << frame.z << " " << frame.w << std::endl;
     
