@@ -11,6 +11,7 @@ SecondPlayerObject::SecondPlayerObject(float mass, const glm::vec3& pos, float w
 
     PlayerStats::Instance().player2SavedPos = pos;
     PlayerStats::Instance().player2SavedVel = vel;
+    PlayerStats::Instance().player2Size = glm::vec2(w * 2, h * 2);
 
     if (!filename.empty())
         load_png(data_path(filename),

@@ -38,7 +38,10 @@ public:
 
 	std::shared_ptr<CollectableCollisionBox> AddOneCollectable(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
+	void update(float elapsed);
+
 private:
 	CollisionSystem();
 	bool IsCollided(const glm::vec4& box1, const glm::vec4& box2) const;
+	bool PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm::vec2& size, glm::vec2& box_pos, glm::vec2& box_size);
 };

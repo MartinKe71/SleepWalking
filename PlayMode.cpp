@@ -308,6 +308,9 @@ void PlayMode::update(float elapsed) {
 		}
 	}
 
+	// Check if the player is already in the wall
+	CollisionSystem::Instance().update(elapsed);
+
 	// force apply test
 	{
 		for (auto& obj : moveableObjs){
