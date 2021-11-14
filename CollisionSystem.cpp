@@ -50,9 +50,9 @@ void CollisionSystem::update(float elapsed)
 		glm::vec3 resPos_y = glm::vec3(player1p.x, player1p.y + y_diff, player1p.z);
 		glm::vec3 resPos_xy = glm::vec3(player1p.x + x_diff, player1p.y + y_diff, player1p.z);
 
-		if (PlayerCheckCollision(resPos_x, player1s))
+		if (CheckPlayerBlockCollision(resPos_x, player1s, player1_hitbox_pos, player1_hitbox_size))
 		{
-			if (PlayerCheckCollision(resPos_y, player1s))
+			if (CheckPlayerBlockCollision(resPos_y, player1s, player1_hitbox_pos, player1_hitbox_size))
 				player1_collision->owner->setPos(resPos_xy);
 			else
 				player1_collision->owner->setPos(resPos_y);
@@ -68,13 +68,24 @@ void CollisionSystem::update(float elapsed)
 }
 
 
-bool CollisionSystem::IsCollided(const glm::vec4& box1, const glm::vec4& box2) const 
+bool CollisionSystem::IsCollided(const glm::vec4& box1, const glm::vec4& box2) const
 {
 	bool x_res = (box1[0] < box2[0] && box1[2] < box2[0]) || (box1[0] > box2[0] && box1[0] > box2[2]);
 	bool y_res = (box1[1] < box2[1] && box1[3] < box2[1]) || (box1[1] > box2[1] && box1[1] > box2[3]);
 
 	return !x_res && !y_res;
 }
+
+bool CollisionSystem::CheckPlayerBlockCollision(const glm::vec2& p1, const glm::vec2& s1, const glm::vec2& p2, const glm::vec2& s2)
+{
+	glm::vec4 player_box(p1.x - s1.x * 0.5f, p1.y - s1.y * 0.5f,
+		p1.x + s1.x * 0.5f, p1.y + s1.y * 0.5f);
+	glm::vec4 block_box(p2.x - s2.x * 0.5f, p2.y - s2.y * 0.5f,
+		p2.x + s2.x * 0.5f, p2.y + s2.y * 0.5f);
+
+	return IsCollided(player_box, block_box);
+}
+
 
 bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2& size)
 {
