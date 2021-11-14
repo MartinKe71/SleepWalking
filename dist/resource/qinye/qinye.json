@@ -1,0 +1,76 @@
+{"frames": [
+
+{
+	"filename": "idle/idle_0.png",
+	"frame": {"x":1,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "idle/idle_1.png",
+	"frame": {"x":1,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "idle/idle_2.png",
+	"frame": {"x":1,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_1.png",
+	"frame": {"x":1,"y":1566,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_2.png",
+	"frame": {"x":879,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_3.png",
+	"frame": {"x":1,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_4.png",
+	"frame": {"x":879,"y":1566,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_5.png",
+	"frame": {"x":1757,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "qinye.png",
+	"format": "RGBA8888",
+	"size": {"w":2614,"h":3110},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a7060eb5f62c9227092b9bba59074919:dc70e9a2387465ebca2b34b1cfe61b57:c38ce6d538eed741596dae8f3cb04742$"
+}
+}

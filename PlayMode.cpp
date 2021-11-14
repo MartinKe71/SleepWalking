@@ -42,10 +42,11 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		if (transform.name == "Player1") {
 			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				false, "resource/templerun/spritesheet.png");
-			player1->addAnimation("Idle", "resource/templerun/Idle.txt");
-			player1->addAnimation("Run", "resource/templerun/Run.txt");
-			player1->addAnimation("Jump", "resource/templerun/Jump.txt");
+				false, "resource/qinye/qinye.png");
+			player1->addAnimation("Idle", "resource/qinye/idle.txt");
+			player1->addAnimation("Run", "resource/qinye/walk.txt");
+			// player1->addAnimation("Run", "resource/qinye/Run.txt");
+			// player1->addAnimation("Jump", "resource/qinye/Jump.txt");
 		}
 		else if (transform.name == "Player2") {
 			player2 = new SecondPlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),

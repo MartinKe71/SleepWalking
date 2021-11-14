@@ -69,7 +69,7 @@ void PlayerObject::update(float elapsed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(-1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        PlayerStats::Instance().isFacingLeft = true;
+        PlayerStats::Instance().isFacingLeft = false;
         cout << "checking collision\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
             glm::abs(glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat)))) {
@@ -84,7 +84,7 @@ void PlayerObject::update(float elapsed) {
         // move right
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
         new_pos += elapsed * speed * glm::vec2(1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        PlayerStats::Instance().isFacingLeft = false;
+        PlayerStats::Instance().isFacingLeft = true;
         if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
             glm::abs(glm::vec2{width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat)))) {
             position.x = new_pos.x;
