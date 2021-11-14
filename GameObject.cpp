@@ -11,6 +11,8 @@
 #include "GLCall.hpp"
 #include "load_save_png.hpp"
 
+#include "glm/gtx/string_cast.hpp"
+
 GameObject::GameObject() : mass (0), position(glm::vec3(0.0f)), 
     velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), 
     isFixed(false), model(glm::mat4(1.0f)){
@@ -90,7 +92,7 @@ void GameObject::prepareDraw() {
     GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * vertex_positions.size(), vertex_positions.data(), GL_STATIC_DRAW));
     GLCall(glEnableVertexAttribArray(shader->Position_vec4));
     GLCall(glVertexAttribPointer(shader->Position_vec4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
-
+    
     // load texcoord every draw to create animation
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_texcoords));
     GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vertex_texcoords.size(), vertex_texcoords.data(), GL_STATIC_DRAW));
@@ -121,23 +123,31 @@ void GameObject::draw(Scene::Camera const& camera) {
     
 
     glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
-    //glm::mat4x3 world_to_light = glm::mat4x3(1.0f);
-    //glm::mat3 normal_to_light = glm::inverse(glm::transpose(glm::mat3(world_to_light)));
+    glm::mat4x3 world_to_light = glm::mat4x3(1.0f) * glm::translate(glm::mat4(1.0f), position);
+    glm::mat3 normal_to_light = glm::inverse(glm::transpose(glm::mat3(world_to_light)));
 
     // apply local rotation
     glm::mat4 curModel = glm::translate(glm::mat4(1.f), position) * model;
+    glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
     //cout << glm::to_string(position) << endl;
 
     // actiavte the shader program
     GLCall(glUseProgram(shader->program));
 
+    cout << "\n\n----------------" << endl;
+    cout << "normal to light: " << glm::to_string(normal_to_light) << endl;
+    cout << "world to light: " << glm::to_string(world_to_light) << endl;
+
+    cout << "-------------------\n\n" << endl;
+
     // get the locations and send the uniforms to the shader
     GLCall(glUniformMatrix4fv(shader->OBJECT_TO_CLIP_mat4, 1, GL_FALSE, glm::value_ptr(world_to_clip)));
-    //GLCall(glUniformMatrix4x3fv(shader->OBJECT_TO_LIGHT_mat4x3, 1, GL_FALSE, glm::value_ptr(world_to_light)));
-    //GLCall(glUniformMatrix3fv(shader->NORMAL_TO_LIGHT_mat3, 1, GL_FALSE, glm::value_ptr(normal_to_light)));
-    GLCall(glUniformMatrix4fv(shader->Model_mat4, 1, GL_FALSE, (float*)&curModel));
+    GLCall(glUniformMatrix4x3fv(shader->OBJECT_TO_LIGHT_mat4x3, 1, GL_FALSE, glm::value_ptr(world_to_light)));
+    GLCall(glUniformMatrix3fv(shader->NORMAL_TO_LIGHT_mat3, 1, GL_FALSE, glm::value_ptr(normal_to_light)));
+    GLCall(glUniformMatrix4fv(shader->Model_mat4, 1, GL_FALSE, glm::value_ptr(curModel)));
     GLCall(glUniform4fv(shader->Color_vec4, 1, &color[0]));
-
+    GLCall(glUniform3fv(shader->Normal_vec3, 1, glm::value_ptr(normal)));
+    
     // Bind the VAO
     GLCall(glBindVertexArray(VAO));
     //    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );

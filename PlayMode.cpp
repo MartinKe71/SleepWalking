@@ -40,7 +40,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 	for (auto& transform : scene.transforms) {
 		if (transform.name == "Player1") {
-			player1 = new PlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+			player1 = new PlayerObject(10.f, transform.position,
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
 				false, "resource/qinye/qinye.png");
 			player1->addAnimation("Idle", "resource/qinye/idle.txt");
@@ -49,9 +49,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 			// player1->addAnimation("Jump", "resource/qinye/Jump.txt");
 		}
 		else if (transform.name == "Player2") {
-			player2 = new SecondPlayerObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+			player2 = new SecondPlayerObject(10.f, transform.position,
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				true, "resource/gg.png");
+				true, "resource/elf.png");
 		}
 		else if (transform.name.find("Block") != string::npos) {
 			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
@@ -66,7 +66,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		else if (transform.name.find("Collectable") != string::npos) {
 			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				true, "resource/light.png");
+				true, "resource/gg.png");
 
 			collectableObjs.push_back(collectable);
 
@@ -335,62 +335,119 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	camera->aspect = float(drawable_size.x) / float(drawable_size.y);
 	camera->drawable_size = drawable_size;
 
-	//set up light type and position for lit_color_texture_program:
-	GLCall(glUseProgram(lit_color_texture_program->program));
-	GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
-	glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(PlayerStats::Instance().player1Pos + glm::vec3(0.0f, 0.f, 10.0f)));
-	GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f,-1.0f))));
-	glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f));
-	GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 200.f)));
-	GLCall(glUseProgram(0));
-
-	GLCall(glUseProgram(object_color_texture_program->program));
-	GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 2));
-	GLCall(glUniform3fv(object_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(PlayerStats::Instance().player1Pos + glm::vec3(0.0f, 0.f, 10.0f))));
-	GLCall(glUniform3fv(object_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-	GLCall(glUniform1f(object_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
-	GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 200.f)));
-	GLCall(glUseProgram(0));
-
 	GLCall(glClearColor(0.5f, 0.5f, 0.5f, 1.0f));
 	GLCall(glClearDepth(1.0f)); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	// glEnable(GL_DEPTH_TEST);
-	// glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
-	scene.draw(*camera);
-	GLCall(glDisable(GL_DEPTH_TEST));
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glDepthFunc(GL_LEQUAL);
 
-	GLCall(glDepthMask(GL_FALSE));
-
-	GLCall(glEnable(GL_BLEND));
-	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	
-	for (auto& obj : moveableObjs){
-		obj->draw(*camera);
-	}
-
-	std::cout << "drawing collectables" << std::endl;
-	int n = (int)collectableObjs.size();
-	for (int i = 0; i < n; i++) {
-		std::cout << i << std::endl;
-		auto obj = collectableObjs[i];
-		if (obj->getLife() > 0) {
+	auto draw_objects = [&]() {
+		for (auto& obj : moveableObjs) {
 			obj->draw(*camera);
 		}
-		else {
-			
-			obj->~CollectableObject();
-			n--;
-
-			std::cout << "erase" << std::endl;
-			collectableObjs.erase(collectableObjs.begin() + i);
-			
-			i--;
+		int n = (int)collectableObjs.size();
+		for (int i = 0; i < n; i++) {
+			std::cout << i << std::endl;
+			auto obj = collectableObjs[i];
+			if (obj->getLife() > 0) {
+				obj->draw(*camera);
+			}
+			else {
+				obj->~CollectableObject();
+				n--;
+				collectableObjs.erase(collectableObjs.begin() + i);
+				i--;
+			}
 		}
+	};
+
+	// first light
+	{
+		////set up light type and position for lit_color_texture_program:
+		GLCall(glUseProgram(lit_color_texture_program->program));
+		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
+		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 200.f)));
+		GLCall(glUseProgram(0));
+		scene.draw(*camera);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glBlendEquation(GL_FUNC_ADD);
 	}
-	std::cout << "finished drawing collectables" << std::endl;
+
+	// second light
+	{
+		//set up light type and position for lit_color_texture_program:
+		GLCall(glUseProgram(lit_color_texture_program->program));
+		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, 5.0f))));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
+		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 50.f)));
+		GLCall(glUseProgram(0));
+		scene.draw(*camera);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glBlendEquation(GL_FUNC_ADD);
+	}
+
+	// third light
+	{
+		GLCall(glUseProgram(lit_color_texture_program->program));
+		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 3));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
+		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.05f)));
+		GLCall(glUseProgram(0));
+		scene.draw(*camera);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glBlendEquation(GL_FUNC_ADD);
+	}
+
+	// fourth light
+	{
+		GLCall(glDisable(GL_DEPTH_TEST));
+		GLCall(glDepthMask(GL_FALSE));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+		GLCall(glUseProgram(object_color_texture_program->program));
+		GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 2));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 400.0f)));
+		GLCall(glUseProgram(0));
+
+		draw_objects();
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glBlendEquation(GL_FUNC_ADD);
+	}
+
+	// fifth light
+	{
+		GLCall(glDisable(GL_DEPTH_TEST));
+		GLCall(glDepthMask(GL_FALSE));
+
+		GLCall(glUseProgram(object_color_texture_program->program));
+		GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 2));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, 10.0f))));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 400.0f)));
+		GLCall(glUseProgram(0));
+
+		draw_objects();
+	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glDisable(GL_BLEND));

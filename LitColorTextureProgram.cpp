@@ -92,7 +92,7 @@ LitColorTextureProgram::LitColorTextureProgram() {
 		"	color = Color;\n"
 		"	texCoord = TexCoord;\n"
 		"}\n"
-	,
+		,
 		//fragment shader:
 		"#version 330\n"
 		"uniform sampler2D TEX;\n"

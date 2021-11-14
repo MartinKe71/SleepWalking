@@ -103,8 +103,8 @@ protected:
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     // shader info
-    Load< ColorTextureProgram > shader = color_texture_program;
-    //Load< ObjectColorTextureProgram > shader = object_color_texture_program;
+    //Load< ColorTextureProgram > shader = color_texture_program;
+    Load< ObjectColorTextureProgram > shader = object_color_texture_program;
 
     GLuint VAO;
     GLuint VBO_positions, VBO_texcoords, EBO;
