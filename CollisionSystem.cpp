@@ -14,27 +14,10 @@ CollisionSystem::CollisionSystem()
 
 bool CollisionSystem::IsCollided(const glm::vec4& box1, const glm::vec4& box2) const 
 {
-	glm::vec2 boxes1[4] = { glm::vec2(box1[0], box1[1]),
-							glm::vec2(box1[0], box1[3]),
-							glm::vec2(box1[2], box1[1]),
-							glm::vec2(box1[2], box1[3])};
+	bool x_res = (box1[0] < box2[0] && box1[2] < box2[0]) || (box1[0] > box2[0] && box1[0] > box2[2]);
+	bool y_res = (box1[1] < box2[1] && box1[3] < box2[1]) || (box1[1] > box2[1] && box1[1] > box2[3]);
 
-	glm::vec2 boxes2[4] = { glm::vec2(box2[0], box2[1]),
-							glm::vec2(box2[0], box2[3]),
-							glm::vec2(box2[2], box2[1]),
-							glm::vec2(box2[2], box2[3])};
-	for (size_t i = 0; i < 4; i++)
-	{
-		glm::vec2 p1 = boxes1[i];
-		glm::vec2 p2 = boxes2[i];
-		if (p1.x > box2[0] && p1.x < box2[2] &&
-			p1.y > box2[1] && p1.y < box2[3])
-			return true;
-		if (p2.x > box1[0] && p2.x < box1[2] &&
-			p2.y > box1[1] && p2.y < box1[3])
-			return true;
-	}
-	return false;
+	return !x_res && !y_res;
 }
 
 bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2& size)
