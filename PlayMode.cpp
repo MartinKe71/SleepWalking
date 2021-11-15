@@ -274,7 +274,7 @@ void PlayMode::update(float elapsed) {
 		// 	player1->getPos().y, camera->transform->position.z);
 
 		// // camera movement test
-		float CameraSpeed = glm::length(player1->getVelocity());
+		//float CameraSpeed = glm::length(player1->getVelocity());
 		
 		glm::vec2 playerPosOnWindow = glm::vec2(
 			player1->getPos().x - camera->transform->position.x, 
@@ -287,19 +287,19 @@ void PlayMode::update(float elapsed) {
 
 		if (playerPosOnWindow.x > 30.f)
 			camera->transform->position = camera->transform->position 
-				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
+				+ PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * right;
 		
 		if (playerPosOnWindow.x < -30.f)
 			camera->transform->position = camera->transform->position 
-				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
+				- PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * right;
 
 		if (playerPosOnWindow.y > 20.f)
 			camera->transform->position = camera->transform->position 
-				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
+				+ PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * up;
 
 		if (playerPosOnWindow.y < -20.f)
 			camera->transform->position = camera->transform->position 
-				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
+				- PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * up;
 		
 		//camera->transform->position.x =std::clamp(camera->transform->position.x, 140.0f, 300.0f);
 		//camera->transform->position.y = std::clamp(camera->transform->position.y, 100.0f, 240.0f);
