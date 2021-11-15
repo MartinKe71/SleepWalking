@@ -134,11 +134,11 @@ void GameObject::draw(Scene::Camera const& camera) {
     // actiavte the shader program
     GLCall(glUseProgram(shader->program));
 
-    cout << "\n\n----------------" << endl;
-    cout << "normal to light: " << glm::to_string(normal_to_light) << endl;
-    cout << "world to light: " << glm::to_string(world_to_light) << endl;
+    //cout << "\n\n----------------" << endl;
+    //cout << "normal to light: " << glm::to_string(normal_to_light) << endl;
+    //cout << "world to light: " << glm::to_string(world_to_light) << endl;
 
-    cout << "-------------------\n\n" << endl;
+    //cout << "-------------------\n\n" << endl;
 
     // get the locations and send the uniforms to the shader
     GLCall(glUniformMatrix4fv(shader->OBJECT_TO_CLIP_mat4, 1, GL_FALSE, glm::value_ptr(world_to_clip)));

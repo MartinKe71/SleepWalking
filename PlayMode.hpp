@@ -8,6 +8,8 @@
 #include "PlayerObject.hpp"
 #include "SecondPlayerObject.hpp"
 #include "CollectableObject.hpp"
+#include "MovingThornObject.hpp"
+#include "MovingBlockObject.hpp"
 
 #include <glm/glm.hpp>
 

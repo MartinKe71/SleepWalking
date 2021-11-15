@@ -26,6 +26,7 @@ enum class AudioSourceList
 
 #define GAME_MAP_SIZE glm::vec2(192.f * 2, 108.f * 2)
 #define GAME_MAP_ORIGIN glm::vec2(0.f, 0.f)
+#define CAMERA_SPEED 30.f
 #define COLLISION_OPT_LEVEL 2
 #define WORLD_ROT_ANGLE 90.f
 #define HALF_VOLUME_RADIUS 10.0f

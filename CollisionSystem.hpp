@@ -32,9 +32,9 @@ public:
 
 	void PlayerCheckCollectables(const glm::vec2& pos, const glm::vec2& size);
 
-	void AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
+	std::shared_ptr<BlockCollisionBox> AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
-	void AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
+	std::shared_ptr<CollisionBox> AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
 	std::shared_ptr<CollectableCollisionBox> AddOneCollectable(const glm::vec2& pos, const glm::vec2& size, std::string name);
 

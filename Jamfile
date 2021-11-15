@@ -154,6 +154,9 @@ GAME_NAMES =
 	PlayerObject
 	SecondPlayerObject
 	CollectableObject
+	MovingGameObject
+	MovingThornObject
+	MovingBlockObject
 	Sound
 	load_wav
 	load_opus

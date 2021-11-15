@@ -178,7 +178,7 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 	}
 }
 
-void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name)
+std::shared_ptr<BlockCollisionBox> CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name)
 {
 	glm::vec2 block_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
 									glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
@@ -199,9 +199,11 @@ void CollisionSystem::AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& si
 	{
 		scene_blocks[i].push_back(box);
 	}
+
+	return box;
 }
 
-void CollisionSystem::AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name)
+std::shared_ptr<CollisionBox> CollisionSystem::AddOneThornBlock(const glm::vec2& pos, const glm::vec2& size, std::string name)
 {
 	glm::vec2 block_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
 								glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
@@ -222,6 +224,8 @@ void CollisionSystem::AddOneThornBlock(const glm::vec2& pos, const glm::vec2& si
 	{
 		scene_triggers[i].push_back(box);
 	}
+
+	return box;
 }
 
 std::shared_ptr<CollectableCollisionBox> CollisionSystem::AddOneCollectable(const glm::vec2& pos, const glm::vec2& size, std::string name)

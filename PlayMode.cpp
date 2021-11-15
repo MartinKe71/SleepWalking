@@ -45,8 +45,6 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 				false, "resource/qinye/qinye.png");
 			player1->addAnimation("Idle", "resource/qinye/idle.txt");
 			player1->addAnimation("Run", "resource/qinye/walk.txt");
-			// player1->addAnimation("Run", "resource/qinye/Run.txt");
-			// player1->addAnimation("Jump", "resource/qinye/Jump.txt");
 		}
 		else if (transform.name == "Player2") {
 			player2 = new SecondPlayerObject(10.f, transform.position,
@@ -54,14 +52,46 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 				true, "resource/elf.png");
 		}
 		else if (transform.name.find("Block") != string::npos) {
-			CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y), 
-				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
-				transform.name);
+			if (transform.name.find("Block_S") != string::npos) {
+				CollisionSystem::Instance().AddOneSceneBlock(glm::vec2(transform.position.x, transform.position.y),
+					glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+					transform.name);
+			}
+			else if (transform.name.find("Block_M") != string::npos) {
+				istringstream stream(transform.name);
+				vector<string> properties;
+				string token;
+				while (getline(stream, token, '_')) properties.push_back(token);
+
+				if (properties.size() < 5) throw std::runtime_error("Invalid Moving Block Name: " + transform.name);
+
+				auto obj = new MovingBlockObject(10.f, properties, transform.position,
+					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+					true, "resource/frame.png", transform.name);
+
+				moveableObjs.push_back(obj);
+			}
 		}
 		else if (transform.name.find("Trigger") != string::npos) {
-			CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y), 
-				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
-				transform.name);
+			if (transform.name.find("Trigger_S") != string::npos) {
+				CollisionSystem::Instance().AddOneThornBlock(glm::vec2(transform.position.x, transform.position.y),
+					glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
+					transform.name);
+			}
+			else if (transform.name.find("Trigger_M") != string::npos) {
+				istringstream stream(transform.name);
+				vector<string> properties;
+				string token;
+				while (getline(stream, token, '_')) properties.push_back(token);
+
+				if (properties.size() < 5) throw std::runtime_error("Invalid Moving Trigger Name: " + transform.name);
+
+				auto obj = new MovingThornObject(10.f, properties, transform.position,
+					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+					true, "resource/frame.png", transform.name);
+
+				moveableObjs.push_back(obj);
+			}			
 		}
 		else if (transform.name.find("Collectable") != string::npos) {
 			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
@@ -82,19 +112,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
-	// test = new SquareObject(10.f, 
-	// 	player1->getPos(), glm::vec3(0.f, 0.f, 0.f), true, 20.f, "resource/templerun/spritesheet.png");
-	// test->addAnimation(data_path("resource/templerun/Run.txt"));
-	// test->addAnimation(data_path("resource/spritsheet/Run.txt"));
-	
-	//moveableObjs.push_back(new SquareObject(10.f, 
-	//	glm::vec3(60.0f, 50.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 3.f, "resource/flyswatter32.png"));
-	//moveableObjs.push_back(new SquareObject(10.f, 
-	//	glm::vec3(50.0f, 40.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), true, 3.f, "resource/mos.png"));
 	
 	moveableObjs.push_back(player1);
 	moveableObjs.push_back(player2);
-	// moveableObjs.push_back(test);
 }
 
 PlayMode::~PlayMode() {
@@ -230,11 +250,19 @@ void PlayMode::update(float elapsed) {
 					glm::radians(factor * (CameraRotSpeed + remain)), glm::vec3(0.0f, 0.0f, 1.0f))
 			);
 			
-			for (auto& obj : moveableObjs){
-				obj->applyRotation(
-					glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))), 
-					camera->transform->position);
-			}
+			player1->applyRotation(
+				glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))),
+				camera->transform->position);
+			
+			player2->applyRotation(
+				glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))),
+				camera->transform->position);
+
+			//for (auto& obj : moveableObjs){
+			//	obj->applyRotation(
+			//		glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))), 
+			//		camera->transform->position);
+			//}
 		}
 
 		if (clockwiseRot.pressed && !isGravitySpellLocked) {
@@ -274,7 +302,6 @@ void PlayMode::update(float elapsed) {
 		// 	player1->getPos().y, camera->transform->position.z);
 
 		// // camera movement test
-		float CameraSpeed = glm::length(player1->getVelocity());
 		
 		glm::vec2 playerPosOnWindow = glm::vec2(
 			player1->getPos().x - camera->transform->position.x, 
@@ -287,19 +314,19 @@ void PlayMode::update(float elapsed) {
 
 		if (playerPosOnWindow.x > 30.f)
 			camera->transform->position = camera->transform->position 
-				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
+				+ PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * right;
 		
 		if (playerPosOnWindow.x < -30.f)
 			camera->transform->position = camera->transform->position 
-				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
+				- PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * right;
 
 		if (playerPosOnWindow.y > 20.f)
 			camera->transform->position = camera->transform->position 
-				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
+				+ PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * up;
 
 		if (playerPosOnWindow.y < -20.f)
 			camera->transform->position = camera->transform->position 
-				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
+				- PlayerStats::Instance().rotMat * CAMERA_SPEED * elapsed * up;
 		
 		//camera->transform->position.x =std::clamp(camera->transform->position.x, 140.0f, 300.0f);
 		//camera->transform->position.y = std::clamp(camera->transform->position.y, 100.0f, 240.0f);
