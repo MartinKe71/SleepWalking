@@ -70,6 +70,8 @@ void SecondPlayerObject::reset() {
 
 void SecondPlayerObject::update(float elapsed) {
     std::cout << "update second player\n";
+
+    start_time = std::chrono::high_resolution_clock::now();
     if (left.pressed && !right.pressed) {
         // move left
         std::cout << "second player move left\n";
@@ -86,7 +88,11 @@ void SecondPlayerObject::update(float elapsed) {
         position.x = new_pos.x;
         position.y = new_pos.y;
     }
+    end_time = std::chrono::high_resolution_clock::now();
+    left_right = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
+
+    start_time = std::chrono::high_resolution_clock::now();
     if (up.pressed && !down.pressed) {
         // move left
         glm::vec2 new_pos = glm::vec2{ position.x, position.y };
@@ -102,7 +108,11 @@ void SecondPlayerObject::update(float elapsed) {
         position.x = new_pos.x;
         position.y = new_pos.y;
     }
+    end_time = std::chrono::high_resolution_clock::now();
+    up_down = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
+
+    start_time = std::chrono::high_resolution_clock::now();
     if (!isFixed) {
         glm::vec3 accel = force / mass;
         cout << "Force: " << glm::to_string(force) << endl;
@@ -122,11 +132,16 @@ void SecondPlayerObject::update(float elapsed) {
             velocity = glm::vec3(0.f);
         }
     }
+    end_time = std::chrono::high_resolution_clock::now();
+    check_collision = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
     PlayerStats::Instance().player2Pos = position;
 
+    start_time = std::chrono::high_resolution_clock::now();
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
     std::cout << "Triggers checked" << std::endl;
+    end_time = std::chrono::high_resolution_clock::now();
+    check_trigger = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
     //box->SetPos(glm::vec2{ position.x, position.y });
 
@@ -136,8 +151,19 @@ void SecondPlayerObject::update(float elapsed) {
 
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 
+    start_time = std::chrono::high_resolution_clock::now();
     if(anims.count(type) && anims[type]) 
         anims[type]->play(this->VAO, this->VBO_texcoords, sz, elapsed);
     
     type = "Idle";
+    end_time = std::chrono::high_resolution_clock::now();
+    animation = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+}
+
+void SecondPlayerObject::print_performance() {
+    std::cout << "Left Right Movement: " << left_right << std::endl;
+    std::cout << "Up Down Movement: " << up_down << std::endl;
+    std::cout << "Collision Checking: " << check_collision << std::endl;
+    std::cout << "Trigger Checking: " << check_trigger << std::endl;
+    std::cout << "Animation: " << animation << std::endl;
 }

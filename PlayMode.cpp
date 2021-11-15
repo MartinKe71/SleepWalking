@@ -227,8 +227,10 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
-		
+	update_elapsed = elapsed;
+
 	// gravity spell
+	auto start_time = std::chrono::high_resolution_clock::now();	
 	{
 		// camera rotation speed
 		float CameraRotSpeed = rotAngle * elapsed;
@@ -307,8 +309,11 @@ void PlayMode::update(float elapsed) {
 					0, 0, 0);
 		}
 	}
+	auto end_time = std::chrono::high_resolution_clock::now();
+	gravity_spell = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
-	// force apply test
+	// update gameobjs
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		for (auto& obj : moveableObjs){
 			obj->zeroForce();
@@ -318,7 +323,11 @@ void PlayMode::update(float elapsed) {
 			obj->update(elapsed);
 		}
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	obj_updates = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
+	// camera movement
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		// camera->transform->position = glm::vec3(player1->getPos().x, 
 		// 	player1->getPos().y, camera->transform->position.z);
@@ -354,8 +363,11 @@ void PlayMode::update(float elapsed) {
 		//camera->transform->position.x =std::clamp(camera->transform->position.x, 140.0f, 300.0f);
 		//camera->transform->position.y = std::clamp(camera->transform->position.y, 100.0f, 240.0f);
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	camera_movement = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	// check reset
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		if (player1->getPos().x <= 0.f || player1->getPos().y <= 0.f || PlayerStats::Instance().health <= 0.f) {
 			player1->reset();
@@ -370,8 +382,13 @@ void PlayMode::update(float elapsed) {
 			isGravitySpellLocked = false;
 		}
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	check_reset = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	PlayerStats::Instance().to_string();
+
+
+
 	{ //update listener to camera position:
 		glm::mat4x3 frame = camera->transform->make_local_to_parent();
 		glm::vec3 right = frame[0];
@@ -414,6 +431,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	};
 
 	// first light
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		////set up light type and position for lit_color_texture_program:
 		GLCall(glUseProgram(lit_color_texture_program->program));
@@ -429,8 +447,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		glBlendFunc(GL_ONE, GL_ONE);
 		glBlendEquation(GL_FUNC_ADD);
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	light1 = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	// second light
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		//set up light type and position for lit_color_texture_program:
 		GLCall(glUseProgram(lit_color_texture_program->program));
@@ -446,8 +467,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		glBlendFunc(GL_ONE, GL_ONE);
 		glBlendEquation(GL_FUNC_ADD);
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	light2 = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	// third light
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		GLCall(glUseProgram(lit_color_texture_program->program));
 		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 3));
@@ -462,8 +486,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		glBlendFunc(GL_ONE, GL_ONE);
 		glBlendEquation(GL_FUNC_ADD);
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	light3 = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	// fourth light
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		GLCall(glDisable(GL_DEPTH_TEST));
 		GLCall(glDepthMask(GL_FALSE));
@@ -483,8 +510,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		glBlendFunc(GL_ONE, GL_ONE);
 		glBlendEquation(GL_FUNC_ADD);
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	light4 = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	// fifth light
+	start_time = std::chrono::high_resolution_clock::now();
 	{
 		GLCall(glDisable(GL_DEPTH_TEST));
 		GLCall(glDepthMask(GL_FALSE));
@@ -498,9 +528,36 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
 		draw_objects();
 	}
+	end_time = std::chrono::high_resolution_clock::now();
+	light5 = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glDisable(GL_BLEND));
 	GLCall(glDepthMask(GL_TRUE));
 	GL_ERRORS();
+
+	
+	print_performace();
+}
+
+void PlayMode::print_performace() {
+	std::cout << "\n\n============ PlayMode Performance ============" << std::endl;
+	std::cout << "Total Elapsed: " << update_elapsed * 1000000.f << std::endl;
+
+	std::cout << "Gravity Spell: " << gravity_spell << std::endl;
+	std::cout << "Total Gameobjects Update: " << obj_updates << std::endl;
+	std::cout << "\n------------ Player 1 ----------" << std::endl;
+	player1->print_performance();
+	std::cout << "------------ Player 1 Print Finished ---------" << std::endl;
+	std::cout << "\n------------ Player 2 ----------" << std::endl;
+	player2->print_performance();
+	std::cout << "------------ Player 2 Print Finished ---------\n" << std::endl;
+	std::cout << "Camera Movement: " << camera_movement << std::endl;
+	std::cout << "Check Reset: " << check_reset << std::endl;
+	std::cout << "Render Light1: " << light1 << std::endl;
+	std::cout << "Render Light2: " << light2 << std::endl;
+	std::cout << "Render Light3: " << light3 << std::endl;
+	std::cout << "Render Light4: " << light4 << std::endl;
+	std::cout << "Render Light5: " << light5 << std::endl;
+	std::cout << "============ Print Finished ============\n\n" << std::endl;
 }

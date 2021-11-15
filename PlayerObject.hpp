@@ -2,6 +2,8 @@
 #include "CollisionSystem.hpp"
 #include "Scene.hpp"
 
+#include <chrono>
+
 using namespace std;
 
 class PlayerObject : public GameObject {
@@ -32,10 +34,16 @@ public :
     virtual void reset() override;
     virtual void createVerts() override;
 
+    void print_performance();
+
 private:
     float width, height;
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     float speed = 40.f;
     float jump_power = 4000.0f;
+
+
+    std::chrono::steady_clock::time_point start_time, end_time;
+    long long left_right, check_collision, check_trigger, check_collectable, animation;
 };

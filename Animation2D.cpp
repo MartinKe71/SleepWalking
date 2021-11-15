@@ -72,8 +72,13 @@ void Animation2D::play(GLuint VAO, GLuint VBO_texcoords,
 
 	if(anim_cursor > speed)
 	{
-		current_frame_indx = (current_frame_indx + 1) % frames_count;
+		auto new_frame_index = (current_frame_indx + 1) % frames_count;
+		if (new_frame_index == current_frame_indx) return;
+		current_frame_indx = new_frame_index;
 		anim_cursor = 0;
+	}
+	else {
+		return;
 	}
     
 	glm::vec4 frame = frames[current_frame_indx];

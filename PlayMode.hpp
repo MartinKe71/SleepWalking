@@ -15,6 +15,8 @@
 
 #include <vector>
 #include <deque>
+#include <chrono>
+
 
 struct PlayMode : Mode {
 	PlayMode();
@@ -25,6 +27,7 @@ struct PlayMode : Mode {
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
 
+	void print_performace();
 
 	//local copy of the game scene (so code can change it during gameplay):
 	Scene scene;
@@ -54,4 +57,9 @@ struct PlayMode : Mode {
 	PlayerObject* player1;
 	SecondPlayerObject* player2;
 	
+	// Performance tracking:
+	std::chrono::steady_clock::time_point start_time, end_time;
+	float update_elapsed;
+	long long gravity_spell, obj_updates, camera_movement, check_reset;
+	long long light1, light2, light3, light4, light5;
 };

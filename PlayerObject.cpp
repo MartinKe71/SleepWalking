@@ -64,37 +64,45 @@ void PlayerObject::reset() {
 
 void PlayerObject::update(float elapsed) {
     std::cout << "update player\n";
-    if (left.pressed && !right.pressed) {
-        type = "Run";
-        // move left
-        glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos += elapsed * speed * glm::vec2(-1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        PlayerStats::Instance().isFacingLeft = false;
-        cout << "checking collision\n";
-        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
-            glm::abs(glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat)))) {
-            cout << "Not colliding\n";
-            position.x = new_pos.x;
-            position.y = new_pos.y;
+
+    // left right movement
+    start_time = std::chrono::high_resolution_clock::now();
+    {
+        if (left.pressed && !right.pressed) {
+            type = "Run";
+            // move left
+            glm::vec2 new_pos = glm::vec2{ position.x, position.y };
+            new_pos += elapsed * speed * glm::vec2(-1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
+            PlayerStats::Instance().isFacingLeft = false;
+            cout << "checking collision\n";
+            if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos,
+                glm::abs(glm::vec2{ width * 2, height * 2 } *glm::mat2(PlayerStats::Instance().rotMat)))) {
+                cout << "Not colliding\n";
+                position.x = new_pos.x;
+                position.y = new_pos.y;
+            }
+            if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
         }
-        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
-    }
-    else if (!left.pressed && right.pressed) {
-        type = "Run";
-        // move right
-        glm::vec2 new_pos = glm::vec2{ position.x, position.y };
-        new_pos += elapsed * speed * glm::vec2(1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
-        PlayerStats::Instance().isFacingLeft = true;
-        if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos, 
-            glm::abs(glm::vec2{width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat)))) {
-            position.x = new_pos.x;
-            position.y = new_pos.y;
+        else if (!left.pressed && right.pressed) {
+            type = "Run";
+            // move right
+            glm::vec2 new_pos = glm::vec2{ position.x, position.y };
+            new_pos += elapsed * speed * glm::vec2(1.f, 0.f) * glm::mat2(PlayerStats::Instance().rotMat);
+            PlayerStats::Instance().isFacingLeft = true;
+            if (!CollisionSystem::Instance().PlayerCheckCollision(new_pos,
+                glm::abs(glm::vec2{ width * 2, height * 2 } *glm::mat2(PlayerStats::Instance().rotMat)))) {
+                position.x = new_pos.x;
+                position.y = new_pos.y;
+            }
+            if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
         }
-        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
+        else if (!left.pressed && !right.pressed) {
+            AudioSystem::Instance().StopLongAudio(AudioSourceList::Footsteps);
+        }
     }
-    else if (!left.pressed && !right.pressed) {
-        AudioSystem::Instance().StopLongAudio(AudioSourceList::Footsteps);
-    }
+    end_time = std::chrono::high_resolution_clock::now();
+    left_right = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+
 
     if (!PlayerStats::Instance().canJump) PlayerStats::Instance().jumpElapsed += elapsed;
 
@@ -108,6 +116,9 @@ void PlayerObject::update(float elapsed) {
         PlayerStats::Instance().canJump = false;
     }
 
+
+    // physics movement
+    start_time = std::chrono::high_resolution_clock::now();
     if (!isFixed) {
         glm::vec3 accel = force / mass;
         cout << "Force: " << glm::to_string(force) << endl;
@@ -131,14 +142,22 @@ void PlayerObject::update(float elapsed) {
             velocity = glm::vec3(0.f);
         }
     }
+    end_time = std::chrono::high_resolution_clock::now();
+    check_collision = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
     PlayerStats::Instance().player1Pos = position;
 
+    start_time = std::chrono::high_resolution_clock::now();
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
     std::cout << "Triggers checked" << std::endl;
+    end_time = std::chrono::high_resolution_clock::now();
+    check_trigger = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
+
+    start_time = std::chrono::high_resolution_clock::now();
     CollisionSystem::Instance().PlayerCheckCollectables(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
-
+    end_time = std::chrono::high_resolution_clock::now();
+    check_collectable = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
     box->SetPos(glm::vec2{ position.x, position.y });
 
@@ -149,8 +168,19 @@ void PlayerObject::update(float elapsed) {
     // std::cout << "player position: x: " << transform->position.x << "; y: " << transform->position.y << "\n";
 
     // update texcoords every update
+    start_time = std::chrono::high_resolution_clock::now();
     if(anims.count(type) && anims[type]) 
         anims[type]->play(this->VAO, this->VBO_texcoords, sz, elapsed);
     
     type = "Idle";
+    end_time = std::chrono::high_resolution_clock::now();
+    animation = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+}
+
+void PlayerObject::print_performance() {
+    std::cout << "Left Right Movement: " << left_right << std::endl;
+    std::cout << "Collision Checking: " << check_collision << std::endl;
+    std::cout << "Trigger Checking: " << check_trigger << std::endl;
+    std::cout << "Collectable Checking: " << check_collectable << std::endl;
+    std::cout << "Animation: " << animation << std::endl;
 }
