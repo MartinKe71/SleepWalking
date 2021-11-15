@@ -41,12 +41,13 @@ struct PlayMode : Mode {
 	float gravitySpellRot = WORLD_ROT_ANGLE;
 	bool isClockwise = false; 
 	bool isGravitySpellLocked = false;
+	float rotAngle;
 
 	//input tracking:
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	} left, right, down, up, clockwiseRot, counterClockwiseRot;
+	} left, right, down, up, clockwiseRot, counterClockwiseRot, flip;
 
 	PlayerObject* player1;
 	SecondPlayerObject* player2;
