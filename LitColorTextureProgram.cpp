@@ -33,7 +33,7 @@ Load< LitColorTextureProgram > lit_color_texture_program(LoadTagEarly, []() -> L
 
 	std::vector< glm::u8vec4 > tex_data(1, glm::u8vec4(0xff));
 	glm::uvec2 sz;
-	load_png(data_path("resource/map-1.png"), &(sz), &(tex_data), OriginLocation::LowerLeftOrigin);
+	load_png(data_path("resource/test_map2.png"), &(sz), &(tex_data), OriginLocation::LowerLeftOrigin);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz.x, sz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_data.data());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
