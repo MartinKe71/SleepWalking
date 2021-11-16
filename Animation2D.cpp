@@ -104,16 +104,16 @@ void Animation2D::play(GLuint VAO, GLuint VBO_texcoords,
 	GLCall(glBindVertexArray(VAO));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_texcoords));
 
-	// { //realocation for memory
-	// 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec2), &uv[0], GL_DYNAMIC_DRAW);
-	// }
+	{ //realocation for memory
+		glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec2), &uv[0], GL_DYNAMIC_DRAW);
+	}
 
 	// best practice to send data to gpu memory..
-	void* gpubuffer = nullptr;
-	gpubuffer = glMapBufferRange(GL_ARRAY_BUFFER, 0, 4 * sizeof(glm::vec2), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT);
-	memcpy(gpubuffer, uv.data(), 4 * sizeof(glm::vec2));
-	GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	//void* gpubuffer = nullptr;
+	//gpubuffer = glMapBufferRange(GL_ARRAY_BUFFER, 0, 4 * sizeof(glm::vec2), GL_MAP_WRITE_BIT| GL_MAP_INVALIDATE_BUFFER_BIT);
+	//memcpy(gpubuffer, uv.data(), 4 * sizeof(glm::vec2));
+	//GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
+	//GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 void Animation2D::set_animation_speed(float newspeed)
