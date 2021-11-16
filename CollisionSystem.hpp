@@ -41,8 +41,22 @@ public:
 	void update(float elapsed);
 
 private:
+	enum BoxCollisionType {
+		// One axis intersect, one axis include
+		XInclude, 
+		
+		YInclude,
+
+		// Two axis include,
+		WholeInclude,
+
+		// Two axis intersect,
+		NoInclude
+	};
+
 	CollisionSystem();
 	bool IsCollided(const glm::vec4& box1, const glm::vec4& box2) const;
-	bool PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm::vec2& size, glm::vec2& box_pos, glm::vec2& box_size);
+	bool PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm::vec2& size, std::vector<glm::vec2>& boxes_pos, std::vector<glm::vec2>& boxes_size);
 	bool CheckPlayerBlockCollision(const glm::vec2& p1, const glm::vec2& s1, const glm::vec2& p2, const glm::vec2& s2);
+	BoxCollisionType CheckCollisionType(const glm::vec4& box1, const glm::vec4& box2) const;
 };

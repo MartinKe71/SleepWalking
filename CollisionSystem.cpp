@@ -13,60 +13,119 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update(float elapsed)
 {
+	if (PlayerStats::Instance().player1Pos == glm::vec3(0.f))
+		return;
+
 	glm::vec2 player1s = glm::abs(PlayerStats::Instance().player1Size * glm::mat2(PlayerStats::Instance().rotMat));
 	//glm::vec2 player1s = glm::abs(PlayerStats::Instance().player1Size);
-	glm::vec2 player2s = glm::abs(PlayerStats::Instance().player2Size);
+	//glm::vec2 player2s = glm::abs(PlayerStats::Instance().player2Size);
 	glm::vec3& player1p = PlayerStats::Instance().player1Pos;
-	glm::vec3& player2p = PlayerStats::Instance().player2Pos;
-	glm::vec2 player1_hitbox_pos = glm::vec2(0.f);
-	glm::vec2 player1_hitbox_size = glm::vec2(0.f);
-	glm::vec2 player2_hitbox_pos = glm::vec2(0.f);
-	glm::vec2 player2_hitbox_size = glm::vec2(0.f);
+	//glm::vec3& player2p = PlayerStats::Instance().player2Pos;
+	std::vector<glm::vec2> player1_hitboxes_pos;
+	std::vector<glm::vec2> player1_hitboxes_size;
+	//glm::vec2 player2_hitbox_pos = glm::vec2(0.f);
+	//glm::vec2 player2_hitbox_size = glm::vec2(0.f);
 
-	if (PlayerCheckCollision_Stuck(PlayerStats::Instance().player1Pos, player1s, player1_hitbox_pos, player1_hitbox_size))
+	if (PlayerCheckCollision_Stuck(player1p, player1s, player1_hitboxes_pos, player1_hitboxes_size))
 	{
-		//std::cout << "Player 1 stuck in the wall." << std::endl;
-		//std::cout << "Collided block: 0: " << player1_hit_box[0] << "; 1: " << player1_hit_box[1]
-		//	<< ";2 : " << player1_hit_box[2] << "; 3: " << player1_hit_box[3] << std::endl;
+		std::cout << "Player 1 stuck in the wall." << std::endl;
 
-		//float x_diff = (player1_hitbox_pos.x > player1p.x) ? 1.0f : -1.0f;
-		//float y_diff = (player1_hitbox_pos.y > player1p.y) ? 1.0f : -1.0f;
+		glm::vec4 player_box(player1p.x - player1s.x * 0.5f, player1p.y - player1s.y * 0.5f,
+			player1p.x + player1s.x * 0.5f, player1p.y + player1s.y * 0.5f);
 
-		float x_mindis = (player1s.x + player1_hitbox_size.x) * 0.5f;
-		float y_mindis = (player1s.y + player1_hitbox_size.y) * 0.5f;
+		size_t box_to_cal = 0;
 
-		float x_diff = std::max(0.0f,(x_mindis - std::abs(player1p.x - player1_hitbox_pos.x)));
-		float y_diff = std::max(0.0f,(y_mindis - std::abs(player1p.y - player1_hitbox_pos.y)));
+		BoxCollisionType type = BoxCollisionType::NoInclude;
 
-		std::cout << "Hit the wall " << std::endl;
-
-		x_diff *= (player1_hitbox_pos.x > player1p.x) ? -1.0f : 1.0f;
-		y_diff *= (player1_hitbox_pos.y > player1p.y) ? -1.0f : 1.0f;
-
-		std::cout << "X DIFF: " << x_diff << std::endl;
-		std::cout << "Y DIFF: " << y_diff << std::endl;
-		
-		glm::vec3 resPos_x = glm::vec3(player1p.x + x_diff, player1p.y, player1p.z);
-		glm::vec3 resPos_y = glm::vec3(player1p.x, player1p.y + y_diff, player1p.z);
-		glm::vec3 resPos_xy = glm::vec3(player1p.x + x_diff, player1p.y + y_diff, player1p.z);
-
-		if (CheckPlayerBlockCollision(resPos_x, player1s, player1_hitbox_pos, player1_hitbox_size))
+		for (size_t i = 0; i < player1_hitboxes_size.size(); i++)
 		{
-			if (CheckPlayerBlockCollision(resPos_y, player1s, player1_hitbox_pos, player1_hitbox_size))
-				player1_collision->owner->setPos(resPos_xy);
-			else
-				player1_collision->owner->setPos(resPos_y);
-		}
-		else
-			player1_collision->owner->setPos(resPos_x);
-	}
+			const glm::vec2& box_pos = player1_hitboxes_pos[i];
+			const glm::vec2& box_size = player1_hitboxes_size[i];
+			
+			glm::vec4 block_box(box_pos.x - box_size.x * 0.5f, box_pos.y - box_size.y * 0.5f,
+				box_pos.x + box_size.x * 0.5f, box_pos.y + box_size.y * 0.5f);
 
-	if (PlayerCheckCollision_Stuck(PlayerStats::Instance().player2Pos, player2s, player2_hitbox_pos, player2_hitbox_size))
-	{
-		//std::cout << "Player 2 stuck in the wall." << std::endl;
+			box_to_cal = i;
+			type = CheckCollisionType(player_box, block_box);
+
+			if (type == BoxCollisionType::XInclude || type == BoxCollisionType::YInclude)
+				break;
+		}
+
+		float mindis_x = (player1s.x + player1_hitboxes_size[box_to_cal].x) * 0.5f;
+		float mindis_y = (player1s.y + player1_hitboxes_size[box_to_cal].y) * 0.5f;
+
+		float x_diff = std::max(0.0f, (mindis_x - std::abs(player1p.x - player1_hitboxes_pos[box_to_cal].x))) + 1.0f;
+		float y_diff = std::max(0.0f, (mindis_y - std::abs(player1p.y - player1_hitboxes_pos[box_to_cal].y))) + 1.0f;
+
+		glm::vec3 predict_pos = player1p;
+
+		if (type == BoxCollisionType::XInclude)
+		{
+			int sign = (player1p.y - player1_hitboxes_pos[box_to_cal].y) > 0 ? 1 : -1;
+			predict_pos = glm::vec3(player1p.x, player1p.y + sign * y_diff, player1p.z);
+		}
+		else if (type == BoxCollisionType::YInclude)
+		{
+			int sign = (player1p.x - player1_hitboxes_pos[box_to_cal].x) > 0 ? 1 : -1;
+			predict_pos = glm::vec3(player1p.x + sign * x_diff, player1p.y, player1p.z);
+		}
+		else if (type == BoxCollisionType::NoInclude)
+		{
+			int sign_x = (player1p.x - player1_hitboxes_pos[box_to_cal].x) > 0 ? 1 : -1;
+			int sign_y = (player1p.y - player1_hitboxes_pos[box_to_cal].y) > 0 ? 1 : -1;
+
+			std::cout << "sign_x " << sign_x << ", sign_y " << sign_y << std::endl;
+
+			if (x_diff > y_diff) {
+				// Try y first
+				predict_pos = glm::vec3(player1p.x, player1p.y + sign_y * y_diff, player1p.z);
+				if (CheckPlayerBlockCollision(predict_pos, player1s, player1_hitboxes_pos[box_to_cal], player1_hitboxes_size[box_to_cal])
+					|| predict_pos.y < 0)
+				{
+					predict_pos = glm::vec3(player1p.x + sign_x * x_diff, player1p.y, player1p.z);
+					// Try x then
+					if (CheckPlayerBlockCollision(predict_pos, player1s, player1_hitboxes_pos[box_to_cal], player1_hitboxes_size[box_to_cal])
+						|| predict_pos.x < 0)
+					{
+						// Do both
+						predict_pos = glm::vec3(player1p.x + sign_x * x_diff, player1p.y + sign_y * y_diff, player1p.z);
+					}
+				}
+			}
+			else
+			{
+				predict_pos = glm::vec3(player1p.x + sign_x * x_diff, player1p.y, player1p.z);
+				if (CheckPlayerBlockCollision(predict_pos, player1s, player1_hitboxes_pos[box_to_cal], player1_hitboxes_size[box_to_cal])
+					|| predict_pos.y < 0)
+				{
+					predict_pos = glm::vec3(player1p.x, player1p.y + sign_y * y_diff, player1p.z);
+					// Try x then
+					if (CheckPlayerBlockCollision(predict_pos, player1s, player1_hitboxes_pos[box_to_cal], player1_hitboxes_size[box_to_cal])
+						|| predict_pos.x < 0)
+					{
+						// Do both
+						predict_pos = glm::vec3(player1p.x + sign_x * x_diff, player1p.y + sign_y * y_diff, player1p.z);
+					}
+				}
+			}
+		}
+		else if (type == BoxCollisionType::WholeInclude)
+		{
+			int sign_x = (player1p.x - player1_hitboxes_pos[box_to_cal].x) > 0 ? 1 : -1;
+			int sign_y = (player1p.y - player1_hitboxes_pos[box_to_cal].y) > 0 ? 1 : -1;
+			predict_pos = glm::vec3(player1p.x + sign_x * x_diff, player1p.y + sign_y * y_diff, player1p.z);
+		}
+
+		std::cout << "Collision type: " << type << std::endl;
+		std::cout << "x_diff: " << x_diff << ", y_diff: " << y_diff << std::endl;
+		std::cout << "Player Pos: " << player1p.x << ", " << player1p.y << ", " << player1p.z << std::endl;
+		std::cout << "Predict Pos: " << predict_pos.x << ", " << predict_pos.y << ", " << predict_pos.z << std::endl;
+		std::cout << "Box pos: " << player1_hitboxes_pos[box_to_cal].x << ", " << player1_hitboxes_pos[box_to_cal].y << std::endl;
+
+		player1_collision->owner->setPos(predict_pos);
 	}
 }
-
 
 bool CollisionSystem::IsCollided(const glm::vec4& box1, const glm::vec4& box2) const
 {
@@ -74,6 +133,19 @@ bool CollisionSystem::IsCollided(const glm::vec4& box1, const glm::vec4& box2) c
 	bool y_res = (box1[1] < box2[1] && box1[3] < box2[1]) || (box1[1] > box2[1] && box1[1] > box2[3]);
 
 	return !x_res && !y_res;
+}
+
+CollisionSystem::BoxCollisionType CollisionSystem::CheckCollisionType(const glm::vec4& box1, const glm::vec4& box2) const
+{
+	bool x_whole = !((box2[0] > box1[0] && box2[0] < box1[2]) || (box1[0] > box2[0] && box1[0] < box2[2]));
+	bool y_whole = !((box2[1] > box1[1] && box2[1] < box1[3]) || (box1[1] > box2[1] && box1[1] < box2[3]));
+
+	BoxCollisionType res = (x_whole && y_whole) ? BoxCollisionType::WholeInclude :
+		(!x_whole && !y_whole) ? BoxCollisionType::NoInclude :
+		(x_whole && !y_whole) ? BoxCollisionType::XInclude : 
+		(!x_whole && y_whole) ? BoxCollisionType::YInclude : BoxCollisionType::WholeInclude;
+
+	return res;
 }
 
 bool CollisionSystem::CheckPlayerBlockCollision(const glm::vec2& p1, const glm::vec2& s1, const glm::vec2& p2, const glm::vec2& s2)
@@ -113,9 +185,9 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 			bool res = IsCollided(player_box, boxes[j]->GetBoxCoord());
 			if (res) { 
 				auto coord = boxes[j]->GetBoxCoord();
-				std::cout << "Colldied block name: " << boxes[j]->name << std::endl;
+				/*std::cout << "Colldied block name: " << boxes[j]->name << std::endl;
 				std::cout << "Collided block: 0: " << coord[0] << "; 1: " << coord[1] 
-					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;
+					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;*/
 
 
 				return true;
@@ -126,7 +198,7 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 	return false; 
 }
 
-bool CollisionSystem::PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm::vec2& size, glm::vec2& box_pos, glm::vec2& box_size)
+bool CollisionSystem::PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm::vec2& size, std::vector<glm::vec2>& boxes_pos, std::vector<glm::vec2>& boxes_size)
 {
 	glm::vec2 player_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
 									glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
@@ -144,6 +216,8 @@ bool CollisionSystem::PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm
 	glm::vec4 player_box(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f,
 		pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
 
+	bool ret_res = false;
+
 	for (const uint8_t i : sections)
 	{
 		const std::vector<std::shared_ptr<BlockCollisionBox>>& boxes = scene_blocks[i];
@@ -151,17 +225,17 @@ bool CollisionSystem::PlayerCheckCollision_Stuck(const glm::vec2& pos, const glm
 		{
 			bool res = IsCollided(player_box, boxes[j]->GetBoxCoord());
 			if (res) {
-				box_pos = boxes[j]->GetPos();
-				box_size = boxes[j]->GetSize();
+				boxes_pos.push_back(boxes[j]->GetPos());
+				boxes_size.push_back(boxes[j]->GetSize());
+				ret_res = true;
 				/*std::cout << "Colldied block name: " << boxes[j]->name << std::endl;
 				std::cout << "Collided block: 0: " << coord[0] << "; 1: " << coord[1]
 					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;*/
-				return true;
 			}
 		}
 	}
 
-	return false;
+	return ret_res;
 }
 
 
@@ -213,7 +287,7 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 
 	std::set<uint8_t> sections;
 
-	std::cout << "unit width : " << unit_width << " unit height : " << unit_height << std::endl;
+	//std::cout << "unit width : " << unit_width << " unit height : " << unit_height << std::endl;
 
 	for (size_t i = 0; i < 4; i++)
 	{
@@ -224,7 +298,7 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 	glm::vec4 player_box(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f,
 		pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
 
-	std::cout << "iterating trigger arrays " << scene_triggers.size();
+	//std::cout << "iterating trigger arrays " << scene_triggers.size();
 
 
 	std::shared_ptr<CollectableCollisionBox> to_delete;
@@ -232,7 +306,7 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 	// Collectables
 	for (const uint8_t i : sections)
 	{
-		std::cout << " at index: " << std::to_string(i) << std::endl;
+		//std::cout << " at index: " << std::to_string(i) << std::endl;
 		std::vector<std::shared_ptr<CollectableCollisionBox>>& collectables = scenes_collectables[i];
 
 		for (size_t j = 0; j < collectables.size(); j++)
@@ -241,9 +315,9 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 			if (res)
 			{
 				auto coord = collectables[j]->GetBoxCoord();
-				std::cout << "Colldied block name: " << collectables[j]->name << std::endl;
+				/*std::cout << "Colldied block name: " << collectables[j]->name << std::endl;
 				std::cout << "Collided block: 0: " << coord[0] << "; 1: " << coord[1]
-					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;
+					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;*/
 
 				collectables[j]->OnTriggerEnter(player1_collision);
 
@@ -258,7 +332,7 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 	}
 
 	if (to_delete != nullptr) {
-		std::cout << "Erasing collectable collision box" << std::endl;
+		//std::cout << "Erasing collectable collision box" << std::endl;
 		for (uint8_t i : sections) {
 			auto pos = find(scenes_collectables[i].begin(), scenes_collectables[i].end(), to_delete);
 			scenes_collectables[i].erase(pos);
