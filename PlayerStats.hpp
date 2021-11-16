@@ -26,6 +26,9 @@ public:
 	glm::vec3 player1Pos = glm::vec3(0.f);
 	glm::vec3 player2Pos = glm::vec3(0.f);
 
+	glm::vec2 player1Size = glm::vec3(0.f);
+	glm::vec2 player2Size = glm::vec3(0.f);
+
 	glm::vec3 player1SavedPos = glm::vec3(0.f);
 	glm::vec3 player1SavedVel = glm::vec3(0.f);
 	glm::vec3 player2SavedPos = glm::vec3(0.f);

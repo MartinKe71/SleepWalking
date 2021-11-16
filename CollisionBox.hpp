@@ -13,6 +13,8 @@ public:
 	}
 	virtual ~CollisionBox() {}
 
+	inline glm::vec2 GetPos() const { return pos; }
+	inline glm::vec2 GetSize() const { return size; }
 	inline void SetPos(const glm::vec2& p) { pos = p; UpdateBoxCoord(); }
 	inline void SetSize(const glm::vec2& s) { size = s; UpdateBoxCoord(); }
 	inline void SetTrigger(const bool i) { is_trigger = i; }
