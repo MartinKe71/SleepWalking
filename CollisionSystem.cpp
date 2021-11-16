@@ -179,7 +179,7 @@ bool CollisionSystem::PlayerCheckCollision(const glm::vec2& pos, const glm::vec2
 		{
 			bool res = IsCollided(player_box, boxes[j]->GetBoxCoord());
 			if (res) { 
-				auto coord = boxes[j]->GetBoxCoord();
+				//auto coord = boxes[j]->GetBoxCoord();
 				/*std::cout << "Colldied block name: " << boxes[j]->name << std::endl;
 				std::cout << "Collided block: 0: " << coord[0] << "; 1: " << coord[1] 
 					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;*/
@@ -309,7 +309,7 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 			bool res = IsCollided(player_box, collectables[j]->GetBoxCoord());
 			if (res)
 			{
-				auto coord = collectables[j]->GetBoxCoord();
+				//auto coord = collectables[j]->GetBoxCoord();
 				/*std::cout << "Colldied block name: " << collectables[j]->name << std::endl;
 				std::cout << "Collided block: 0: " << coord[0] << "; 1: " << coord[1]
 					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;*/
