@@ -15,17 +15,17 @@ CollectableObject::CollectableObject(float mass, const glm::vec3& pos, float w, 
 }
 
 CollectableObject::~CollectableObject() {
-    std::cout << "deleting box\n";
-    std::cout << "Use Count Prev: " << box.use_count() << std::endl;
+    //std::cout << "deleting box\n";
+    //std::cout << "Use Count Prev: " << box.use_count() << std::endl;
     box.reset();
-    std::cout << "Use Count After: " << box.use_count() << std::endl;
+    //std::cout << "Use Count After: " << box.use_count() << std::endl;
 
-    std::cout << "deleting buffers\n";
+    //std::cout << "deleting buffers\n";
     glDeleteBuffers(1, &VBO_positions);
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
 
-    std::cout << "finished deletion\n";
+    //std::cout << "finished deletion\n";
 }
 
 void CollectableObject::createVerts() {

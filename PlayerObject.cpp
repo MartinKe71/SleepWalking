@@ -12,12 +12,15 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
 
     PlayerStats::Instance().player1SavedPos = pos;
     PlayerStats::Instance().player1SavedVel = vel;
+    PlayerStats::Instance().player1Size = glm::vec2(w * 2, h * 2);
 
     createVerts();
     prepareDraw();
 
     box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false));
     CollisionSystem::Instance().player1_collision = box;
+
+    box->owner = this;
 }
 
 PlayerObject::~PlayerObject() {
@@ -45,7 +48,7 @@ void PlayerObject::createVerts() {
 }
 
 void PlayerObject::reset() {
-    std::cout << "reset beng" << std::endl;
+    //std::cout << "reset beng" << std::endl;
     model = glm::mat4(1.0f);
     GameObject::reset();
 
@@ -55,7 +58,7 @@ void PlayerObject::reset() {
     velocity = PlayerStats::Instance().player1SavedVel;
     box->SetPos(glm::vec2{ position.x, position.y });
 
-    std::cout << "Before beng" << std::endl;
+    //std::cout << "Before beng" << std::endl;
 
     vertex_positions.clear();
     createVerts();
@@ -107,7 +110,7 @@ void PlayerObject::update(float elapsed) {
     if (!PlayerStats::Instance().canJump) PlayerStats::Instance().jumpElapsed += elapsed;
 
     if (space.pressed && PlayerStats::Instance().canJump) {
-        cout << "jump\n";
+        //cout << "jump\n";
         type = "Jump";
         force += mass * jump_power * glm::vec3(0.f, 1.f, 0.f) * PlayerStats::Instance().rotMat;
         AudioSystem::Instance().PlayShortAudio(AudioSourceList::Jump);
@@ -121,20 +124,20 @@ void PlayerObject::update(float elapsed) {
     start_time = std::chrono::high_resolution_clock::now();
     if (!isFixed) {
         glm::vec3 accel = force / mass;
-        cout << "Force: " << glm::to_string(force) << endl;
+        //cout << "Force: " << glm::to_string(force) << endl;
         velocity += accel * elapsed;
         glm::vec3 new_pos = position + velocity * elapsed;
-        cout << "new_pos: " << glm::to_string(new_pos) << endl;
-        cout << "\n";
+        //cout << "new_pos: " << glm::to_string(new_pos) << endl;
+        //cout << "\n";
         if (!CollisionSystem::Instance().PlayerCheckCollision(glm::vec2{ new_pos.x, new_pos.y }, 
             glm::abs(glm::vec2{ width * 2, height * 2} * glm::mat2(PlayerStats::Instance().rotMat)))) {
-            cout << "Graivity Not colliding\n";
+            //cout << "Graivity Not colliding\n";
             
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
         else {
-            cout << " Gravity collided\n";
+            //cout << " Gravity collided\n";
             if (PlayerStats::Instance().jumpElapsed > 0.5f) {
                 PlayerStats::Instance().canJump = true;
                 PlayerStats::Instance().jumpElapsed = 0.f;

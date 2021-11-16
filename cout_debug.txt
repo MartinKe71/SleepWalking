@@ -1,0 +1,20 @@
+Code page is properly set to UTF-8.
+Audio output initialized.
+loading 'Z:\Development\GitHub\SleepWalking\dist/dusty-floor.opus'... done.
+loading 'Z:\Development\GitHub\SleepWalking\dist/car_honk.opus'... done.
+loading 'Z:\Development\GitHub\SleepWalking\dist/train_horn.opus'... done.
+loading 'Z:\Development\GitHub\SleepWalking\dist/running_og-nr.opus'... done.
+Z:\Development\GitHub\SleepWalking\dist/resource/qinye/idle.txt
+Z:\Development\GitHub\SleepWalking\dist/resource/qinye/walk.txt
+Player 1 stuck in the wall.
+Player Pos: 0, 0, 0
+Predict Pos: -52.2987, 0, 0
+reset triggered
+Player 1 stuck in the wall.
+Player Pos: 75.6908, 14.9579, -10.4504
+Predict Pos: 23.3921, 14.9579, -10.4504
+Player 1 stuck in the wall.
+Player Pos: 23.3921, 14.9579, -10.4504
+Predict Pos: -28.9065, 14.9579, -10.4504
+reset triggered
+reset triggered

@@ -248,7 +248,7 @@ void PlayMode::update(float elapsed) {
 				isGravitySpellLocked = false;
 			}
 
-			std::cout << gravitySpellRot << std::endl;
+			//std::cout << gravitySpellRot << std::endl;
 			
 			// substract from the rotation angle if over roate,
 			// otherwise rotate on z axis
@@ -314,6 +314,10 @@ void PlayMode::update(float elapsed) {
 
 	// update gameobjs
 	start_time = std::chrono::high_resolution_clock::now();
+	// Check if the player is already in the wall
+	CollisionSystem::Instance().update(elapsed);
+
+	// force apply test
 	{
 		for (auto& obj : moveableObjs){
 			obj->zeroForce();
@@ -380,15 +384,14 @@ void PlayMode::update(float elapsed) {
 			camera->transform->rotation = glm::quat{ 1.f, 0.f, 0.f, 0.f };
 			gravitySpellRot = WORLD_ROT_ANGLE;
 			isGravitySpellLocked = false;
+
+			std::cout << "reset triggered" << std::endl;
 		}
 	}
 	end_time = std::chrono::high_resolution_clock::now();
 	check_reset = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
 
-	PlayerStats::Instance().to_string();
-
-
-
+	//PlayerStats::Instance().to_string();
 	{ //update listener to camera position:
 		glm::mat4x3 frame = camera->transform->make_local_to_parent();
 		glm::vec3 right = frame[0];
@@ -416,7 +419,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		}
 		int n = (int)collectableObjs.size();
 		for (int i = 0; i < n; i++) {
-			std::cout << i << std::endl;
+			//std::cout << i << std::endl;
 			auto obj = collectableObjs[i];
 			if (obj->getLife() > 0) {
 				obj->draw(*camera);
