@@ -79,7 +79,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 					transform.name);
 			}
 			else if (transform.name.find("Trigger_M") != string::npos) {
-				istringstream stream(transform.name);
+				auto pos = transform.name.find('.');
+
+				istringstream stream(transform.name.substr(0, pos));
 				vector<string> properties;
 				string token;
 				while (getline(stream, token, '_')) properties.push_back(token);
@@ -88,7 +90,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 				auto obj = new MovingThornObject(10.f, properties, transform.position,
 					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-					true, "resource/frame.png", transform.name);
+					true, "resource/moving_throne.png", transform.name);
 
 				moveableObjs.push_back(obj);
 			}			
@@ -426,7 +428,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
 		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 200.f)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 100.f)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
@@ -440,10 +442,10 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		//set up light type and position for lit_color_texture_program:
 		GLCall(glUseProgram(lit_color_texture_program->program));
 		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, 5.0f))));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, 10.0f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
 		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 50.f)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 100.f)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
@@ -459,7 +461,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
 		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.05f)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.1f)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
