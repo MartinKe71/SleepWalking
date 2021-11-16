@@ -17,14 +17,9 @@ void CollisionSystem::update(float elapsed)
 		return;
 
 	glm::vec2 player1s = glm::abs(PlayerStats::Instance().player1Size * glm::mat2(PlayerStats::Instance().rotMat));
-	//glm::vec2 player1s = glm::abs(PlayerStats::Instance().player1Size);
-	//glm::vec2 player2s = glm::abs(PlayerStats::Instance().player2Size);
 	glm::vec3& player1p = PlayerStats::Instance().player1Pos;
-	//glm::vec3& player2p = PlayerStats::Instance().player2Pos;
 	std::vector<glm::vec2> player1_hitboxes_pos;
 	std::vector<glm::vec2> player1_hitboxes_size;
-	//glm::vec2 player2_hitbox_pos = glm::vec2(0.f);
-	//glm::vec2 player2_hitbox_size = glm::vec2(0.f);
 
 	if (PlayerCheckCollision_Stuck(player1p, player1s, player1_hitboxes_pos, player1_hitboxes_size))
 	{
