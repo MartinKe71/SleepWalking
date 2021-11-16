@@ -189,6 +189,9 @@
             <key type="filename">walk/qqren_parts_walk_3.png</key>
             <key type="filename">walk/qqren_parts_walk_4.png</key>
             <key type="filename">walk/qqren_parts_walk_5.png</key>
+            <key type="filename">walk/qqren_parts_walk_6.png</key>
+            <key type="filename">walk/qqren_parts_walk_7.png</key>
+            <key type="filename">walk/qqren_parts_walk_8.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

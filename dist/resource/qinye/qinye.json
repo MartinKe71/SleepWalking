@@ -63,6 +63,30 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
 	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_6.png",
+	"frame": {"x":879,"y":1566,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_7.png",
+	"frame": {"x":1,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
+},
+{
+	"filename": "walk/qqren_parts_walk_8.png",
+	"frame": {"x":879,"y":1,"w":856,"h":1543},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":856,"h":1543},
+	"sourceSize": {"w":858,"h":1543}
 }],
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
@@ -71,6 +95,6 @@
 	"format": "RGBA8888",
 	"size": {"w":2614,"h":3110},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:a7060eb5f62c9227092b9bba59074919:dc70e9a2387465ebca2b34b1cfe61b57:c38ce6d538eed741596dae8f3cb04742$"
+	"smartupdate": "$TexturePacker:SmartUpdate:ac1a3deeccc3ad5ce3b81d6539573be8:a27062a26810e7e7502ecb90578c6c61:c38ce6d538eed741596dae8f3cb04742$"
 }
 }
