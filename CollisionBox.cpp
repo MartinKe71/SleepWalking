@@ -23,3 +23,8 @@ void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 		owner->setLife(-1.f);
 	}
 }
+
+void SavePointCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
+{
+
+}
