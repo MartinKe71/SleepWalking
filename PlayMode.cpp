@@ -374,6 +374,12 @@ void PlayMode::update(float elapsed) {
 			gravitySpellRot = WORLD_ROT_ANGLE;
 			isGravitySpellLocked = false;
 
+			// Reset collectables
+			for (auto& c : collectableObjs)
+			{
+				c->setLife(1.0f);
+			}
+
 			std::cout << "reset triggered" << std::endl;
 		}
 	}
@@ -410,12 +416,6 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 			auto obj = collectableObjs[i];
 			if (obj->getLife() > 0) {
 				obj->draw(*camera);
-			}
-			else {
-				obj->~CollectableObject();
-				n--;
-				collectableObjs.erase(collectableObjs.begin() + i);
-				i--;
 			}
 		}
 	};
