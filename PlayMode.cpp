@@ -101,11 +101,40 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 				true, "resource/gg.png");
 
 			collectableObjs.push_back(collectable);
+			//std::cout << "Collectable created with w: " << transform.scale.x << ", and height: " << transform.scale.y << std::endl;
 
 			collectable->box = CollisionSystem::Instance().AddOneCollectable(glm::vec2(transform.position.x, transform.position.y),
 				glm::vec2(transform.scale.x * 2, transform.scale.y * 2),
 				transform.name);
 			collectable->box->owner = collectable;
+		}
+		else if (transform.name.find("SavePoint") != string::npos) {
+			size_t w_i = transform.name.find("_W_");
+			size_t h_i = transform.name.find("_H_");
+			int w = 0;
+			int h = 0;
+			if (w_i != string::npos && h_i != string::npos)
+			{
+				w = std::stoi(transform.name.substr(w_i+3, h_i-w_i-3));
+				h = std::stoi(transform.name.substr(h_i+3));
+			}
+			else
+			{
+				std::cerr << "SavePoint load failed, string name not valid." << std::endl;
+				continue;
+			}
+			//std::cout << "Save point created with w: " << w << ", and height: " << h << std::endl;
+			auto savePoint = new SavePointObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
+				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/save_point.png");
+			
+			savePointObjs.push_back(savePoint);
+
+			savePoint->box = CollisionSystem::Instance().AddOneSavePoint(glm::vec2(transform.position.x, transform.position.y),
+				glm::vec2(w * 2, h * 2),
+				transform.name);
+
+			savePoint->box->owner = savePoint;
 		}
 	}
 

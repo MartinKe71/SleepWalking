@@ -3,7 +3,7 @@
 #include "GameObject.hpp"
 #include "CollisionBox.hpp"
 
-class SavePointObject : public GameObject {
+class SavePointObject : public GameObject  {
 public:
 	SavePointObject();
 	SavePointObject(float mass = 10.0f, const glm::vec3& pos = glm::vec3(0.f),
@@ -16,5 +16,8 @@ public:
 	void reset() override;
 	void createVerts() override;
 
-	std::shared_ptr<>
+	std::shared_ptr<SavePointCollisionBox> box;
+private:
+	float width, height;
+	glm::vec4 color = glm::vec4(1.f, 1.f, 1.f, 1.f);
 };

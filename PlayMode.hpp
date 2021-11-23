@@ -10,6 +10,7 @@
 #include "CollectableObject.hpp"
 #include "MovingThornObject.hpp"
 #include "MovingBlockObject.hpp"
+#include "SavePointObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -38,6 +39,7 @@ struct PlayMode : Mode {
 	//----- game object -----
 	vector<GameObject*> moveableObjs;
 	vector<CollectableObject*> collectableObjs;
+	vector<SavePointObject*> savePointObjs;
 
 	//----- game state -----
 	float gravitySpellRot = WORLD_ROT_ANGLE;

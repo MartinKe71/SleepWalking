@@ -296,11 +296,22 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 	//std::cout << "iterating trigger arrays " << scene_triggers.size();
 
 
-	// Collectables
+	// Collectables and save point
 	for (const uint8_t i : sections)
 	{
 		//std::cout << " at index: " << std::to_string(i) << std::endl;
 		std::vector<std::shared_ptr<CollectableCollisionBox>>& collectables = scenes_collectables[i];
+		std::vector<std::shared_ptr<SavePointCollisionBox>>& savePoints = scene_savePoints[i];
+
+		for (size_t j = 0; j < savePoints.size(); j++)
+		{
+			bool res = IsCollided(player_box, savePoints[j]->GetBoxCoord());
+			if (res && savePoints[j]->owner)
+			{
+				savePoints[j]->OnTriggerEnter(player1_collision);
+			}
+
+		}
 
 		for (size_t j = 0; j < collectables.size(); j++)
 		{
@@ -390,6 +401,31 @@ std::shared_ptr<CollectableCollisionBox> CollisionSystem::AddOneCollectable(cons
 	for (const uint8_t i : sections)
 	{
 		scenes_collectables[i].push_back(box);
+	}
+
+	return box;
+}
+
+std::shared_ptr<SavePointCollisionBox> CollisionSystem::AddOneSavePoint(const glm::vec2& pos, const glm::vec2& size, std::string name)
+{
+	glm::vec2 block_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
+							glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
+							glm::vec2(pos.x + size.x * 0.5f, pos.y - size.y * 0.5f),
+							glm::vec2(pos.x + size.x * 0.5f, pos.y + size.y * 0.5f) };
+
+	std::set<uint8_t> sections;
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		sections.insert(static_cast<uint8_t>((block_points[i].x - GAME_MAP_ORIGIN.x) / unit_width) +
+			static_cast<uint8_t>((block_points[i].y - GAME_MAP_ORIGIN.y) / unit_height) * COLLISION_OPT_LEVEL);
+	}
+
+	std::shared_ptr<SavePointCollisionBox> box(new SavePointCollisionBox(pos, size, true, name));
+
+	for (const uint8_t i : sections)
+	{
+		scene_savePoints[i].push_back(box);
 	}
 
 	return box;

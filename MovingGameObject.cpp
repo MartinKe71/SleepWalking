@@ -61,7 +61,7 @@ void MovingGameObject::reset() {
 }
 
 void MovingGameObject::update(float elapsed) {
-    cout << "updating moving object" << endl;
+    //cout << "updating moving object" << endl;
 
     position += moving_dir * moving_speed * elapsed;
 
@@ -71,7 +71,7 @@ void MovingGameObject::update(float elapsed) {
     }
 
     if (box != nullptr) {
-        cout << "box is not nullptr\n\n" << endl;
+        //cout << "box is not nullptr\n\n" << endl;
         box->SetPos(position);
     }
 }
