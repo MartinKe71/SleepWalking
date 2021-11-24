@@ -71,3 +71,11 @@ public :
 	~CollectableCollisionBox() {}
 private:
 };
+
+class SavePointCollisionBox : public CollisionBox {
+public:
+	using CollisionBox::CollisionBox;
+	void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) override;
+	~SavePointCollisionBox() {}
+private:
+};

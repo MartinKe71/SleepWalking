@@ -17,7 +17,7 @@ public:
 	float health = 100.f;
 	int lightNum = 0;
 	int direction = 1;
-	
+
 	glm::mat3 rotMat = glm::mat3(1.f);
 	bool isFacingLeft = false;
 
