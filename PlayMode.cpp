@@ -447,6 +447,9 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 				obj->draw(*camera);
 			}
 		}
+		for (auto& obj : savePointObjs) {
+			obj->draw(*camera);
+		}
 	};
 
 	// first light
