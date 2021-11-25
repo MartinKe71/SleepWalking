@@ -38,6 +38,7 @@ struct PlayMode : Mode {
 
 	//----- game object -----
 	vector<GameObject*> moveableObjs;
+	vector<GameObject*> playerObjs; 
 	vector<CollectableObject*> collectableObjs;
 	vector<SavePointObject*> savePointObjs;
 
@@ -45,13 +46,15 @@ struct PlayMode : Mode {
 	float gravitySpellRot = WORLD_ROT_ANGLE;
 	bool isClockwise = false; 
 	bool isGravitySpellLocked = false;
-	float rotAngle;
+	float rotAngle = WORLD_ROT_ANGLE;
+	float timestopLock = 0.f;
+	float timestopTimer = 0.f;
 
 	//input tracking:
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	} left, right, down, up, clockwiseRot, counterClockwiseRot, flip;
+	} left, right, down, up, clockwiseRot, counterClockwiseRot, flip, timestop;
 
 	PlayerObject* player1;
 	SecondPlayerObject* player2;

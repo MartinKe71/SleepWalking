@@ -20,7 +20,7 @@ public:
     struct Button {
         uint8_t downs = 0;
         bool pressed = 0;
-    } left, right, up, down;
+    } left, right, up, down, drag;
 
     int direction = 1;
     bool canJump = true;
