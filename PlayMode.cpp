@@ -143,6 +143,12 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/stopwatch.png"));
+
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/rope.png"));
+
 	playerObjs.push_back(player1);
 	playerObjs.push_back(player2);
 	
@@ -210,6 +216,9 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			case SDLK_SLASH:
 				timestop.pressed = true;
 				break;
+			case SDLK_PERIOD:
+				drag.pressed = true;
+				break;
 			default:
 				break;
 		}
@@ -257,6 +266,9 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			case SDLK_SLASH:
 				timestop.pressed = false;
 				break;
+			case SDLK_PERIOD:
+				drag.pressed = false;
+				break;
 			default:
 				break;
 		}
@@ -266,7 +278,10 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
-		
+
+	for (auto& obj : moveableObjs) obj->zeroForce();
+	for (auto& obj : playerObjs) obj->zeroForce();
+
 	// gravity spell
 	{
 		// camera rotation speed
@@ -346,16 +361,41 @@ void PlayMode::update(float elapsed) {
 					0, 0, 0);
 		}
 	}
+	// drag spell
+	{
+		float cd = DRAG_CD;
+		float timer = DRAG_TIMER;
+		float force_mag = DRAG_FORCE_MAG;
+		glm::vec3 force_dir = glm::normalize(player2->getPos() - player1->getPos());
+		if (drag.pressed && dragLock == 0.f){
+			markerObjs[1]->show(player2->getPos());
+			glm::vec3 force = force_mag * force_dir;
+			player1->applyForce(force);
+			dragLock += elapsed;
+			dragTimer += elapsed;
+		}
+		
+		if (dragLock > 0.f) dragLock += elapsed;
+		if (dragLock > cd) dragLock = 0.f;
+		if (dragTimer > 0.f) dragTimer += elapsed;
+		if (dragTimer > timer) dragTimer = 0.f;
+
+		if (dragTimer > 0.f){
+			glm::vec3 force = force_mag * force_dir;
+			player1->applyForce(force);
+		}
+	}
 
 	// Check if the player is already in the wall
 	CollisionSystem::Instance().update(elapsed);
 
-
+	// update and time stop
 	{
 		float cd = TIMESTOP_CD;
 		float timer = TIMESTOP_TIMER;
 		// active phrase
 		if (timestop.pressed && timestopLock == 0.f){
+			markerObjs[0]->show(player2->getPos());
 			timestopTimer += elapsed;
 			timestopLock += elapsed;
 		}
@@ -370,21 +410,25 @@ void PlayMode::update(float elapsed) {
 		// normal phrase
 		if (timestopTimer == 0.f){
 			for (auto& obj : moveableObjs){
-				obj->zeroForce();
 				glm::vec3 force = gravity * obj->getMass();
 				obj->applyForce(force);
 				obj->update(elapsed);
 			}
 		}
+	}
 
+	{
 		for (auto& obj : playerObjs){
-			obj->zeroForce();
 			glm::vec3 force = gravity * obj->getMass();
 			obj->applyForce(force);
 			obj->update(elapsed);
 		}
+		// std::cout << player1->getForce().x << " " 
+		// 	<< player1->getForce().y << " " << player1->getForce().z << std::endl;
+		for (auto& obj : markerObjs) obj->fadeOut();
 	}
 
+	// camera movement
 	{
 		// camera->transform->position = glm::vec3(player1->getPos().x, 
 		// 	player1->getPos().y, camera->transform->position.z);
@@ -483,7 +527,7 @@ void PlayMode::update(float elapsed) {
 		glm::vec3 right = frame[0];
 		glm::vec3 at = frame[3];
 		Sound::listener.set_position_right(at, right, 1.0f / 60.0f);
-	}
+	}	
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
@@ -603,6 +647,14 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glUseProgram(0));
 
 		draw_objects();
+	}
+
+	{
+		GLCall(glDisable(GL_DEPTH_TEST));
+		GLCall(glDepthMask(GL_FALSE));
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		for (auto& obj : markerObjs) obj->draw(*camera);
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));

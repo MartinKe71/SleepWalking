@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:53
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 23:33:53
+ * @ Modified time: 2021-11-26 01:50:11
  * @ Description: Interface of square object
  */
 
@@ -26,6 +26,9 @@ public:
     
     void reset() override;
     void createVerts() override;
+
+    void fadeOut();
+    void show(const glm::vec3& pos);
     
 private:
     float width;

@@ -20,7 +20,7 @@ public:
     struct Button {
         uint8_t downs = 0;
         bool pressed = 0;
-    } left, right, up, down, drag;
+    } left, right, up, down;
 
     int direction = 1;
     bool canJump = true;
@@ -34,7 +34,6 @@ public:
 
 private:
     float width, height;
-    glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     float speed = 40.f;
     float jump_power = 4000.0f;
