@@ -38,3 +38,5 @@ enum class AudioSourceList
 #define P2_RIGHT SDLK_RIGHT
 #define P2_UP SDLK_UP
 #define P2_DOWN SDLK_DOWN
+
+#define LIGHT_DECAY 0.4f

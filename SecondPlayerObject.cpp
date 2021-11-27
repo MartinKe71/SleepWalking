@@ -24,8 +24,8 @@ SecondPlayerObject::SecondPlayerObject(float mass, const glm::vec3& pos, float w
     createVerts();
     prepareDraw();
 
-    /*box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false));
-    CollisionSystem::Instance().player1_collision = box;*/
+    box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false, "player2"));
+    CollisionSystem::Instance().player2_collision = box;
 }
 
 SecondPlayerObject::~SecondPlayerObject() {
@@ -57,7 +57,7 @@ void SecondPlayerObject::reset() {
     model = glm::mat4(1.0f);
     GameObject::reset();
 
-    PlayerStats::Instance().reset();
+    //PlayerStats::Instance().reset();
 
     position = PlayerStats::Instance().player2SavedPos;
     velocity = PlayerStats::Instance().player2SavedVel;
@@ -127,6 +127,9 @@ void SecondPlayerObject::update(float elapsed) {
     PlayerStats::Instance().player2Pos = position;
 
     CollisionSystem::Instance().PlayerCheckTrigger(glm::vec2{ position.x, position.y }, glm::vec2{ width, height });
+
+    CollisionSystem::Instance().PlayerCheckCollectables(glm::vec2{ position.x, position.y }, glm::vec2{ width, height }, false);
+
     //std::cout << "Triggers checked" << std::endl;
 
     //box->SetPos(glm::vec2{ position.x, position.y });

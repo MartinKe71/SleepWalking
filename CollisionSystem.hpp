@@ -32,7 +32,7 @@ public:
 
 	void PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& size);
 
-	void PlayerCheckCollectables(const glm::vec2& pos, const glm::vec2& size);
+	void PlayerCheckCollectables(const glm::vec2& pos, const glm::vec2& size, bool isPlayer1 = true);
 
 	std::shared_ptr<BlockCollisionBox> AddOneSceneBlock(const glm::vec2& pos, const glm::vec2& size, std::string name);
 
