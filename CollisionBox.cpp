@@ -16,7 +16,7 @@ void ThornCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 
 void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 {
-	std::cout << "Somebody hits the collectable" << cb->name << std::endl;
+	//std::cout << "Somebody hits the collectable" << cb->name << std::endl;
 	if (cb->name == "player1") {
 		PlayerStats::Instance().player1Light += 1.0f;
 	}
