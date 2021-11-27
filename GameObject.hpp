@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 23:14:14
+ * @ Modified time: 2021-11-26 01:14:50
  * @ Description: Header file for GameObject class
  */
 
@@ -42,6 +42,7 @@ public:
     glm::vec3 getPos() { return position; }
     glm::vec3 getNormal() { return normal; }
     glm::vec3 getVelocity() { return velocity; }
+    glm::vec3 getForce() { return force; }
     float getLife(){return lifeSpan;}
 
     

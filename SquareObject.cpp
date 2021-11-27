@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 23:35:42
+ * @ Modified time: 2021-11-26 01:58:01
  * @ Description: implementation of square object
  */
 
@@ -10,6 +10,7 @@
 #include "data_path.hpp"
 #include "SquareObject.hpp"
 #include "Inivar.hpp"
+#include "PlayerStats.hpp"
 
 SquareObject::SquareObject(){
 }
@@ -56,4 +57,22 @@ void SquareObject::setWidth(float r){
     
     createVerts();
     prepareDraw();
+}
+
+void SquareObject::fadeOut() {
+    if (color.w > 0.f)
+        color.w -= MARKER_FADE_OUT;
+
+    // // done fading out
+    // if (color.w <= 0.f){
+    //     color.w = 0.f;
+    //     return true;
+    // }
+    // // still fading out
+    // return false;
+}
+
+void SquareObject::show(const glm::vec3& pos) {
+    position = pos + glm::vec3(0.f, 7.f, 0.f) * PlayerStats::Instance().rotMat;
+    color.w = 1.f;
 }

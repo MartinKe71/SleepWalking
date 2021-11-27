@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:16
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-12 17:17:22
+ * @ Modified time: 2021-11-26 01:59:07
  * @ Description: Base class for game object
  */
 
@@ -145,7 +145,7 @@ void GameObject::draw(Scene::Camera const& camera) {
     GLCall(glUniformMatrix4x3fv(shader->OBJECT_TO_LIGHT_mat4x3, 1, GL_FALSE, glm::value_ptr(world_to_light)));
     GLCall(glUniformMatrix3fv(shader->NORMAL_TO_LIGHT_mat3, 1, GL_FALSE, glm::value_ptr(normal_to_light)));
     GLCall(glUniformMatrix4fv(shader->Model_mat4, 1, GL_FALSE, glm::value_ptr(curModel)));
-    GLCall(glUniform4fv(shader->Color_vec4, 1, &color[0]));
+    GLCall(glUniform4fv(shader->Color_vec4, 1, glm::value_ptr(color)));
     GLCall(glUniform3fv(shader->Normal_vec3, 1, glm::value_ptr(normal)));
     
     // Bind the VAO

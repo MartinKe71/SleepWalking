@@ -143,9 +143,17 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		throw std::runtime_error("Expecting scene to have exactly one camera, but it has " + std::to_string(scene.cameras.size()));
 	camera = &scene.cameras.front();
 	
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/stopwatch.png"));
+
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/rope.png"));
+
+	playerObjs.push_back(player1);
+	playerObjs.push_back(player2);
 	
-	moveableObjs.push_back(player1);
-	moveableObjs.push_back(player2);
+	// moveableObjs.push_back(player1);
+	// moveableObjs.push_back(player2);
 }
 
 PlayMode::~PlayMode() {
@@ -205,6 +213,12 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			case SDLK_r:
 				flip.pressed = true;
 				break;
+			case SDLK_SLASH:
+				timestop.pressed = true;
+				break;
+			case SDLK_PERIOD:
+				drag.pressed = true;
+				break;
 			default:
 				break;
 		}
@@ -249,6 +263,12 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			case SDLK_r:
 				flip.pressed = false;
 				break;
+			case SDLK_SLASH:
+				timestop.pressed = false;
+				break;
+			case SDLK_PERIOD:
+				drag.pressed = false;
+				break;
 			default:
 				break;
 		}
@@ -258,7 +278,10 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 }
 
 void PlayMode::update(float elapsed) {
-		
+
+	for (auto& obj : moveableObjs) obj->zeroForce();
+	for (auto& obj : playerObjs) obj->zeroForce();
+
 	// gravity spell
 	{
 		// camera rotation speed
@@ -338,28 +361,84 @@ void PlayMode::update(float elapsed) {
 					0, 0, 0);
 		}
 	}
+	// drag spell
+	{
+		float cd = DRAG_CD;
+		float timer = DRAG_TIMER;
+		float force_mag = DRAG_FORCE_MAG;
+		glm::vec3 force_dir = glm::normalize(player2->getPos() - player1->getPos());
+		if (drag.pressed && dragLock == 0.f){
+			markerObjs[1]->show(player2->getPos());
+			glm::vec3 force = force_mag * force_dir;
+			player1->applyForce(force);
+			dragLock += elapsed;
+			dragTimer += elapsed;
+		}
+		
+		if (dragLock > 0.f) dragLock += elapsed;
+		if (dragLock > cd) dragLock = 0.f;
+		if (dragTimer > 0.f) dragTimer += elapsed;
+		if (dragTimer > timer) dragTimer = 0.f;
+
+		if (dragTimer > 0.f){
+			glm::vec3 force = force_mag * force_dir;
+			player1->applyForce(force);
+		}
+	}
 
 	// Check if the player is already in the wall
 	CollisionSystem::Instance().update(elapsed);
 
-	// force apply test
+	// update and time stop
 	{
-		for (auto& obj : moveableObjs){
-			obj->zeroForce();
-			glm::vec3 force = gravity * obj->getMass();
-			obj->applyForce(force);
-			
-			obj->update(elapsed);
+		float cd = TIMESTOP_CD;
+		float timer = TIMESTOP_TIMER;
+		// active phrase
+		if (timestop.pressed && timestopLock == 0.f){
+			markerObjs[0]->show(player2->getPos());
+			timestopTimer += elapsed;
+			timestopLock += elapsed;
+		}
+		
+		// counting phrase
+		// if cd set, then keep increment
+		if (timestopLock > 0.f) timestopLock += elapsed; 
+		if (timestopLock > cd) timestopLock = 0.f;
+		if (timestopTimer > 0.f) timestopTimer += elapsed;
+		if (timestopTimer > timer) timestopTimer = 0.f;
+
+		// normal phrase
+		if (timestopTimer == 0.f){
+			for (auto& obj : moveableObjs){
+				glm::vec3 force = gravity * obj->getMass();
+				obj->applyForce(force);
+				obj->update(elapsed);
+			}
 		}
 	}
 
 	{
+		for (auto& obj : playerObjs){
+			glm::vec3 force = gravity * obj->getMass();
+			obj->applyForce(force);
+			obj->update(elapsed);
+		}
+		// std::cout << player1->getForce().x << " " 
+		// 	<< player1->getForce().y << " " << player1->getForce().z << std::endl;
+		for (auto& obj : markerObjs) obj->fadeOut();
+	}
+
+	// camera movement
+	{
 		// camera->transform->position = glm::vec3(player1->getPos().x, 
 		// 	player1->getPos().y, camera->transform->position.z);
-
+		
 		// // camera movement test
 		float CameraSpeed = max(glm::length(player1->getVelocity()), CAMERA_SPEED);
 		
+		glm::vec2 offset = CAM_OFFSET;
+		offset = glm::vec2(glm::abs(PlayerStats::Instance().rotMat * glm::vec3(offset , 0.f)));
+
 		glm::vec2 playerPosOnWindow = glm::vec2(
 			player1->getPos().x - camera->transform->position.x, 
 			player1->getPos().y - camera->transform->position.y);
@@ -369,22 +448,51 @@ void PlayMode::update(float elapsed) {
 		glm::vec3 up = frame[1];	
 		// glm::vec3 forward = -frame[2];
 
-		if (playerPosOnWindow.x > 30.f)
-			camera->transform->position = camera->transform->position 
+		glm::vec3 next_cam_pos = camera->transform->position;
+		if (playerPosOnWindow.x > offset.x)
+			next_cam_pos = next_cam_pos 
 				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
 		
-		if (playerPosOnWindow.x < -30.f)
-			camera->transform->position = camera->transform->position 
+		if (playerPosOnWindow.x < -offset.x)
+			next_cam_pos = next_cam_pos 
 				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * right;
 
-		if (playerPosOnWindow.y > 20.f)
-			camera->transform->position = camera->transform->position 
+		if (playerPosOnWindow.y > offset.y)
+			next_cam_pos = next_cam_pos 
 				+ PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
 
-		if (playerPosOnWindow.y < -20.f)
-			camera->transform->position = camera->transform->position 
+		if (playerPosOnWindow.y < -offset.y)
+			next_cam_pos = next_cam_pos 
 				- PlayerStats::Instance().rotMat * CameraSpeed * elapsed * up;
 		
+		float cam_h = glm::tan(camera->fovy / 2.f) * camera->transform->position.z;
+		float cam_w = camera->aspect * cam_h ;
+		glm::vec2 cam_dim = glm::vec2(cam_w, cam_h);
+		glm::vec2 map_dim = GAME_MAP_SIZE;
+
+		cam_dim = glm::vec2(PlayerStats::Instance().rotMat * glm::vec3(cam_dim, 0.f));
+		map_dim = glm::vec2(PlayerStats::Instance().rotMat * glm::vec3(map_dim, 0.f));
+
+		cam_dim = glm::abs(cam_dim);
+		map_dim = glm::abs(map_dim);
+
+		next_cam_pos.x = max(min(next_cam_pos.x, map_dim.x - cam_dim.x), cam_dim.x);
+		next_cam_pos.y = max(min(next_cam_pos.y, map_dim.y - cam_dim.y), cam_dim.y);
+
+		camera->transform->position = next_cam_pos;
+
+		glm::vec3 player2_pos = player2->getPos();
+		player2_pos.x = max(min(player2_pos.x, 
+			camera->transform->position.x + cam_dim.x - offset.x), 
+			camera->transform->position.x - cam_dim.x + offset.x);
+		player2_pos.y = max(min(player2_pos.y, 
+			camera->transform->position.y + cam_dim.y - offset.y), 
+			camera->transform->position.y - cam_dim.y + offset.y);
+
+		player2->setPos(player2_pos);
+
+		// std::cout << cam_dim.x << " " << cam_dim.y << std::endl;
+		// std::cout << next_cam_pos.x << " " << next_cam_pos.y << std::endl;
 		//camera->transform->position.x =std::clamp(camera->transform->position.x, 140.0f, 300.0f);
 		//camera->transform->position.y = std::clamp(camera->transform->position.y, 100.0f, 240.0f);
 	}
@@ -419,7 +527,7 @@ void PlayMode::update(float elapsed) {
 		glm::vec3 right = frame[0];
 		glm::vec3 at = frame[3];
 		Sound::listener.set_position_right(at, right, 1.0f / 60.0f);
-	}
+	}	
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
@@ -437,6 +545,9 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 
 	auto draw_objects = [&]() {
 		for (auto& obj : moveableObjs) {
+			obj->draw(*camera);
+		}
+		for (auto& obj : playerObjs) {
 			obj->draw(*camera);
 		}
 		int n = (int)collectableObjs.size();
@@ -536,6 +647,14 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glUseProgram(0));
 
 		draw_objects();
+	}
+
+	{
+		GLCall(glDisable(GL_DEPTH_TEST));
+		GLCall(glDepthMask(GL_FALSE));
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		for (auto& obj : markerObjs) obj->draw(*camera);
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
