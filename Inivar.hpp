@@ -37,7 +37,7 @@ enum class AudioSourceList
 #define DRAG_FORCE_MAG 1000.f;
 #define DRAG_CD 5.f;
 #define DRAG_TIMER 0.5f;
-#define MARKER_FADE_OUT 0.05f;
+#define MARKER_FADE_OUT 0.02f;
 
 #define P1_LEFT SDLK_a
 #define P1_RIGHT SDLK_d

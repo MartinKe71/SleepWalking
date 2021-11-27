@@ -442,6 +442,10 @@ void PlayMode::update(float elapsed) {
 		glm::vec2 playerPosOnWindow = glm::vec2(
 			player1->getPos().x - camera->transform->position.x, 
 			player1->getPos().y - camera->transform->position.y);
+		
+		// glm::vec2 player2PosOnWindow = glm::vec2(
+		// 	player2->getPos().x - camera->transform->position.x, 
+		// 	player2->getPos().y - camera->transform->position.y);
 
 		glm::mat4x3 frame = camera->transform->make_local_to_parent();
 		glm::vec3 right = frame[0];
