@@ -17,7 +17,7 @@ PlayerObject::PlayerObject(float mass, const glm::vec3& pos, float w, float h,
     createVerts();
     prepareDraw();
 
-    box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false));
+    box = std::shared_ptr<PlayerCollisionBox>(new PlayerCollisionBox(position, glm::vec2(width, height), false, "player1"));
     CollisionSystem::Instance().player1_collision = box;
 
     box->owner = this;

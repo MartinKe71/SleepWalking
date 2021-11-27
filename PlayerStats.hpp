@@ -30,13 +30,29 @@ public:
 	glm::vec2 player2Size = glm::vec3(0.f);
 
 	glm::vec3 player1SavedPos = glm::vec3(0.f);
-	glm::vec3 player1SavedVel = glm::vec3(0.f);
+	glm::vec3 player1SavedVel = glm::vec3(0.f);	
+
 	glm::vec3 player2SavedPos = glm::vec3(0.f);
-	glm::vec3 player2SavedVel = glm::vec3(0.f);
+	glm::vec3 player2SavedVel = glm::vec3(0.f);	
+
+	// player 1 lighting
+	float player1Light = 5.f;
+	float player1SavedLight = 5.f;
+	float player1LightDistance = 10.f;
+	float player1LightEnergy = 1.f;
+
+	// player 2 lighting	
+	float player2Light = 5.f;
+	float player2SavedLight = 5.f;
+	float player2LightDistance = 10.f;
+	float player2LightEnergy = 1.f;
+
+	float ambientLightEnergy = 1.f;
+
 	float jumpElapsed = 0.f;
 
 	void reset();
-
+	void update(float elapsed);
 	void to_string();
 
 private:

@@ -273,7 +273,7 @@ void CollisionSystem::PlayerCheckTrigger(const glm::vec2& pos, const glm::vec2& 
 	}
 }
 
-void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::vec2& size)
+void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::vec2& size, bool isPlayer1)
 {
 	glm::vec2 player_points[4] = { glm::vec2(pos.x - size.x * 0.5f, pos.y - size.y * 0.5f),
 								glm::vec2(pos.x - size.x * 0.5f, pos.y + size.y * 0.5f),
@@ -308,9 +308,11 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 			bool res = IsCollided(player_box, savePoints[j]->GetBoxCoord());
 			if (res && savePoints[j]->owner)
 			{
-				savePoints[j]->OnTriggerEnter(player1_collision);
+				if (isPlayer1) 
+				{
+					savePoints[j]->OnTriggerEnter(player1_collision);
+				}				
 			}
-
 		}
 
 		for (size_t j = 0; j < collectables.size(); j++)
@@ -323,7 +325,14 @@ void CollisionSystem::PlayerCheckCollectables(const glm::vec2& pos, const glm::v
 				std::cout << "Collided block: 0: " << coord[0] << "; 1: " << coord[1]
 					<< ";2 : " << coord[2] << "; 3: " << coord[3] << std::endl;*/
 
-				collectables[j]->OnTriggerEnter(player1_collision);
+				if (isPlayer1)
+				{
+					collectables[j]->OnTriggerEnter(player1_collision);
+				}
+				else 
+				{
+					collectables[j]->OnTriggerEnter(player2_collision);
+				}
 
 				break;
 			}
