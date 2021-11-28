@@ -1,5 +1,6 @@
 #pragma once
 #include "Inivar.hpp"
+#include "PlayerStats.hpp"
 #include "Scene.hpp"
 #include "Sound.hpp"
 
@@ -14,8 +15,8 @@ public:
 		return audio_system;
 	}
 
-	void PlayShortAudio(const AudioSourceList sound, const glm::vec3& pos, float volume = 1.0f);
-	void PlayLongAudio(const AudioSourceList sound, const glm::vec3& pos, float volume = 1.0f);
+	void PlayShortAudio(const AudioSourceList sound, float volume = 1.0f, const glm::vec3& pos = PlayerStats::Instance().player1Pos);
+	void PlayLongAudio(const AudioSourceList sound, float volume = 1.0f, const glm::vec3& pos = PlayerStats::Instance().player1Pos);
 	void StopLongAudio(const AudioSourceList sound);
 	void StopAllAudio();
 

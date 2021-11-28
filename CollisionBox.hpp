@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameObject.hpp"
 #include "Inivar.hpp"
 #include "PlayerStats.hpp"
 
@@ -12,6 +13,8 @@ public:
 	}
 	virtual ~CollisionBox() {}
 
+	inline glm::vec2 GetPos() const { return pos; }
+	inline glm::vec2 GetSize() const { return size; }
 	inline void SetPos(const glm::vec2& p) { pos = p; UpdateBoxCoord(); }
 	inline void SetSize(const glm::vec2& s) { size = s; UpdateBoxCoord(); }
 	inline void SetTrigger(const bool i) { is_trigger = i; }
@@ -22,6 +25,8 @@ public:
 	virtual void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) {}
 
 	std::string name;
+
+	GameObject* owner;
 
 private:
 	glm::vec2 pos {0};
@@ -57,4 +62,20 @@ public:
 	~ThornCollisionBox() {}
 private:
 	
+};
+
+class CollectableCollisionBox : public CollisionBox {
+public :
+	using CollisionBox::CollisionBox;
+	void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) override;
+	~CollectableCollisionBox() {}
+private:
+};
+
+class SavePointCollisionBox : public CollisionBox {
+public:
+	using CollisionBox::CollisionBox;
+	void OnTriggerEnter(std::shared_ptr<CollisionBox> cb) override;
+	~SavePointCollisionBox() {}
+private:
 };

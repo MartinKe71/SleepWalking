@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 23:39:44
+ * @ Modified time: 2021-11-26 01:14:50
  * @ Description: Header file for GameObject class
  */
 
@@ -20,7 +20,9 @@
 #include <unordered_map>
 
 #include "ColorTextureProgram.hpp"
+#include "ObjectColorTextureProgram.hpp"
 #include "Scene.hpp"
+#include "Animation2D.hpp"
 #include "glm/gtx/euler_angles.hpp"
 
 class GameObject {
@@ -40,6 +42,7 @@ public:
     glm::vec3 getPos() { return position; }
     glm::vec3 getNormal() { return normal; }
     glm::vec3 getVelocity() { return velocity; }
+    glm::vec3 getForce() { return force; }
     float getLife(){return lifeSpan;}
 
     
@@ -65,7 +68,7 @@ public:
     void setVelocity(const glm::vec3& v){
         velocity = v;
     }
-    
+
     void applyNormal(glm::vec3& n) {
         normal += n;
     }
@@ -79,7 +82,10 @@ public:
     }
     
     void prepareDraw();
+    void addAnimation(const std::string& type, const std::string& filename);
+
     virtual void createVerts() = 0;
+
     virtual void update (float deltaTime);
     virtual void draw (Scene::Camera const &camera);
     virtual void reset();
@@ -98,7 +104,8 @@ protected:
     glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     // shader info
-    Load< ColorTextureProgram > shader = color_texture_program;
+    //Load< ColorTextureProgram > shader = color_texture_program;
+    Load< ObjectColorTextureProgram > shader = object_color_texture_program;
 
     GLuint VAO;
     GLuint VBO_positions, VBO_texcoords, EBO;
@@ -111,6 +118,10 @@ protected:
     // texture info
     glm::uvec2 sz;
     std::vector< glm::u8vec4 > pic;
+
+    // animation info
+    std::unordered_map<std::string, Animation2D*> anims;
+    std::string type = "Idle";
 };
 
 #endif /* GameObject_h */

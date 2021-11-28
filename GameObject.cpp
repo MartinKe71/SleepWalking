@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:16
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-03 23:31:16
+ * @ Modified time: 2021-11-26 01:59:07
  * @ Description: Base class for game object
  */
 
@@ -10,6 +10,8 @@
 #include "Inivar.hpp"
 #include "GLCall.hpp"
 #include "load_save_png.hpp"
+
+#include "glm/gtx/string_cast.hpp"
 
 GameObject::GameObject() : mass (0), position(glm::vec3(0.0f)), 
     velocity(glm::vec3(0.0f)), force(glm::vec3(0.0f)), normal(glm::vec3(0.0f)), 
@@ -53,9 +55,15 @@ GameObject::~GameObject(){
     glDeleteBuffers(1, &VBO_positions);
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
+
+    // for(auto& o : anims) delete o;
 }
 
 void GameObject::update(float deltaTime){
+    // update texcoords every update
+    if(anims.count(type) && anims[type]) 
+        anims[type]->play(this->VAO, this->VBO_texcoords, sz, deltaTime);
+    
     // compute acceleration
     if (!isFixed && lifeSpan > 0.0f){
         glm::vec3 accel = force / mass;
@@ -70,7 +78,7 @@ void GameObject::reset(){
     velocity = glm::vec3(0.0f);
     zeroForce();
     zeroNormal();
-    isFixed = false;
+    //isFixed = false;
     lifeSpan = 0.0f;
 }
 
@@ -84,8 +92,8 @@ void GameObject::prepareDraw() {
     GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * vertex_positions.size(), vertex_positions.data(), GL_STATIC_DRAW));
     GLCall(glEnableVertexAttribArray(shader->Position_vec4));
     GLCall(glVertexAttribPointer(shader->Position_vec4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0));
-
-    // Bind to the second VBO - We will use it to store the vertex_texcoords
+    
+    // load texcoord every draw to create animation
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO_texcoords));
     GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * vertex_texcoords.size(), vertex_texcoords.data(), GL_STATIC_DRAW));
     GLCall(glEnableVertexAttribArray(shader->TexCoord_vec2));
@@ -98,9 +106,10 @@ void GameObject::prepareDraw() {
     // Unbind the VBOs.
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
     GLCall(glBindVertexArray(0));
-
+    
     GLCall(glBindTexture(GL_TEXTURE_2D, tex));
     GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sz.x, sz.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, pic.data()));
+    GLCall(glGenerateMipmap(GL_TEXTURE_2D));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
     GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
@@ -111,20 +120,34 @@ void GameObject::prepareDraw() {
 }
 
 void GameObject::draw(Scene::Camera const& camera) {
+    
+
     glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
+    glm::mat4x3 world_to_light = glm::mat4x3(1.0f) * glm::translate(glm::mat4(1.0f), position);
+    glm::mat3 normal_to_light = glm::inverse(glm::transpose(glm::mat3(world_to_light)));
 
     // apply local rotation
     glm::mat4 curModel = glm::translate(glm::mat4(1.f), position) * model;
+    glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
     //cout << glm::to_string(position) << endl;
 
     // actiavte the shader program
     GLCall(glUseProgram(shader->program));
 
+    //cout << "\n\n----------------" << endl;
+    //cout << "normal to light: " << glm::to_string(normal_to_light) << endl;
+    //cout << "world to light: " << glm::to_string(world_to_light) << endl;
+
+    //cout << "-------------------\n\n" << endl;
+
     // get the locations and send the uniforms to the shader
     GLCall(glUniformMatrix4fv(shader->OBJECT_TO_CLIP_mat4, 1, GL_FALSE, glm::value_ptr(world_to_clip)));
-    GLCall(glUniformMatrix4fv(shader->Model_mat4, 1, GL_FALSE, (float*)&curModel));
-    GLCall(glUniform4fv(shader->Color_vec4, 1, &color[0]));
-
+    GLCall(glUniformMatrix4x3fv(shader->OBJECT_TO_LIGHT_mat4x3, 1, GL_FALSE, glm::value_ptr(world_to_light)));
+    GLCall(glUniformMatrix3fv(shader->NORMAL_TO_LIGHT_mat3, 1, GL_FALSE, glm::value_ptr(normal_to_light)));
+    GLCall(glUniformMatrix4fv(shader->Model_mat4, 1, GL_FALSE, glm::value_ptr(curModel)));
+    GLCall(glUniform4fv(shader->Color_vec4, 1, glm::value_ptr(color)));
+    GLCall(glUniform3fv(shader->Normal_vec3, 1, glm::value_ptr(normal)));
+    
     // Bind the VAO
     GLCall(glBindVertexArray(VAO));
     //    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -140,3 +163,7 @@ void GameObject::draw(Scene::Camera const& camera) {
     GLCall(glUseProgram(0));
 }
 
+void GameObject::addAnimation(const std::string& type, const std::string& filename){
+    Animation2D* anim = new Animation2D(data_path(filename));
+	anims[type] = anim;
+}

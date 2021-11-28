@@ -34,7 +34,6 @@ public :
 
 private:
     float width, height;
-    glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
     float speed = 40.f;
     float jump_power = 4000.0f;

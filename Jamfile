@@ -143,13 +143,21 @@ GAME_NAMES =
 	CollisionBox
 	FontSource
 	ShapeTextureProgram
+	Animation2D
 	PlayMode
 	main
 	LitColorTextureProgram
 	ColorTextureProgram #not used right now, but you might want it
+	ObjectColorTextureProgram
 	GameObject
 	SquareObject
 	PlayerObject
+	SecondPlayerObject
+	CollectableObject
+	MovingGameObject
+	MovingThornObject
+	MovingBlockObject
+	SavePointObject
 	Sound
 	load_wav
 	load_opus

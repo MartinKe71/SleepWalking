@@ -29,7 +29,7 @@ AudioSystem::~AudioSystem()
 	Sound::stop_all_samples();
 }
 
-void AudioSystem::PlayShortAudio(const AudioSourceList sound, const glm::vec3& pos, float volume /* = 1.0f */)
+void AudioSystem::PlayShortAudio(const AudioSourceList sound, float volume /* = 1.0f */, const glm::vec3& pos /* = PlayerStats::Instance().player1Pos */)
 {
 	switch (sound)
 	{
@@ -42,7 +42,7 @@ void AudioSystem::PlayShortAudio(const AudioSourceList sound, const glm::vec3& p
 	}
 }
 
-void AudioSystem::PlayLongAudio(const AudioSourceList sound, const glm::vec3& pos, float volume /* = 1.0f */)
+void AudioSystem::PlayLongAudio(const AudioSourceList sound, float volume /* = 1.0f */, const glm::vec3& pos /* = PlayerStats::Instance().player1Pos */)
 {
 	switch (sound)
 	{

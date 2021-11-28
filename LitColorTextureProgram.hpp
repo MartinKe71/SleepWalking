@@ -15,6 +15,7 @@ struct LitColorTextureProgram {
 	GLuint Position_vec4 = -1U;
 	GLuint Normal_vec3 = -1U;
 	GLuint Color_vec4 = -1U;
+	//GLuint Model_mat4 = -1U;
 	GLuint TexCoord_vec2 = -1U;
 
 	//Uniform (per-invocation variable) locations:
@@ -33,18 +34,6 @@ struct LitColorTextureProgram {
 	//TEXTURE0 - texture that is accessed by TexCoord
 	GLint Texture_Id = 0;
 
-	void SetTextureId(GLint id) {
-		Texture_Id = id;
-
-		GLuint TEX_sampler2D = glGetUniformLocation(program, "TEX");
-
-		//set TEX to always refer to texture binding zero:
-		glUseProgram(program); //bind program -- glUniform* calls refer to this program now
-
-		glUniform1i(TEX_sampler2D, Texture_Id); //set TEX to sample from GL_TEXTURE0
-
-		glUseProgram(0); //unbind program -- glUniform* calls refer to ??? now
-	}
 };
 
 extern Load< LitColorTextureProgram > lit_color_texture_program;
