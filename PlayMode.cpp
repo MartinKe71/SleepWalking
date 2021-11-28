@@ -520,7 +520,6 @@ void PlayMode::update(float elapsed) {
 		}
 	}
 
-	
 	//PlayerStats::Instance().to_string();
 	{ //update listener to camera position:
 		glm::mat4x3 frame = camera->transform->make_local_to_parent();

@@ -30,6 +30,7 @@ enum class AudioSourceList
 
 #define CAMERA_SPEED 30.f
 #define COLLISION_OPT_LEVEL 2
+
 #define WORLD_ROT_ANGLE 90.f
 #define HALF_VOLUME_RADIUS 10.0f
 #define TIMESTOP_TIMER 3.f;
