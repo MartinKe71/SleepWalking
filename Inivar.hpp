@@ -30,6 +30,7 @@ enum class AudioSourceList
 
 #define CAMERA_SPEED 30.f
 #define COLLISION_OPT_LEVEL 2
+
 #define WORLD_ROT_ANGLE 90.f
 #define HALF_VOLUME_RADIUS 10.0f
 #define TIMESTOP_TIMER 3.f;
@@ -39,6 +40,7 @@ enum class AudioSourceList
 #define DRAG_TIMER 0.5f;
 #define MARKER_FADE_OUT 0.02f;
 
+// key bindings
 #define P1_LEFT SDLK_a
 #define P1_RIGHT SDLK_d
 #define P1_UP SDLK_SPACE
@@ -46,5 +48,10 @@ enum class AudioSourceList
 #define P2_RIGHT SDLK_RIGHT
 #define P2_UP SDLK_UP
 #define P2_DOWN SDLK_DOWN
+#define KEY_DRAG SDLK_PERIOD
+#define KEY_TIMESTOP SDLK_SLASH
+#define KEY_CLOCK_ROT SDLK_e
+#define KEY_COUNTERCLOCK_ROT SDLK_q
+#define KEY_FLIP SDLK_r
 
 #define LIGHT_DECAY 0.4f

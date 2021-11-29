@@ -80,6 +80,7 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
+
         if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
     }
     else if (!left.pressed && right.pressed) {
@@ -93,6 +94,7 @@ void PlayerObject::update(float elapsed) {
             position.x = new_pos.x;
             position.y = new_pos.y;
         }
+
         if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
     }
     else if (!left.pressed && !right.pressed) {
