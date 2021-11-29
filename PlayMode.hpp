@@ -11,6 +11,7 @@
 #include "MovingThornObject.hpp"
 #include "MovingBlockObject.hpp"
 #include "SavePointObject.hpp"
+#include "HealthBarObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -67,4 +68,7 @@ struct PlayMode : Mode {
 
 	PlayerObject* player1;
 	SecondPlayerObject* player2;
+
+	HealthBarObject* hb1;
+	HealthBarObject* hb2;
 };

@@ -154,6 +154,8 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	
 	// moveableObjs.push_back(player1);
 	// moveableObjs.push_back(player2);
+
+	hb1 = new HealthBarObject(5.f);
 }
 
 PlayMode::~PlayMode() {
@@ -536,6 +538,12 @@ void PlayMode::update(float elapsed) {
 		glm::vec3 at = frame[3];
 		Sound::listener.set_position_right(at, right, 1.0f / 60.0f);
 	}	
+
+	// UI update
+	{
+		glm::vec3 hb1pos = glm::vec3(glm::vec2(camera->transform->position), 0.f);
+		hb1.setPos(hb1pos);
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
@@ -569,6 +577,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 				obj->draw(*camera);
 			}
 		}
+
+		hb1->draw(*camera);
 	};
 
 	// first light

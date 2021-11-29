@@ -158,6 +158,7 @@ GAME_NAMES =
 	MovingThornObject
 	MovingBlockObject
 	SavePointObject
+	HealthBarObject
 	Sound
 	load_wav
 	load_opus
