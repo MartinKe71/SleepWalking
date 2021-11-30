@@ -4,6 +4,7 @@ Author: Zi Wang, Wenlin Mao, Tianrun(Martin) Ke
 
 Design: 
 
+Players would be playing as a little girl and her cute pet to reach the end of the dark labyrinth. They have to collect "vision" so that they won't lose the light.'
 
 Screen Shot:
 
@@ -11,7 +12,9 @@ Screen Shot:
 
 How To Play:
 
-Use mouse to click buttons to make decision. You can talk to 20 customers max. And your goal is to get $300 in profit.
+Player 1 would use WAD to move the little girl. Press Q to rotate the map counter-clockwise. Press E to clockwise. Press R to turn up side down.
+
+Player 2 would use directional arrays to navigate the little pet. Press "." would drag the little girl and help her jump higher and further. Press "/" would stop the time in emergent situation.
 
 Sources: 
 * Credit List:
