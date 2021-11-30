@@ -98,7 +98,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		}
 		else if (transform.name.find("Collectable") != string::npos) {
 			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
-				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
+				transform.scale.x * 2, transform.scale.y * 2, glm::vec3(0.f, 0.f, 0.f),
 				true, "resource/gg.png");
 
 			collectableObjs.push_back(collectable);
@@ -126,8 +126,8 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 			}
 			//std::cout << "Save point created with w: " << w << ", and height: " << h << std::endl;
 			auto savePoint = new SavePointObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
-				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				true, "resource/save_point.png");
+				transform.scale.x * 2, transform.scale.y * 2, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/save.png");
 			
 			savePointObjs.push_back(savePoint);
 
@@ -569,6 +569,7 @@ void PlayMode::update(float elapsed) {
 	// check reset
 	{
 		if (player1->getPos().x <= 0.f || player1->getPos().y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+			std::cout << "reset triggered" << std::endl;
 			player1->reset();
 			player2->reset();
 			gravity = glm::vec3(0, -98.f, 0);
@@ -581,6 +582,7 @@ void PlayMode::update(float elapsed) {
 			isGravitySpellLocked = false;
 
 			// Reset collectables
+			std::cout << "Reset collectables" << std::endl;
 			for (auto& c : collectableObjs)
 			{
 				c->setLife(1.0f);

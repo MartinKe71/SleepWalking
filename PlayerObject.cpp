@@ -48,7 +48,7 @@ void PlayerObject::createVerts() {
 }
 
 void PlayerObject::reset() {
-    //std::cout << "reset beng" << std::endl;
+    std::cout << "player 1 reset" << std::endl;
     model = glm::mat4(1.0f);
     GameObject::reset();
 
