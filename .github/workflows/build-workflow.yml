@@ -115,7 +115,8 @@ jobs:
         run: |
           brew install ftjam
           ls
-          jam -j3 -q && cp README.md dist
+          jam -j3 -q -dx && cp README.md dist
+          file dist/game
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
