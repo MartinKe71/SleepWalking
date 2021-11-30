@@ -62,4 +62,4 @@ enum class AudioSourceList
 #define KEY_COUNTERCLOCK_ROT SDLK_q
 #define KEY_FLIP SDLK_r
 
-#define LIGHT_DECAY 0.0f
+#define LIGHT_DECAY 0.1f
