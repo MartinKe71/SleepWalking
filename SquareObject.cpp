@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-26 01:58:01
+ * @ Modified time: 2021-11-27 00:41:16
  * @ Description: implementation of square object
  */
 
@@ -62,14 +62,6 @@ void SquareObject::setWidth(float r){
 void SquareObject::fadeOut() {
     if (color.w > 0.f)
         color.w -= MARKER_FADE_OUT;
-
-    // // done fading out
-    // if (color.w <= 0.f){
-    //     color.w = 0.f;
-    //     return true;
-    // }
-    // // still fading out
-    // return false;
 }
 
 void SquareObject::show(const glm::vec3& pos) {

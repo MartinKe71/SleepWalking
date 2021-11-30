@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 17:59:51
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-26 01:14:50
+ * @ Modified time: 2021-11-29 12:47:48
  * @ Description: Header file for GameObject class
  */
 
@@ -81,13 +81,13 @@ public:
         model = model * glm::eulerAngleYXZ(euler.y, euler.x, euler.z);
     }
     
-    void prepareDraw();
     void addAnimation(const std::string& type, const std::string& filename);
 
     virtual void createVerts() = 0;
 
     virtual void update (float deltaTime);
     virtual void draw (Scene::Camera const &camera);
+    virtual void prepareDraw();
     virtual void reset();
     
 protected:

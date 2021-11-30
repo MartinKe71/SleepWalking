@@ -11,6 +11,9 @@
 #include "MovingThornObject.hpp"
 #include "MovingBlockObject.hpp"
 #include "SavePointObject.hpp"
+#include "HealthBarObject.hpp"
+#include "UIBGObject.hpp"
+#include "UICDObject.hpp"
 
 #include <glm/glm.hpp>
 
@@ -41,6 +44,9 @@ struct PlayMode : Mode {
 	vector<GameObject*> playerObjs; 
 	vector<CollectableObject*> collectableObjs;
 	vector<SavePointObject*> savePointObjs;
+	vector<UIObject*> uiObjs;
+	// rotate command has shared CD
+	vector<UICDObject*> uiShareCDRotObjs;
 
 	// 0: time stop
 	// 1: drag
@@ -67,4 +73,21 @@ struct PlayMode : Mode {
 
 	PlayerObject* player1;
 	SecondPlayerObject* player2;
+
+	// UI Object
+	HealthBarObject* hb1;
+	HealthBarObject* hb2;
+
+	UIBGObject* hbbg1;
+	UIBGObject* hbbg2;
+
+	UIBGObject* spellPanel1;
+	UIBGObject* spellPanel2;
+
+	UICDObject* uiTimeStop;
+	UICDObject* uiDrag;
+
+	UICDObject* uiFlip;
+	UICDObject* uiCWRotate;
+	UICDObject* uiCCWRotate;
 };

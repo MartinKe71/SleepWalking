@@ -4,6 +4,13 @@
         "__config": "cpp",
         "deque": "cpp",
         "filesystem": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "__node_handle": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "__split_buffer": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
     }
 }

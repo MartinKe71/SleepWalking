@@ -144,12 +144,10 @@ GAME_NAMES =
 	FontSource
 	ShapeTextureProgram
 	Animation2D
-	PlayMode
-	main
-	LitColorTextureProgram
-	ColorTextureProgram #not used right now, but you might want it
-	ObjectColorTextureProgram
 	GameObject
+	UIObject
+	UIBGObject
+	UICDObject
 	SquareObject
 	PlayerObject
 	SecondPlayerObject
@@ -158,6 +156,12 @@ GAME_NAMES =
 	MovingThornObject
 	MovingBlockObject
 	SavePointObject
+	HealthBarObject
+	main
+	PlayMode
+	LitColorTextureProgram
+	ColorTextureProgram #not used right now, but you might want it
+	ObjectColorTextureProgram
 	Sound
 	load_wav
 	load_opus

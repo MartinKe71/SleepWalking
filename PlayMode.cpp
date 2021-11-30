@@ -158,6 +158,40 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 	// moveableObjs.push_back(player1);
 	// moveableObjs.push_back(player2);
+
+	// Order Matters!!!
+	hbbg1 = new UIBGObject(glm::vec3(0.f, -0.6f, 0.f), 0.8f, 0.08f);
+	uiObjs.push_back(hbbg1);
+	hbbg2 = new UIBGObject(glm::vec3(0.f, -0.8f, 0.f), 0.8f, 0.08f);
+	uiObjs.push_back(hbbg2);
+
+	spellPanel1 = new UIBGObject(glm::vec3(-1.3f, -0.7f, 0.f), 0.8f, 0.12f);
+	uiObjs.push_back(spellPanel1);
+	spellPanel2 = new UIBGObject(glm::vec3(1.15f, -0.7f, 0.f), 0.5f, 0.12f);
+	uiObjs.push_back(spellPanel2);
+
+	hb1 = new HealthBarObject(PlayerStats::Instance().player1Light, glm::vec3(0.f, -0.6f, 0.f));
+	uiObjs.push_back(hb1);
+	hb2 = new HealthBarObject(PlayerStats::Instance().player2Light, glm::vec3(0.f, -0.8f, 0.f));
+	uiObjs.push_back(hb2);
+
+	uiTimeStop = new UICDObject(glm::vec3(1.0f, -0.7f, 0.f), 0.05f, TIMESTOP_CD);
+	uiObjs.push_back(uiTimeStop);
+
+	uiDrag = new UICDObject(glm::vec3(1.3f, -0.7f, 0.f), 0.05f, DRAG_CD);
+	uiObjs.push_back(uiDrag);
+
+	uiFlip = new UICDObject(glm::vec3(-1.6f, -0.7f, 0.f), 0.05f, WORLD_ROT_ANGLE * 2.f);
+	uiObjs.push_back(uiFlip);
+	uiShareCDRotObjs.push_back(uiFlip);
+
+	uiCWRotate = new UICDObject(glm::vec3(-1.3f, -0.7f, 0.f), 0.05f, WORLD_ROT_ANGLE);
+	uiObjs.push_back(uiCWRotate);
+	uiShareCDRotObjs.push_back(uiCWRotate);
+
+	uiCCWRotate = new UICDObject(glm::vec3(-1.0f, -0.7f, 0.f), 0.05f, WORLD_ROT_ANGLE);
+	uiObjs.push_back(uiCCWRotate);
+	uiShareCDRotObjs.push_back(uiCCWRotate);
 }
 
 PlayMode::~PlayMode() {
@@ -292,12 +326,16 @@ void PlayMode::update(float elapsed) {
 			float remain = 0.f;
 			float factor = isClockwise ? 1.f : -1.f;
 
+			for (auto& obj : uiShareCDRotObjs) 
+				obj->setCD(rotAngle - gravitySpellRot);
+
 			if (gravitySpellRot < 0.f) {
 				// record the remain angle so that 
 				// we will not over rotated
 				remain = gravitySpellRot;
 				gravitySpellRot = rotAngle;
 				isGravitySpellLocked = false;
+				for (auto& obj : uiShareCDRotObjs) obj->hide();
 			}
 
 			//std::cout << gravitySpellRot << std::endl;
@@ -317,12 +355,6 @@ void PlayMode::update(float elapsed) {
 			player2->applyRotation(
 				glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))),
 				camera->transform->position);
-
-			//for (auto& obj : moveableObjs){
-			//	obj->applyRotation(
-			//		glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))), 
-			//		camera->transform->position);
-			//}
 		}
 
 		if (flip.pressed && !isGravitySpellLocked) {
@@ -336,8 +368,12 @@ void PlayMode::update(float elapsed) {
 					glm::cos(-glm::radians(rotAngle)), glm::sin(-glm::radians(rotAngle)), 0,
 					-glm::sin(-glm::radians(rotAngle)), glm::cos(-glm::radians(rotAngle)), 0,
 					0, 0, 0);
-		}
-		else if (clockwiseRot.pressed && !isGravitySpellLocked) {
+
+			for (auto& obj : uiShareCDRotObjs) {
+				obj->setMaxCD(rotAngle);
+				obj->show();
+			}
+		} else if (clockwiseRot.pressed && !isGravitySpellLocked) {
 			gravity = glm::vec3(-gravity.y, gravity.x, 0.f);
 			isGravitySpellLocked = true;
 			isClockwise = true;
@@ -348,6 +384,10 @@ void PlayMode::update(float elapsed) {
 					glm::cos(-glm::radians(rotAngle)), glm::sin(-glm::radians(rotAngle)), 0,
 					-glm::sin(-glm::radians(rotAngle)), glm::cos(-glm::radians(rotAngle)), 0,
 					0, 0, 0);
+			for (auto& obj : uiShareCDRotObjs) {
+				obj->setMaxCD(rotAngle);
+				obj->show();
+			}
 		} else if (counterClockwiseRot.pressed && !isGravitySpellLocked) {
 			gravity = glm::vec3(gravity.y, -gravity.x, 0.f);
 			isGravitySpellLocked = true;
@@ -359,6 +399,10 @@ void PlayMode::update(float elapsed) {
 					glm::cos(glm::radians(rotAngle)), glm::sin(glm::radians(rotAngle)), 0,
 					-glm::sin(glm::radians(rotAngle)), glm::cos(glm::radians(rotAngle)), 0,
 					0, 0, 0);
+			for (auto& obj : uiShareCDRotObjs) {
+				obj->setMaxCD(rotAngle);
+				obj->show();
+			}
 		}
 	}
 	// drag spell
@@ -373,11 +417,18 @@ void PlayMode::update(float elapsed) {
 			player1->applyForce(force);
 			dragLock += elapsed;
 			dragTimer += elapsed;
+			uiDrag->show();
 			AudioSystem::Instance().PlayShortAudio(AudioSourceList::Drag);
 		}
 		
-		if (dragLock > 0.f) dragLock += elapsed;
-		if (dragLock > cd) dragLock = 0.f;
+		if (dragLock > 0.f){
+			dragLock += elapsed;
+			uiDrag->setCD(dragLock);
+		} 
+		if (dragLock > cd) {
+			dragLock = 0.f;
+			uiDrag->hide();
+		}
 		if (dragTimer > 0.f) dragTimer += elapsed;
 		if (dragTimer > timer) dragTimer = 0.f;
 
@@ -399,13 +450,20 @@ void PlayMode::update(float elapsed) {
 			markerObjs[0]->show(player2->getPos());
 			timestopTimer += elapsed;
 			timestopLock += elapsed;
+			uiTimeStop->show();
 			AudioSystem::Instance().PlayLongAudio(AudioSourceList::Timestop);
 		}
 		
 		// counting phrase
 		// if cd set, then keep increment
-		if (timestopLock > 0.f) timestopLock += elapsed; 
-		if (timestopLock > cd) timestopLock = 0.f;
+		if (timestopLock > 0.f) {
+			timestopLock += elapsed; 
+			uiTimeStop->setCD(timestopLock);
+		}
+		if (timestopLock > cd) {
+			timestopLock = 0.f;
+			uiTimeStop->hide();
+		}
 		if (timestopTimer > 0.f) timestopTimer += elapsed;
 		if (timestopTimer > timer) timestopTimer = 0.f;
 
@@ -541,6 +599,14 @@ void PlayMode::update(float elapsed) {
 		glm::vec3 at = frame[3];
 		Sound::listener.set_position_right(at, right, 1.0f / 60.0f);
 	}	
+
+	// UI update
+	{
+		// glm::vec3 cam_pos = camera->transform->position;
+
+		hb1->setHealth(PlayerStats::Instance().player1Light);
+		hb2->setHealth(PlayerStats::Instance().player2Light);
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &drawable_size) {
@@ -671,6 +737,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		for (auto& obj : markerObjs) obj->draw(*camera);
+		for (auto& obj : uiObjs) obj->draw(*camera);
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
