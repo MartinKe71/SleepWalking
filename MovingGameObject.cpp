@@ -2,6 +2,9 @@
 #include "load_save_png.hpp"
 #include "AudioSystem.hpp"
 
+#include <cstdlib>
+#include <ctime>
+
 
 MovingGameObject::MovingGameObject() {
 }
@@ -18,6 +21,21 @@ MovingGameObject::MovingGameObject(float mass, vector<string> properties, const 
 
     moving_speed = std::stof(properties[3]);
     moving_range = std::stof(properties[4]);
+
+    std::srand((unsigned int)std::time(nullptr));
+    int offset = (std::rand() % (2 * (int)moving_range)) - (int) moving_range;
+
+    position = moving_dir * (float)offset + start_position;
+
+    if (glm::length(position - start_position) > moving_range) {
+        moving_dir *= -1.f;
+        position += 2.f * moving_dir * (glm::length(position - start_position) - moving_range);
+    }
+
+    if (box != nullptr) {
+        //cout << "box is not nullptr\n\n" << endl;
+        box->SetPos(position);
+    }
 
     createVerts();
     prepareDraw();

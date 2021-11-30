@@ -53,7 +53,7 @@ void SecondPlayerObject::createVerts() {
 }
 
 void SecondPlayerObject::reset() {
-    //std::cout << "reset beng" << std::endl;
+    std::cout << "player 2 reset" << std::endl;
     model = glm::mat4(1.0f);
     GameObject::reset();
 

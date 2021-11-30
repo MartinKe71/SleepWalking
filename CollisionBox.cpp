@@ -39,7 +39,7 @@ void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 
 void SavePointCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 {
-	//std::cout << "Save point hit: " << name << std::endl;
+	
 
 	if (owner->getLife() > 0) {
 		AudioSystem::Instance().PlayShortAudio(AudioSourceList::CheckPoint);
@@ -49,6 +49,8 @@ void SavePointCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 	if (PlayerStats::Instance().player1SavedPos.x != owner->getPos().x ||
 		PlayerStats::Instance().player1SavedPos.y != owner->getPos().y)
 	{
+
+		std::cout << "Save point hit: " << name << std::endl;
 		PlayerStats::Instance().player1SavedPos.x = owner->getPos().x;
 		PlayerStats::Instance().player1SavedPos.y = owner->getPos().y;
 

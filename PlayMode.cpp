@@ -68,7 +68,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 				auto obj = new MovingBlockObject(10.f, properties, transform.position,
 					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-					true, "resource/frame.png", transform.name);
+					true, "resource/moving_block.png", transform.name);
 
 				moveableObjs.push_back(obj);
 			}
@@ -91,15 +91,15 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 				auto obj = new MovingThornObject(10.f, properties, transform.position,
 					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-					true, "resource/moving_throne.png", transform.name);
+					true, "resource/moving_trigger.png", transform.name);
 
 				moveableObjs.push_back(obj);
 			}			
 		}
 		else if (transform.name.find("Collectable") != string::npos) {
 			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
-				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				true, "resource/gg.png");
+				transform.scale.x * 2, transform.scale.y * 2, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/Eyeball.png");
 
 			collectableObjs.push_back(collectable);
 			//std::cout << "Collectable created with w: " << transform.scale.x << ", and height: " << transform.scale.y << std::endl;
@@ -126,8 +126,8 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 			}
 			//std::cout << "Save point created with w: " << w << ", and height: " << h << std::endl;
 			auto savePoint = new SavePointObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
-				transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-				true, "resource/save_point.png");
+				transform.scale.x * 2, transform.scale.y * 2, glm::vec3(0.f, 0.f, 0.f),
+				true, "resource/save.png");
 			
 			savePointObjs.push_back(savePoint);
 
@@ -178,9 +178,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	spellPanel2 = new UIBGObject(glm::vec3(1.f, -0.6f, 0.f), 0.6f, 0.18f, "resource/p2Spell.png");
 	uiObjs.push_back(spellPanel2);
 
-	hb1 = new HealthBarObject(PlayerStats::Instance().player1Light, glm::vec3(-0.995f, -0.8025f, 0.f), 0.65f, 0.09f);
+	hb1 = new HealthBarObject(MAX_LIGHT_AMOUNT, glm::vec3(-0.995f, -0.8025f, 0.f), 0.65f, 0.09f);
 	uiObjs.push_back(hb1);
-	hb2 = new HealthBarObject(PlayerStats::Instance().player2Light, glm::vec3(1.005f, -0.8025f, 0.f), 0.65f, 0.09f);
+	hb2 = new HealthBarObject(MAX_LIGHT_AMOUNT, glm::vec3(1.005f, -0.8025f, 0.f), 0.65f, 0.09f);
 	uiObjs.push_back(hb2);
 
 	uiTimeStop = new UICDObject(glm::vec3(.845f, -0.6f, 0.f), 0.04f, TIMESTOP_CD);
@@ -584,6 +584,7 @@ void PlayMode::update(float elapsed) {
 	// check reset
 	{
 		if (player1->getPos().x <= 0.f || player1->getPos().y <= 0.f || PlayerStats::Instance().health <= 0.f) {
+			std::cout << "reset triggered" << std::endl;
 			player1->reset();
 			player2->reset();
 			gravity = glm::vec3(0, -98.f, 0);
@@ -596,6 +597,7 @@ void PlayMode::update(float elapsed) {
 			isGravitySpellLocked = false;
 
 			// Reset collectables
+			std::cout << "Reset collectables" << std::endl;
 			for (auto& c : collectableObjs)
 			{
 				c->setLife(1.0f);
@@ -702,7 +704,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 3));
 		//GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.1f * PlayerStats::Instance().ambientLightEnergy)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.2f * PlayerStats::Instance().ambientLightEnergy)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
