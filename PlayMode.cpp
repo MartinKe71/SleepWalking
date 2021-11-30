@@ -169,9 +169,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	spellPanel2 = new UIBGObject(glm::vec3(1.f, -0.6f, 0.f), 0.6f, 0.18f, "resource/p2Spell.png");
 	uiObjs.push_back(spellPanel2);
 
-	hb1 = new HealthBarObject(PlayerStats::Instance().player1Light, glm::vec3(-0.995f, -0.8025f, 0.f), 0.65f, 0.09f);
+	hb1 = new HealthBarObject(MAX_LIGHT_AMOUNT, glm::vec3(-0.995f, -0.8025f, 0.f), 0.65f, 0.09f);
 	uiObjs.push_back(hb1);
-	hb2 = new HealthBarObject(PlayerStats::Instance().player2Light, glm::vec3(1.005f, -0.8025f, 0.f), 0.65f, 0.09f);
+	hb2 = new HealthBarObject(MAX_LIGHT_AMOUNT, glm::vec3(1.005f, -0.8025f, 0.f), 0.65f, 0.09f);
 	uiObjs.push_back(hb2);
 
 	uiTimeStop = new UICDObject(glm::vec3(.845f, -0.6f, 0.f), 0.04f, TIMESTOP_CD);

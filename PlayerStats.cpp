@@ -29,8 +29,8 @@ void PlayerStats::reset()
 
 void PlayerStats::update(float elapsed)
 {	
-	player1Light = std::max(player1Light - LIGHT_DECAY * elapsed, 0.f);
-	player2Light = std::max(player2Light - LIGHT_DECAY * elapsed, 0.f);
+	player1Light = std::min(MAX_LIGHT_AMOUNT, std::max(player1Light - LIGHT_DECAY * elapsed, 0.f));
+	player2Light = std::min(MAX_LIGHT_AMOUNT, std::max(player2Light - LIGHT_DECAY * elapsed, 0.f));
 	
 	player1LightEnergy = player1Light / 5.0f;
 	player2LightEnergy = player2Light / 5.0f;
