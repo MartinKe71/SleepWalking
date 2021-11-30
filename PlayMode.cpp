@@ -2,6 +2,7 @@
 
 #include "LitColorTextureProgram.hpp"
 
+#include "AudioSystem.hpp"
 #include "DrawLines.hpp"
 #include "Mesh.hpp"
 #include "Load.hpp"
@@ -152,6 +153,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	playerObjs.push_back(player1);
 	playerObjs.push_back(player2);
 	
+	// Start BGM
+	AudioSystem::Instance().PlayLongAudio(AudioSourceList::BGM, 0.8f);
+
 	// moveableObjs.push_back(player1);
 	// moveableObjs.push_back(player2);
 
@@ -310,6 +314,10 @@ void PlayMode::update(float elapsed) {
 
 	// gravity spell
 	{
+		// Audio
+		if (!isGravitySpellLocked && (flip.pressed || clockwiseRot.pressed || counterClockwiseRot.pressed))
+			AudioSystem::Instance().PlayShortAudio(AudioSourceList::Rotate);
+
 		// camera rotation speed
 		float CameraRotSpeed = rotAngle * elapsed;
 		if (isGravitySpellLocked) {
@@ -410,6 +418,7 @@ void PlayMode::update(float elapsed) {
 			dragLock += elapsed;
 			dragTimer += elapsed;
 			uiDrag->show();
+			AudioSystem::Instance().PlayShortAudio(AudioSourceList::Drag);
 		}
 		
 		if (dragLock > 0.f){
@@ -441,8 +450,8 @@ void PlayMode::update(float elapsed) {
 			markerObjs[0]->show(player2->getPos());
 			timestopTimer += elapsed;
 			timestopLock += elapsed;
-
 			uiTimeStop->show();
+			AudioSystem::Instance().PlayLongAudio(AudioSourceList::Timestop);
 		}
 		
 		// counting phrase
@@ -468,6 +477,8 @@ void PlayMode::update(float elapsed) {
 
 			// Update lighting parameters
 			PlayerStats::Instance().update(elapsed);
+
+			AudioSystem::Instance().StopLongAudio(AudioSourceList::Timestop);
 		}
 	}
 
@@ -574,6 +585,8 @@ void PlayMode::update(float elapsed) {
 			{
 				c->setLife(1.0f);
 			}
+
+			AudioSystem::Instance().PlayShortAudio(AudioSourceList::Die);
 
 			std::cout << "reset triggered" << std::endl;
 		}
