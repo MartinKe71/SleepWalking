@@ -13,6 +13,7 @@ CollisionSystem::CollisionSystem()
 
 void CollisionSystem::update(float elapsed)
 {
+	// Extra collision, pushing player out if player stucks in a block
 	if (PlayerStats::Instance().player1Pos == glm::vec3(0.f))
 		return;
 

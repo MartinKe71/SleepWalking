@@ -81,7 +81,7 @@ void PlayerObject::update(float elapsed) {
             position.y = new_pos.y;
         }
 
-        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps);
     }
     else if (!left.pressed && right.pressed) {
         type = "Run";
@@ -95,7 +95,7 @@ void PlayerObject::update(float elapsed) {
             position.y = new_pos.y;
         }
 
-        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps, 3.0f);
+        if (PlayerStats::Instance().canJump) AudioSystem::Instance().PlayLongAudio(AudioSourceList::Footsteps);
     }
     else if (!left.pressed && !right.pressed) {
         AudioSystem::Instance().StopLongAudio(AudioSourceList::Footsteps);
