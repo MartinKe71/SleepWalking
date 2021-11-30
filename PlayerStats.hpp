@@ -38,15 +38,15 @@ public:
 	// player 1 lighting
 	float player1Light = 5.f;
 	float player1SavedLight = 5.f;
-	float player1LightCutOff = 0.8f;
-	float player1LightDistance = 10.f;
+	float player1LightCutOff = 0.4f;
+	float player1LightDistance = 40.f;
 	float player1LightEnergy = 1.f;
 
 	// player 2 lighting	
 	float player2Light = 5.f;
 	float player2SavedLight = 5.f;
-	float player2LightCutOff = 0.8f;
-	float player2LightDistance = 10.f;
+	float player2LightCutOff = 0.4f;
+	float player2LightDistance = 40.f;
 	float player2LightEnergy = 1.f;
 
 	float ambientLightEnergy = 1.f;
