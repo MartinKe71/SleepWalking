@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-30 00:47:16
+ * @ Modified time: 2021-11-30 02:11:48
  * @ Description: implementation of square object
  */
 
@@ -17,7 +17,7 @@ HealthBarObject::HealthBarObject(float maxHealth, const glm::vec3& pos,
     float w, float h, const std::string& filename): 
     UIObject(10.f, glm::vec3(pos.x - w/2.f, pos.y, pos.z), filename), 
     width(w), height(h), maxWidth(w){
-    color = glm::vec4(1.0f, 0.0f, 0.0f, 0.8f);
+    color = glm::vec4(1.0f, 0.0f, 0.0f, 0.6f);
 
     step = w / maxHealth;
     

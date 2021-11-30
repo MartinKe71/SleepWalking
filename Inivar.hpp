@@ -56,11 +56,12 @@ enum class AudioSourceList
 #define P2_RIGHT SDLK_RIGHT
 #define P2_UP SDLK_UP
 #define P2_DOWN SDLK_DOWN
-#define KEY_DRAG SDLK_PERIOD
-#define KEY_TIMESTOP SDLK_SLASH
+#define KEY_DRAG SDLK_SLASH
+#define KEY_TIMESTOP SDLK_PERIOD
 #define KEY_CLOCK_ROT SDLK_e
 #define KEY_COUNTERCLOCK_ROT SDLK_q
 #define KEY_FLIP SDLK_r
 
 #define LIGHT_DECAY 0.12f
 #define MAX_LIGHT_AMOUNT 10.f
+

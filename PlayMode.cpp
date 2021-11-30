@@ -150,6 +150,15 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	markerObjs.push_back(new SquareObject(10.f, 
 		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/rope.png"));
 
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/right-rot.png"));
+
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/left-rot.png"));
+
+	markerObjs.push_back(new SquareObject(10.f, 
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/flip.png"));
+
 	playerObjs.push_back(player1);
 	playerObjs.push_back(player2);
 	
@@ -354,9 +363,15 @@ void PlayMode::update(float elapsed) {
 			player2->applyRotation(
 				glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))),
 				camera->transform->position);
+
+			for (auto& obj : markerObjs) 
+				obj->applyRotation(
+					glm::vec3(0.f, 0.f, glm::radians(factor * (CameraRotSpeed + remain))),
+					camera->transform->position);
 		}
 
 		if (flip.pressed && !isGravitySpellLocked) {
+			markerObjs[4]->show(player1->getPos());
 			gravity *= -1.0f;
 			isGravitySpellLocked = true;
 			isClockwise = !isClockwise;
@@ -367,12 +382,12 @@ void PlayMode::update(float elapsed) {
 					glm::cos(-glm::radians(rotAngle)), glm::sin(-glm::radians(rotAngle)), 0,
 					-glm::sin(-glm::radians(rotAngle)), glm::cos(-glm::radians(rotAngle)), 0,
 					0, 0, 0);
-
 			for (auto& obj : uiShareCDRotObjs) {
 				obj->setMaxCD(rotAngle);
 				obj->show();
 			}
 		} else if (clockwiseRot.pressed && !isGravitySpellLocked) {
+			markerObjs[2]->show(player1->getPos());
 			gravity = glm::vec3(-gravity.y, gravity.x, 0.f);
 			isGravitySpellLocked = true;
 			isClockwise = true;
@@ -388,6 +403,7 @@ void PlayMode::update(float elapsed) {
 				obj->show();
 			}
 		} else if (counterClockwiseRot.pressed && !isGravitySpellLocked) {
+			markerObjs[3]->show(player1->getPos());
 			gravity = glm::vec3(gravity.y, -gravity.x, 0.f);
 			isGravitySpellLocked = true;
 			isClockwise = false;
