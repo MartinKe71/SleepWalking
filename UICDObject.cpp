@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-29 21:34:23
+ * @ Modified time: 2021-11-29 21:57:40
  * @ Description: implementation of square object
  */
 
@@ -16,7 +16,7 @@ UICDObject::UICDObject(){
 UICDObject::UICDObject(const glm::vec3& pos, float r, float cd,
         const std::string& filename): 
     UIObject(10.f, pos, filename), 
-    radius(r), numVert(100), angle(2.0*glm::pi<float>()), maxCD(cd){
+    radius(r), numVert(100), angle(2.f*glm::pi<float>()), maxCD(cd){
 
     color = glm::vec4(0.f, 1.f, 0.f, 0.f);
 
