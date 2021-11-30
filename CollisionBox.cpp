@@ -1,4 +1,5 @@
 #include "CollisionBox.hpp"
+#include "AudioSystem.hpp"
 
 void CollisionBox::UpdateBoxCoord()
 {
@@ -19,9 +20,11 @@ void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 	//std::cout << "Somebody hits the collectable" << cb->name << std::endl;
 	if (cb->name == "player1") {
 		PlayerStats::Instance().player1Light += 1.0f;
+		AudioSystem::Instance().PlayShortAudio(AudioSourceList::Collect);
 	}
 	else if (cb->name == "player2") {
 		PlayerStats::Instance().player2Light += 1.0f;
+		AudioSystem::Instance().PlayShortAudio(AudioSourceList::Collect);
 	}
 	else {
 		std::cerr << "Non-player object is triggering collectables" << std::endl;
@@ -37,6 +40,11 @@ void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 void SavePointCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 {
 	//std::cout << "Save point hit: " << name << std::endl;
+
+	if (owner->getLife() > 0) {
+		AudioSystem::Instance().PlayShortAudio(AudioSourceList::CheckPoint);
+		owner->setLife(-1.f);
+	}
 
 	if (PlayerStats::Instance().player1SavedPos.x != owner->getPos().x ||
 		PlayerStats::Instance().player1SavedPos.y != owner->getPos().y)

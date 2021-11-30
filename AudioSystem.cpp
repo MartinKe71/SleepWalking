@@ -23,8 +23,12 @@ Load < Sound::Sample > drag_sample(LoadTagDefault, []() -> Sound::Sample const* 
 	return new Sound::Sample(data_path("drag.opus"));
 });
 
+Load < Sound::Sample > collect_sample(LoadTagDefault, []() -> Sound::Sample const* {
+	return new Sound::Sample(data_path("collect.opus"));
+});
+
 Load < Sound::Sample > foot_steps_sample(LoadTagDefault, []() -> Sound::Sample const* {
-	return new Sound::Sample(data_path("running_og-nr.opus"));
+	return new Sound::Sample(data_path("run.opus"));
 });
 
 Load < Sound::Sample > time_stop_sample(LoadTagDefault, []() -> Sound::Sample const* {
@@ -67,6 +71,10 @@ void AudioSystem::PlayShortAudio(const AudioSourceList sound, float volume /* = 
 
 	case AudioSourceList::CheckPoint:
 		Sound::play_3D(*checkPoint_sample, volume, pos);
+		break;
+
+	case AudioSourceList::Collect:
+		Sound::play_3D(*collect_sample, volume, pos);
 		break;
 	}
 }

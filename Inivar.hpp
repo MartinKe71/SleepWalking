@@ -23,6 +23,7 @@ enum class AudioSourceList
 	Drag,
 	Die,
 	CheckPoint,
+	Collect,
 
 	// Long sound
 	Footsteps,
