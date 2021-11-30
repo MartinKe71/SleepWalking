@@ -12,6 +12,8 @@ Screen Shot:
 
 How To Play:
 
+This is a local 2 player co-op game.
+
 Player 1 would use WAD to move the little girl. Press Q to rotate the map counter-clockwise. Press E to clockwise. Press R to turn up side down.
 
 Player 2 would use directional arrays to navigate the little pet. Press "." would drag the little girl and help her jump higher and further. Press "/" would stop the time in emergent situation.
