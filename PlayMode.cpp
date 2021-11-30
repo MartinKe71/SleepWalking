@@ -666,12 +666,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	{
 		////set up light type and position for lit_color_texture_program:
 		GLCall(glUseProgram(lit_color_texture_program->program));
-		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 0));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, PlayerStats::Instance().player1LightDistance))));
+		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, PlayerStats::Instance().player1LightDistance * 0.5f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-		//GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
-		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player1LightCutOff)));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 100.f * PlayerStats::Instance().player1LightEnergy)));
+		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.0f) * 45.f));
+		//GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player1LightCutOff)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 400.f * PlayerStats::Instance().player1LightEnergy)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
@@ -684,12 +684,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	{
 		//set up light type and position for lit_color_texture_program:
 		GLCall(glUseProgram(lit_color_texture_program->program));
-		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 0));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, PlayerStats::Instance().player2LightDistance))));
+		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 2));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, PlayerStats::Instance().player2LightDistance * 0.5f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-		//GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.8f)));
-		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player2LightCutOff)));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 100.f * PlayerStats::Instance().player2LightEnergy)));
+		GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * 0.0f) * 45.f));
+		//GLCall(glUniform1f(lit_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player2LightCutOff)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 400.f * PlayerStats::Instance().player2LightEnergy)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
@@ -720,11 +720,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		GLCall(glUseProgram(object_color_texture_program->program));
-		GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 0));
+		GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 2));
 		GLCall(glUniform3fv(object_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, PlayerStats::Instance().player1LightDistance))));
 		GLCall(glUniform3fv(object_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-		GLCall(glUniform1f(object_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player1LightCutOff)));
-		GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 150.0f * PlayerStats::Instance().player1LightEnergy)));
+		GLCall(glUniform1f(object_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player1LightCutOff) * 40.f));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 900.0f * PlayerStats::Instance().player1LightEnergy)));
 		GLCall(glUseProgram(0));
 
 		draw_objects();
@@ -741,11 +741,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glDepthMask(GL_FALSE));
 
 		GLCall(glUseProgram(object_color_texture_program->program));
-		GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 0));
+		GLCall(glUniform1i(object_color_texture_program->LIGHT_TYPE_int, 2));
 		GLCall(glUniform3fv(object_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player2Pos.x, PlayerStats::Instance().player2Pos.y, PlayerStats::Instance().player2LightDistance))));
 		GLCall(glUniform3fv(object_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-		GLCall(glUniform1f(object_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player2LightCutOff)));
-		GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 150.0f * PlayerStats::Instance().player2LightEnergy)));
+		GLCall(glUniform1f(object_color_texture_program->LIGHT_CUTOFF_float, std::cos(3.1415926f * PlayerStats::Instance().player2LightCutOff) * 40.f));
+		GLCall(glUniform3fv(object_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 1000.0f * PlayerStats::Instance().player2LightEnergy)));
 		GLCall(glUseProgram(0));
 
 		draw_objects();
