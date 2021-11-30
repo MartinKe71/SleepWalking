@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-30 01:46:29
+ * @ Modified time: 2021-11-30 02:11:30
  * @ Description: implementation of square object
  */
 
