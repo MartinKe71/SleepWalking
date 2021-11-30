@@ -19,9 +19,16 @@ enum class AudioSourceList
 {
 	// Short sound
 	Jump,
+	Rotate,
+	Drag,
+	Die,
+	CheckPoint,
+	Collect,
 
 	// Long sound
-	Footsteps
+	Footsteps,
+	Timestop,
+	BGM
 };
 
 #define GAME_MAP_SIZE glm::vec2(1536.f * 2, 864.f * 2)
@@ -39,6 +46,7 @@ enum class AudioSourceList
 #define DRAG_CD 5.f
 #define DRAG_TIMER 0.5f
 #define MARKER_FADE_OUT 0.02f
+
 
 // key bindings
 #define P1_LEFT SDLK_a
