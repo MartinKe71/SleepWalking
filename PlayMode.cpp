@@ -68,7 +68,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 				auto obj = new MovingBlockObject(10.f, properties, transform.position,
 					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-					true, "resource/frame.png", transform.name);
+					true, "resource/moving_block.png", transform.name);
 
 				moveableObjs.push_back(obj);
 			}
@@ -91,7 +91,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 
 				auto obj = new MovingThornObject(10.f, properties, transform.position,
 					transform.scale.x, transform.scale.y, glm::vec3(0.f, 0.f, 0.f),
-					true, "resource/moving_throne.png", transform.name);
+					true, "resource/moving_trigger.png", transform.name);
 
 				moveableObjs.push_back(obj);
 			}			
@@ -99,7 +99,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 		else if (transform.name.find("Collectable") != string::npos) {
 			auto collectable = new CollectableObject(10.f, glm::vec3(transform.position.x, transform.position.y, 0.f),
 				transform.scale.x * 2, transform.scale.y * 2, glm::vec3(0.f, 0.f, 0.f),
-				true, "resource/gg.png");
+				true, "resource/Eyeball.png");
 
 			collectableObjs.push_back(collectable);
 			//std::cout << "Collectable created with w: " << transform.scale.x << ", and height: " << transform.scale.y << std::endl;
@@ -686,7 +686,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 3));
 		//GLCall(glUniform3fv(lit_color_texture_program->LIGHT_LOCATION_vec3, 1, glm::value_ptr(glm::vec3(PlayerStats::Instance().player1Pos.x, PlayerStats::Instance().player1Pos.y, 10.0f))));
 		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(glm::vec3(0.0f, 0.0f, -1.0f))));
-		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.1f * PlayerStats::Instance().ambientLightEnergy)));
+		GLCall(glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f) * 0.2f * PlayerStats::Instance().ambientLightEnergy)));
 		GLCall(glUseProgram(0));
 		scene.draw(*camera);
 
