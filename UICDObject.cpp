@@ -2,7 +2,7 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-29 21:57:40
+ * @ Modified time: 2021-11-30 01:46:29
  * @ Description: implementation of square object
  */
 
@@ -18,7 +18,7 @@ UICDObject::UICDObject(const glm::vec3& pos, float r, float cd,
     UIObject(10.f, pos, filename), 
     radius(r), numVert(100), angle(2.f*glm::pi<float>()), maxCD(cd){
 
-    color = glm::vec4(0.f, 1.f, 0.f, 0.f);
+    color = glm::vec4(0.6f, 0.6f, 0.6f, 0.0f);
 
     createVerts();
     prepareDraw();
@@ -78,7 +78,7 @@ void UICDObject::hide() {
 
 void UICDObject::show() {
     angle = 2.f * glm::pi<float>();
-    color.w = 1.f;
+    color.w = 0.7f;
 }
 
 void UICDObject::reset(){

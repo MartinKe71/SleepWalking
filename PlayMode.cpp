@@ -145,7 +145,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	camera = &scene.cameras.front();
 	
 	markerObjs.push_back(new SquareObject(10.f, 
-		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/stopwatch.png"));
+		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/clock.png"));
 
 	markerObjs.push_back(new SquareObject(10.f, 
 		glm::vec3(0.0f, 0.0f, 0.f), glm::vec3(1.f, 0.f, 0.f), false, 5.f, "resource/rope.png"));
@@ -159,37 +159,36 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	// moveableObjs.push_back(player1);
 	// moveableObjs.push_back(player2);
 
-	// Order Matters!!!
-	hbbg1 = new UIBGObject(glm::vec3(0.f, -0.6f, 0.f), 0.8f, 0.08f, "resource/greenbar.png");
+	hbbg1 = new UIBGObject(glm::vec3(-1.f, -0.8f, 0.f), 0.74f, 0.18f, "resource/healthbar.png");
 	uiObjs.push_back(hbbg1);
-	hbbg2 = new UIBGObject(glm::vec3(0.f, -0.8f, 0.f), 0.8f, 0.08f);
+	hbbg2 = new UIBGObject(glm::vec3(1.f, -0.8f, 0.f), 0.74f, 0.18f, "resource/healthbar.png");
 	uiObjs.push_back(hbbg2);
 
-	spellPanel1 = new UIBGObject(glm::vec3(-1.3f, -0.7f, 0.f), 0.8f, 0.12f);
+	spellPanel1 = new UIBGObject(glm::vec3(-1.f, -0.6f, 0.f), 0.6f, 0.18f, "resource/p1Spell.png");
 	uiObjs.push_back(spellPanel1);
-	spellPanel2 = new UIBGObject(glm::vec3(1.15f, -0.7f, 0.f), 0.5f, 0.12f);
+	spellPanel2 = new UIBGObject(glm::vec3(1.f, -0.6f, 0.f), 0.6f, 0.18f, "resource/p2Spell.png");
 	uiObjs.push_back(spellPanel2);
 
-	hb1 = new HealthBarObject(PlayerStats::Instance().player1Light, glm::vec3(0.f, -0.6f, 0.f));
+	hb1 = new HealthBarObject(PlayerStats::Instance().player1Light, glm::vec3(-0.995f, -0.8025f, 0.f), 0.65f, 0.09f);
 	uiObjs.push_back(hb1);
-	hb2 = new HealthBarObject(PlayerStats::Instance().player2Light, glm::vec3(0.f, -0.8f, 0.f));
+	hb2 = new HealthBarObject(PlayerStats::Instance().player2Light, glm::vec3(1.005f, -0.8025f, 0.f), 0.65f, 0.09f);
 	uiObjs.push_back(hb2);
 
-	uiTimeStop = new UICDObject(glm::vec3(1.0f, -0.7f, 0.f), 0.05f, TIMESTOP_CD);
+	uiTimeStop = new UICDObject(glm::vec3(.845f, -0.6f, 0.f), 0.04f, TIMESTOP_CD);
 	uiObjs.push_back(uiTimeStop);
 
-	uiDrag = new UICDObject(glm::vec3(1.3f, -0.7f, 0.f), 0.05f, DRAG_CD);
+	uiDrag = new UICDObject(glm::vec3(.995f, -0.6f, 0.f), 0.04f, DRAG_CD);
 	uiObjs.push_back(uiDrag);
 
-	uiFlip = new UICDObject(glm::vec3(-1.6f, -0.7f, 0.f), 0.05f, WORLD_ROT_ANGLE * 2.f);
+	uiFlip = new UICDObject(glm::vec3(-.855f, -0.6f, 0.f), 0.04f, WORLD_ROT_ANGLE * 2.f);
 	uiObjs.push_back(uiFlip);
 	uiShareCDRotObjs.push_back(uiFlip);
 
-	uiCWRotate = new UICDObject(glm::vec3(-1.3f, -0.7f, 0.f), 0.05f, WORLD_ROT_ANGLE);
+	uiCWRotate = new UICDObject(glm::vec3(-1.005f, -0.6f, 0.f), 0.04f, WORLD_ROT_ANGLE);
 	uiObjs.push_back(uiCWRotate);
 	uiShareCDRotObjs.push_back(uiCWRotate);
 
-	uiCCWRotate = new UICDObject(glm::vec3(-1.0f, -0.7f, 0.f), 0.05f, WORLD_ROT_ANGLE);
+	uiCCWRotate = new UICDObject(glm::vec3(-1.155f, -0.6f, 0.f), 0.04f, WORLD_ROT_ANGLE);
 	uiObjs.push_back(uiCCWRotate);
 	uiShareCDRotObjs.push_back(uiCCWRotate);
 }
@@ -451,7 +450,7 @@ void PlayMode::update(float elapsed) {
 			timestopTimer += elapsed;
 			timestopLock += elapsed;
 			uiTimeStop->show();
-			AudioSystem::Instance().PlayLongAudio(AudioSourceList::Timestop);
+			AudioSystem::Instance().PlayLongAudio(AudioSourceList::Timestop, 3.f);
 		}
 		
 		// counting phrase
@@ -588,6 +587,9 @@ void PlayMode::update(float elapsed) {
 
 			AudioSystem::Instance().PlayShortAudio(AudioSourceList::Die);
 
+			for (auto& obj : uiShareCDRotObjs) obj->hide();
+			uiTimeStop->hide();
+			uiDrag->hide();
 			std::cout << "reset triggered" << std::endl;
 		}
 	}
@@ -737,7 +739,20 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		for (auto& obj : markerObjs) obj->draw(*camera);
+		GLCall(glEnable(GL_DEPTH_TEST));
+		GLCall(glDisable(GL_BLEND));
+		GLCall(glDepthMask(GL_TRUE));
+	}
+
+	{
+		GLCall(glDisable(GL_DEPTH_TEST));
+		GLCall(glDepthMask(GL_FALSE));
+		GLCall(glEnable(GL_BLEND));
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		for (auto& obj : uiObjs) obj->draw(*camera);
+		GLCall(glEnable(GL_DEPTH_TEST));
+		GLCall(glDisable(GL_BLEND));
+		GLCall(glDepthMask(GL_TRUE));
 	}
 
 	GLCall(glEnable(GL_DEPTH_TEST));
