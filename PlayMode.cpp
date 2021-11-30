@@ -161,6 +161,11 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	hbbg2 = new UIBGObject(glm::vec3(0.f, -0.8f, 0.f), 0.8f, 0.08f);
 	uiObjs.push_back(hbbg2);
 
+	spellPanel1 = new UIBGObject(glm::vec3(-1.3f, -0.7f, 0.f), 0.8f, 0.12f);
+	uiObjs.push_back(spellPanel1);
+	spellPanel2 = new UIBGObject(glm::vec3(1.15f, -0.7f, 0.f), 0.5f, 0.12f);
+	uiObjs.push_back(spellPanel2);
+
 	hb1 = new HealthBarObject(PlayerStats::Instance().player1Light, glm::vec3(0.f, -0.6f, 0.f));
 	uiObjs.push_back(hb1);
 	hb2 = new HealthBarObject(PlayerStats::Instance().player2Light, glm::vec3(0.f, -0.8f, 0.f));

@@ -81,6 +81,9 @@ struct PlayMode : Mode {
 	UIBGObject* hbbg1;
 	UIBGObject* hbbg2;
 
+	UIBGObject* spellPanel1;
+	UIBGObject* spellPanel2;
+
 	UICDObject* uiTimeStop;
 	UICDObject* uiDrag;
 
