@@ -1,4 +1,4 @@
-# Gamestop Simulator
+# Sleepwalking
 
 Author: Zi Wang, Wenlin Mao, Tianrun(Martin) Ke
 
@@ -19,14 +19,45 @@ Player 1 would use WAD to move the little girl. Press Q to rotate the map counte
 Player 2 would use directional arrays to navigate the little pet. Press "." would drag the little girl and help her jump higher and further. Press "/" would stop the time in emergent situation.
 
 Sources: 
+* Credit List:
+    * Audio:
+        * BGM
+            * https://www.chosic.com/download-audio/27015/
+        * Jump
+            * https://freesound.org/people/SkyRaeVoicing/sounds/363582/
+        * Rotate
+            * https://freesound.org/people/Greencouch/sounds/124899/
+        * Collect
+            * https://freesound.org/people/sapht/sounds/61234/
+        * Drag
+            * https://freesound.org/people/InspectorJ/sounds/361546/
+        * Timestop
+            * Clock ticking: https://freesound.org/people/Mortifreshman/sounds/237210/ 
+        * Die
+            * https://freesound.org/people/Jofae/sounds/364929/
+        * Walk
+            * https://freesound.org/people/Disagree/sounds/433725/
+        * Walk across checkpoint
+            *  https://freesound.org/people/Eponn/sounds/528862/
+    * Art:
+        * Clock, Drag:
+            * https://opengameart.org/content/cc0-tool-icons
+        * Spell block, health bar
+            * https://opengameart.org/content/golden-ui
+        * Light:
+            * https://opengameart.org/content/flare-effect-blender
+        * Save
+            * https://www.gameart2d.com/free-candy-buttons.html
+        * Thorn
+            * Created and distributed by Spriteshift (https://spriteshift.itch.io/)
+        * Special Thanks to Qin Zhang for background, characters, collectables, and tiles
+        * Rotate Spell
+            * https://www.veryicon.com/icons/business/back-stage-management/left-rotation.html
+            * https://www.veryicon.com/icons/business/back-stage-management/right-rotation.html
+            * https://www.veryicon.com/icons/system/eva-all/flip-2-2.html
 
-Pipeline inspiration: https://github.com/GenBrg/MarryPrincess \
-Dimbo font: https://www.dafont.com/dimbo.font?l[]=10&l[]=1 \
-Pacifico font: https://fonts.google.com/specimen/Pacifico
 
-Json loading: \
-Stackoverflow: https://stackoverflow.com/a/39975809 \
-nlohmann's JSON Repository on GitHub: https://github.com/nlohmann/json
+
 
 This game was built with [NEST](NEST.md).
 
