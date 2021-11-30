@@ -153,6 +153,9 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	playerObjs.push_back(player1);
 	playerObjs.push_back(player2);
 	
+	// Start BGM
+	AudioSystem::Instance().PlayLongAudio(AudioSourceList::BGM, 0.8f);
+
 	// moveableObjs.push_back(player1);
 	// moveableObjs.push_back(player2);
 }

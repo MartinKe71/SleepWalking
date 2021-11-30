@@ -27,7 +27,8 @@ enum class AudioSourceList
 
 	// Long sound
 	Footsteps,
-	Timestop
+	Timestop,
+	BGM
 };
 
 #define GAME_MAP_SIZE glm::vec2(1536.f * 2, 864.f * 2)

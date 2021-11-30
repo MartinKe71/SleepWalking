@@ -26,4 +26,5 @@ private:
 	AudioSystem();
 	std::shared_ptr< Sound::PlayingSample > foot_steps_ps;
 	std::shared_ptr< Sound::PlayingSample > time_stop_ps;
+	std::shared_ptr< Sound::PlayingSample > bgm_ps;
 };

@@ -35,10 +35,15 @@ Load < Sound::Sample > time_stop_sample(LoadTagDefault, []() -> Sound::Sample co
 	return new Sound::Sample(data_path("timestop.opus"));
 });
 
+Load < Sound::Sample > bgm_sample(LoadTagDefault, []() -> Sound::Sample const* {
+	return new Sound::Sample(data_path("bgm.opus"));
+});
+
 AudioSystem::AudioSystem()
 {
 	foot_steps_ps = Sound::loop_3D(*foot_steps_sample, 0.0f, glm::vec3(0));
 	time_stop_ps = Sound::loop_3D(*time_stop_sample, 0.0f, glm::vec3(0));
+	bgm_ps = Sound::loop_3D(*bgm_sample, 0.0f, glm::vec3(0));
 }
 
 AudioSystem::~AudioSystem()
@@ -95,6 +100,11 @@ void AudioSystem::PlayLongAudio(const AudioSourceList sound, float volume /* = 1
 		time_stop_ps->set_position(pos);
 		time_stop_ps->set_volume(volume);
 		break;
+
+	case AudioSourceList::BGM:
+		bgm_ps->set_position(pos);
+		bgm_ps->set_volume(volume);
+		break;
 	}
 }
 
@@ -112,6 +122,10 @@ void AudioSystem::StopLongAudio(const AudioSourceList sound)
 	case AudioSourceList::Timestop:
 		time_stop_ps->set_volume(0.0f);
 		break;
+
+	case AudioSourceList::BGM:
+		bgm_ps->set_volume(0.0f);
+		break;
 	}
 }
 
@@ -119,4 +133,5 @@ void AudioSystem::StopAllAudio()
 {
 	foot_steps_ps->set_volume(0.0f);
 	time_stop_ps->set_volume(0.0f);
+	bgm_ps->set_volume(0.0f);
 }
