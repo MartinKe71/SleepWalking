@@ -156,7 +156,7 @@ PlayMode::PlayMode() : scene(*sleepWalking_scene){
 	// moveableObjs.push_back(player2);
 
 	// Order Matters!!!
-	hbbg1 = new UIBGObject(glm::vec3(0.f, -0.6f, 0.f), 0.8f, 0.08f);
+	hbbg1 = new UIBGObject(glm::vec3(0.f, -0.6f, 0.f), 0.8f, 0.08f, "resource/greenbar.png");
 	uiObjs.push_back(hbbg1);
 	hbbg2 = new UIBGObject(glm::vec3(0.f, -0.8f, 0.f), 0.8f, 0.08f);
 	uiObjs.push_back(hbbg2);
