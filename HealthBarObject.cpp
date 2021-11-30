@@ -2,12 +2,10 @@
  * @ Author: Wenlin Mao
  * @ Create Time: 2021-10-30 18:35:37
  * @ Modified by: Wenlin Mao
- * @ Modified time: 2021-11-29 01:36:47
+ * @ Modified time: 2021-11-29 17:29:32
  * @ Description: implementation of square object
  */
 
-#include "load_save_png.hpp"
-#include "data_path.hpp"
 #include "HealthBarObject.hpp"
 #include "Inivar.hpp"
 #include "PlayerStats.hpp"
@@ -17,12 +15,11 @@ HealthBarObject::HealthBarObject(){
 
 HealthBarObject::HealthBarObject(float maxHealth, const glm::vec3& pos, 
     float w, float h, const std::string& filename): 
-    GameObject(10.f, pos, glm::vec3(0.f), true, filename, 100.f), 
+    UIObject(10.f, glm::vec3(pos.x - w/2.f, pos.y, pos.z), filename), 
     width(w), height(h), maxWidth(w){
-    
     color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-    step = maxHealth / w;
+    step = w / maxHealth;
     
     createVerts();
     prepareDraw();
@@ -33,10 +30,10 @@ HealthBarObject::~HealthBarObject(){}
 void HealthBarObject::createVerts(){
 
     vertex_positions = vector<glm::vec4>({
-        glm::vec4(width/2,  height/2, 0.0f, 1.0f),  // top right
-        glm::vec4(width/2, -height/2, 0.0f, 1.0f),  // bottom right
-        glm::vec4(-width/2, -height/2, 0.0f, 1.0f),  // bottom left
-        glm::vec4(-width/2,  height/2, 0.0f, 1.0f)  // top left 
+        glm::vec4(width,  height/2, 0.0f, 1.0f),  // top right
+        glm::vec4(width, -height/2, 0.0f, 1.0f),  // bottom right
+        glm::vec4(0.f, -height/2, 0.0f, 1.0f),  // bottom left
+        glm::vec4(0.f,  height/2, 0.0f, 1.0f)  // top left 
     });
 
     vertex_texcoords = vector<glm::vec2>({
@@ -55,7 +52,7 @@ void HealthBarObject::reset(){
 }
 
 void HealthBarObject::setHealth(float w){
-    width = w;
+    width = w * step;
     
     vertex_positions.clear();
     

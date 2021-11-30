@@ -4,6 +4,9 @@
         "__config": "cpp",
         "deque": "cpp",
         "filesystem": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "__node_handle": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp"
     }
 }
