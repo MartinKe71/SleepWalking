@@ -2,19 +2,9 @@
 
 Author: Zi Wang, Wenlin Mao, Tianrun(Martin) Ke
 
-Design: You are working at gamestop where people would come and sell cards, gaming consoles or action figures to you. Be cautious though because some people are lying. You need to find out the true value of these items and make profit for your store!
+Design: 
 
-Text Drawing: 
-
-The text drawing pipeline is like this. The InitializeGlyaphMap will create all the 2d textures for all the ascii code from 32 to 127. And then, whenever we want to change text, SetText will regenerate the glyph position and info. Then in the DrawText, it will iterate through all the characters and calculate the positions, find the already saved texture_id and let opengl does the drawing.
-
-Finite State Machine: 
-This game is implemented using the Finite State Machine with all text rendering tasks defined as a state and
-all player action defined as edges. Based on the state the player currently located,
-different action will lead to different outcomes. The game is purely based on randomization,
-thus the player is able to meet various condition and need to think how to overcome them.
-The state will render text accordingly based on the randomized generated item type, item level, true price, NPC expect price,
-and NPC bid price. Different combination will create different challenge for player to resolve.
+Players would be playing as a little girl and her cute pet to reach the end of the dark labyrinth. They have to collect "vision" so that they won't lose the light.'
 
 Screen Shot:
 
@@ -22,7 +12,9 @@ Screen Shot:
 
 How To Play:
 
-Use mouse to click buttons to make decision. You can talk to 20 customers max. And your goal is to get $300 in profit.
+Player 1 would use WAD to move the little girl. Press Q to rotate the map counter-clockwise. Press E to clockwise. Press R to turn up side down.
+
+Player 2 would use directional arrays to navigate the little pet. Press "." would drag the little girl and help her jump higher and further. Press "/" would stop the time in emergent situation.
 
 Sources: 
 
