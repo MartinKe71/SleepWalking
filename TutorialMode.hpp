@@ -1,7 +1,9 @@
 #pragma once
 #include "Mode.hpp"
+#include "Scene.hpp"
 #include "PlayMode.hpp"
 #include "Inivar.hpp"
+#include "UIBGObject.hpp"
 
 #include "Scene.hpp"
 
@@ -18,4 +20,8 @@ struct TutorialMode : Mode {
     virtual void draw(glm::uvec2 const& drawable_size) override;
 
     float elpasedTime = 0.f;
+
+    Scene::Camera* camera = new Scene::Camera(new Scene::Transform());
+
+    UIBGObject* tutorial;
 };
