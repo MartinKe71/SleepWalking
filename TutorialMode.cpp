@@ -9,7 +9,7 @@
 #include "data_path.hpp"
 
 TutorialMode::TutorialMode() {
-    
+    tutorial = new UIBGObject(glm::vec3(0.f, 0.0f, 0.f), 2.f, 2.f, "resource/Tutorial.png");
 }
 
 TutorialMode::~TutorialMode() {
@@ -19,6 +19,7 @@ TutorialMode::~TutorialMode() {
 bool TutorialMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size) {
     if (evt.type == SDL_KEYDOWN) {
         if (evt.key.keysym.sym == SDLK_SPACE) {
+            std::cout << "Switching to next mode" << std::endl;
             Mode::set_current(std::make_shared<PlayMode>());
             return true;
         }
@@ -29,6 +30,7 @@ bool TutorialMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_s
 void TutorialMode::update(float elapsed) {
     elpasedTime += elapsed;
     if (elpasedTime > TUTORIAL_TIME) {
+        std::cout << "Enough time in tutorial" << std::endl;
         Mode::set_current(std::make_shared<PlayMode>());
     }
 }
@@ -45,4 +47,6 @@ void TutorialMode::draw(glm::uvec2 const& drawable_size) {
         background_color.z / 255.0f,  // blue 
         background_color.w / 255.0f); // alpha
     glClear(GL_COLOR_BUFFER_BIT);
+
+    tutorial->draw(*camera);
 }
