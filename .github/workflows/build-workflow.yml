@@ -117,6 +117,7 @@ jobs:
           ls
           jam -j3 -q -dx && cp README.md dist
           file dist/game
+          chmod u+x dist/game
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
