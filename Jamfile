@@ -158,6 +158,8 @@ GAME_NAMES =
 	SavePointObject
 	HealthBarObject
 	main
+	GP21IntroMode
+	TutorialMode
 	PlayMode
 	LitColorTextureProgram
 	ColorTextureProgram #not used right now, but you might want it

@@ -31,6 +31,8 @@ enum class AudioSourceList
 	BGM
 };
 
+#define TUTORIAL_TIME 10.f
+
 #define GAME_MAP_SIZE glm::vec2(1024.f * 4, 416.5f * 4)
 #define GAME_MAP_ORIGIN glm::vec2(0.f, 0.f)
 #define CAM_OFFSET glm::vec2(30.f, 20.f)
