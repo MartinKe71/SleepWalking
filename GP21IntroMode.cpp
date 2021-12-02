@@ -277,7 +277,7 @@ GP21IntroMode::GP21IntroMode(std::shared_ptr< Mode > const& next_mode_) : next_m
 		"#  \n"
 		"###\n"
 	);
-	add_cubes(glm::ivec3(1, 2, 4), glm::ivec3(0, 1, 0),
+	add_cubes(glm::ivec3(4, 3, 2), glm::ivec3(1, 0, 0),
 		"## \n"
 		"# #\n"
 		"## \n"
