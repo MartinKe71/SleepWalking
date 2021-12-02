@@ -1,3 +1,5 @@
+#pragma once
+
 #include "GameObject.hpp"
 #include "CollisionSystem.hpp"
 #include "Scene.hpp"
