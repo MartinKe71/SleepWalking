@@ -1,3 +1,5 @@
+#include "Mode.hpp"
+#include "EndMode.hpp"
 #include "CollisionBox.hpp"
 #include "AudioSystem.hpp"
 
@@ -39,7 +41,9 @@ void CollectableCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 
 void SavePointCollisionBox::OnTriggerEnter(std::shared_ptr<CollisionBox> cb)
 {
-	
+	if (name.find("SavePoint6") != std::string::npos) {
+		Mode::set_current(std::make_shared< EndMode >());
+	}
 
 	if (owner->getLife() > 0) {
 		AudioSystem::Instance().PlayShortAudio(AudioSourceList::CheckPoint);

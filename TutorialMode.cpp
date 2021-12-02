@@ -40,7 +40,7 @@ void TutorialMode::draw(glm::uvec2 const& drawable_size) {
     glDisable(GL_BLEND);
 
     // ----- set the background color -----
-    glm::uvec4 background_color(37, 12, 10, 0);
+    glm::uvec4 background_color(1, 1, 1, 0);
     glClearColor(
         background_color.x / 255.0f,  // red
         background_color.y / 255.0f,  // green

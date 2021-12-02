@@ -160,6 +160,7 @@ GAME_NAMES =
 	main
 	GP21IntroMode
 	TutorialMode
+	EndMode
 	PlayMode
 	LitColorTextureProgram
 	ColorTextureProgram #not used right now, but you might want it

@@ -7,9 +7,9 @@
 
 #include "Scene.hpp"
 
-struct TutorialMode : Mode {
-    TutorialMode();
-    virtual ~TutorialMode();
+struct EndMode : Mode {
+    EndMode();
+    virtual ~EndMode();
 
 
     //functions called by main loop:
@@ -21,5 +21,5 @@ struct TutorialMode : Mode {
 
     Scene::Camera* camera = new Scene::Camera(new Scene::Transform());
 
-    UIBGObject* tutorial;
+    UIBGObject* ending;
 };
