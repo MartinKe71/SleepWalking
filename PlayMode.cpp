@@ -490,9 +490,6 @@ void PlayMode::update(float elapsed) {
 				obj->update(elapsed);
 			}
 
-			// Update lighting parameters
-			PlayerStats::Instance().update(elapsed);
-
 			AudioSystem::Instance().StopLongAudio(AudioSourceList::Timestop);
 		}
 	}
@@ -507,6 +504,9 @@ void PlayMode::update(float elapsed) {
 		// 	<< player1->getForce().y << " " << player1->getForce().z << std::endl;
 		for (auto& obj : markerObjs) obj->fadeOut();
 	}
+
+	// Update lighting parameters
+	PlayerStats::Instance().update(elapsed);
 
 	// camera movement
 	{
